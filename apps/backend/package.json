@@ -1,0 +1,29 @@
+{
+  "name": "umbrel-lnd-backend",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "lint": "eslint",
+    "start": "node ./bin/www",
+    "test": "mocha --file test.setup 'test/**/*.js'",
+    "coverage": "nyc --all mocha --file test.setup 'test/**/*.js'",
+    "postcoverage": "codecov"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "bitcoind-rpc": "^0.9.1",
+    "camelize-keys": "^1.0.0",
+    "continuation-local-storage": "^3.2.1",
+    "cors": "^2.8.5",
+    "find-config": "^1.0.0",
+    "grpc": "^1.24.11",
+    "module-alias": "^2.2.2",
+    "morgan": "^1.10.0",
+    "validator": "^13.7.0",
+    "winston": "^3.6.0",
+    "winston-daily-rotate-file": "^4.6.1"
+  }
+}

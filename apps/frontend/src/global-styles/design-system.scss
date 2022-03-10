@@ -1,0 +1,8 @@
+$font-size-base: 1rem;
+
+@import "./variables";
+@import "bootstrap/scss/bootstrap";
+@import "bootstrap-vue/src/index.scss";
+@import "./fonts.scss";
+@import "./custom.scss";
+@import "./responsive.scss";

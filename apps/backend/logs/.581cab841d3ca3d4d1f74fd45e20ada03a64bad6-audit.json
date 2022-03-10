@@ -1,0 +1,30 @@
+{
+    "keep": {
+        "days": true,
+        "amount": 7
+    },
+    "auditLog": "logs/.581cab841d3ca3d4d1f74fd45e20ada03a64bad6-audit.json",
+    "files": [
+        {
+            "date": 1646244318142,
+            "name": "logs/api-2022-03-02.log",
+            "hash": "54fea89c05aa3c9873b568d6434a3b57"
+        },
+        {
+            "date": 1646699438519,
+            "name": "logs/api-2022-03-07.log",
+            "hash": "56871723205b3d01e6c1b38cfc11b7cd"
+        },
+        {
+            "date": 1646746515666,
+            "name": "logs/api-2022-03-08.log",
+            "hash": "f14787f61b310af6b6ef35a77d12f769"
+        },
+        {
+            "date": 1646846521135,
+            "name": "logs/api-2022-03-09.log",
+            "hash": "e64e012e3c4f8cc1ab73ba319183e423"
+        }
+    ],
+    "hashType": "md5"
+}
