@@ -1,41 +1,40 @@
 version: '3.7'
 
 services:
-  # app:
-  #   build:
-  #     dockerfile: ./Dockerfile
-  #     context: ./
-  #   depends_on: [lnd]
-  #   command: npm run dev:backend
-  #   restart: on-failure
-  #   volumes:
-  #     - ${PWD}/lnd:/lnd:ro
-  #   environment:
-  #     PORT: "3006"
-  #     LND_NETWORK: "regtest"
-  #     LND_HOST: "lnd"
-  #     LND_PORT: "9735"
-  #     LND_REST_HIDDEN_SERVICE_FILE: "/var/lib/tor/lnd-rest/hostname"
-  #     LND_GRPC_HIDDEN_SERVICE_FILE: "/var/lib/tor/lnd-grpc/hostname"
-  #     TLS_FILE: "/lnd/tls.cert"
-  #     DEVICE_HOSTS: 'foobar, jones'
-  #   ports:
-  #     - "3006:3006"
+  app:
+    build:
+      dockerfile: ./Dockerfile
+      context: ./
+    command: npm run dev:backend
+    restart: on-failure
+    volumes:
+      - ${PWD}/data/lnd:/lnd:ro
+    environment:
+      PORT: "3006"
+      BITCOIN_HOST: "bitcoind"
+      RPC_PORT: "18443"
+      RPC_USER: "umbrel"
+      RPC_PASSWORD: "2hmQlIgYfjFoMGAwBQPdvpJ6vDuQbOoBfG_LxznanAk="
+      LND_NETWORK: "regtest"
+      LND_HOST: "lnd"
+      LND_REST_HIDDEN_SERVICE_FILE: "/var/lib/tor/lnd-rest/hostname"
+      LND_GRPC_HIDDEN_SERVICE_FILE: "/var/lib/tor/lnd-grpc/hostname"
+      TLS_FILE: "/lnd/tls.cert"
+      DEVICE_HOSTS: 'foobar,jones'
+    ports:
+      - "3006:3006"
+
   lnd:
-    depends_on: [bitcoind]
     image: lightninglabs/lnd:v0.14.1-beta@sha256:810f290f4da51adaf57d53bc1f1e65b52b03c543f322da0b98fb8c47be94a27a
     user: 1000:1000
     volumes:
-            - ${PWD}/lnd:/data/.lnd
+      - ${PWD}/data/lnd:/data/.lnd
     environment:
       HOME: /data
     restart: on-failure
-    stop_grace_period: 5m30s
-    ports:
-        - "9735:9735"
+
   bitcoind:
     image: lncm/bitcoind:v22.0@sha256:37a1adb29b3abc9f972f0d981f45e41e5fca2e22816a023faa9fdc0084aa4507
-    command: -regtest -rpcbind=0.0.0.0 -rpcallowip=0.0.0.0/0
     volumes:
       - ${PWD}/data/bitcoin:/data/.bitcoin
     restart: on-failure
