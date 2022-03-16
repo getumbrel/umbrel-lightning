@@ -97,44 +97,44 @@ export default {
       isOpening: false,
       selectedFee: {
         type: "normal",
-        satPerByte: 0
+        satPerByte: 0,
       },
       fee: {
         fast: {
           total: 0,
           perByte: "--",
           error: "",
-          sweepAmount: 0
+          sweepAmount: 0,
         },
         normal: {
           total: 0,
           perByte: "--",
           error: "",
-          sweepAmount: 0
+          sweepAmount: 0,
         },
         slow: {
           total: 0,
           perByte: "--",
           error: "",
-          sweepAmount: 0
+          sweepAmount: 0,
         },
         cheapest: {
           total: 0,
           perByte: "--",
           error: "",
-          sweepAmount: 0
-        }
+          sweepAmount: 0,
+        },
       },
       error: "",
       feeTimeout: null,
-      sweep: false
+      sweep: false,
     };
   },
   computed: {
     ...mapState({
-      unit: state => state.system.unit,
-      confirmedBtcBalance: state => state.bitcoin.balance.confirmed
-    })
+      unit: (state) => state.system.unit,
+      confirmedBtcBalance: (state) => state.bitcoin.balance.confirmed,
+    }),
   },
   methods: {
     selectFee(fee) {
@@ -168,7 +168,7 @@ export default {
           : parseInt(this.fundingAmount, 10),
         name: "",
         purpose: "",
-        satPerByte: parseInt(this.selectedFee.satPerByte, 10)
+        satPerByte: parseInt(this.selectedFee.satPerByte, 10),
       };
 
       const parsedConnectionCode = this.peerConnectionCode.match(
@@ -209,7 +209,7 @@ export default {
               autoHideDelay: 3000,
               variant: "success",
               solid: true,
-              toaster: "b-toaster-bottom-right"
+              toaster: "b-toaster-bottom-right",
             }
           );
         }, 200);
@@ -269,7 +269,7 @@ export default {
           }
         }
       }, 500);
-    }
+    },
   },
   watch: {
     unit: function(val) {
@@ -297,12 +297,12 @@ export default {
         this.fundingAmount = btcToSats(val);
       }
       this.fetchFees();
-    }
+    },
   },
   components: {
     SatsBtcSwitch,
-    FeeSelector
-  }
+    FeeSelector,
+  },
 };
 </script>
 

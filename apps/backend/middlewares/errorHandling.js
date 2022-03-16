@@ -7,8 +7,6 @@ function handleError(error, req, res, next) {
   var route = req.url || "";
   var message = error.message || "";
 
-  console.log("error: ", error);
-
   if (error instanceof LndError) {
     if (error.error && error.error.code === 12) {
       statusCode = 403;

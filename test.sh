@@ -1,11 +1,11 @@
 #!/usr/bin/env bash
 
-function cleanup() {
-    docker-compose down
-    echo "Nuking data dirs..."
-    rm -rf data
-}
-trap cleanup EXIT
+# function cleanup() {
+#     docker-compose down
+#     echo "Nuking data dirs..."
+#     rm -rf data
+# }
+# trap cleanup EXIT
 
 docker-compose up &
 

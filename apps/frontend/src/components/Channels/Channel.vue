@@ -1,7 +1,7 @@
 <template>
-  <div class="py-3 px-3 px-lg-4 channel">
-    <b-row>
-      <b-col col cols="12" xl="3">
+  <div class="py-3 px-3 channel">
+    <div class="d-flexflex-wrap">
+      <b-col col cols="12">
         <!-- on large screens -->
         <div class="d-none d-xl-block">
           <status :variant="statusVariant" size="sm">{{
@@ -10,7 +10,7 @@
           <div>
             <span v-if="channel.remoteAlias">{{ channel.remoteAlias }}</span>
             <span
-              class="loading-placeholder loading-placeholder-sm d-block"
+              class="loading-placeholder loading-placeholder-sm block"
               style="width:80%; margin-top: 8px;"
               v-else
             ></span>
@@ -29,11 +29,11 @@
           </div>
         </div>
       </b-col>
-      <b-col col cols="12" xl="9">
+      <b-col col cols="12">
         <div class>
           <div class="d-flex justify-content-between">
             <span
-              class="text-primary font-weight-bold"
+              class="text-primary font-bold"
               v-b-tooltip.hover.right
               :title="channel.localBalance | satsToUSD"
               >{{ channel.localBalance | unit | localize }}
@@ -42,7 +42,7 @@
             <span
               v-b-tooltip.hover.left
               :title="channel.remoteBalance | satsToUSD"
-              class="text-success text-right font-weight-bold"
+              class="text-success text-right font-bold"
               >{{ channel.remoteBalance | unit | localize }}
               {{ unit | formatUnit }}</span
             >
@@ -53,14 +53,12 @@
             class="my-1"
           ></bar>
           <div class="d-flex justify-content-between">
-            <small class="text-muted font-weight-bold">Max Send</small>
-            <small class="text-muted font-weight-bold text-right"
-              >Max Receive</small
-            >
+            <small class="text-muted font-bold">Max Send</small>
+            <small class="text-muted font-bold text-right">Max Receive</small>
           </div>
         </div>
       </b-col>
-    </b-row>
+    </div>
   </div>
 </template>
 
@@ -90,7 +88,7 @@ export default {
         return "danger";
       }
       return "default";
-    }
+    },
   },
   data() {
     return {};
@@ -100,13 +98,13 @@ export default {
       if (this.channel.type === "OPEN") {
         return {
           text: "Online",
-          variant: "success"
+          variant: "success",
         };
       }
       if (this.channel.type === "PENDING_OPEN_CHANNEL") {
         return {
           text: "Opening",
-          variant: "warning"
+          variant: "warning",
         };
       }
       if (
@@ -115,24 +113,24 @@ export default {
       ) {
         return {
           text: "Closing",
-          variant: "warning"
+          variant: "warning",
         };
       }
       if (this.channel.type === "FORCE_CLOSING_CHANNEL") {
         return {
           text: "Force Closing",
-          variant: "danger"
+          variant: "danger",
         };
       }
-    }
+    },
   },
   props: {
-    channel: Object
+    channel: Object,
   },
   components: {
     Status,
-    Bar
-  }
+    Bar,
+  },
 };
 </script>
 

@@ -13,7 +13,7 @@ async function getConnectionsCount() {
   var outBoundConnections = 0;
   var inBoundConnections = 0;
 
-  peerInfo.result.forEach(function(peer) {
+  peerInfo.result.forEach(function (peer) {
     if (peer.inbound === false) {
       outBoundConnections++;
 
@@ -25,7 +25,7 @@ async function getConnectionsCount() {
   const connections = {
     total: inBoundConnections + outBoundConnections,
     inbound: inBoundConnections,
-    outbound: outBoundConnections
+    outbound: outBoundConnections,
   };
 
   return connections;
@@ -34,11 +34,9 @@ async function getConnectionsCount() {
 async function getStatus() {
   try {
     await bitcoindService.help();
-    console.log("after help");
 
     return { operational: true };
   } catch (error) {
-    console.log("bitcoin getStatus error: ", error);
     if (error instanceof BitcoindError) {
       return { operational: false };
     }
@@ -55,7 +53,7 @@ async function getMaxSyncHeader() {
     return -1;
   }
 
-  const maxPeer = peerInfo.reduce(function(prev, current) {
+  const maxPeer = peerInfo.reduce(function (prev, current) {
     return prev.syncedHeaders > current.syncedHeaders ? prev : current;
   });
 
@@ -79,7 +77,7 @@ async function getLocalSyncInfo() {
     chain,
     percent,
     currentBlock: blockCount,
-    headerCount: headerCount // eslint-disable-line object-shorthand,
+    headerCount: headerCount, // eslint-disable-line object-shorthand,
   };
 }
 
@@ -114,7 +112,7 @@ async function getTransaction(txid) {
     size: transactionObj.result.size,
     input: transactionObj.result.vin.txid,
     utxo: transactionObj.result.vout,
-    rawtx: transactionObj.result.hex
+    rawtx: transactionObj.result.hex,
   };
 }
 
@@ -134,7 +132,7 @@ async function getBlock(hash) {
     blocktime: blockObj.result.time,
     prevblock: blockObj.result.previousblockhash,
     nextblock: blockObj.result.nextblockhash,
-    transactions: blockObj.result.tx
+    transactions: blockObj.result.tx,
   };
 }
 
@@ -169,7 +167,7 @@ async function getBlocks(fromHeight, toHeight) {
       numTransactions: block.tx.length,
       confirmations: block.confirmations,
       time: block.time,
-      size: block.size
+      size: block.size,
     };
 
     blocks.push(formattedBlock);
@@ -188,7 +186,7 @@ async function getBlockHash(height) {
   const getBlockHashObj = await bitcoindService.getBlockHash(height);
 
   return {
-    hash: getBlockHashObj.result
+    hash: getBlockHashObj.result,
   };
 }
 
@@ -202,7 +200,7 @@ async function nodeStatusDump() {
     blockchain_info: blockchainInfo.result,
     network_info: networkInfo.result,
     mempool: mempoolInfo.result,
-    mining_info: miningInfo.result
+    mining_info: miningInfo.result,
   };
 }
 
@@ -217,7 +215,7 @@ async function nodeStatusSummary() {
     size: blockchainInfo.result.sizeOnDisk,
     mempool: mempoolInfo.result.bytes,
     connections: networkInfo.result.connections,
-    networkhashps: miningInfo.result.networkhashps
+    networkhashps: miningInfo.result.networkhashps,
   };
 }
 
@@ -234,5 +232,5 @@ module.exports = {
   getSyncStatus,
   getVersion,
   nodeStatusDump,
-  nodeStatusSummary
+  nodeStatusSummary,
 };

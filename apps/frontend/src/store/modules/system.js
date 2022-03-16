@@ -5,15 +5,15 @@ const state = () => ({
   version: "",
   backupStatus: {
     status: "", //success, failed
-    timestamp: null
+    timestamp: null,
   },
   loading: true,
   unit: "sats", //sats or btc
   api: {
     operational: false,
-    version: ""
+    version: "",
   },
-  onionAddress: ""
+  onionAddress: "",
 });
 
 // Functions to update the state directly
@@ -35,7 +35,7 @@ const mutations = {
   },
   setBackupStatus(state, status) {
     state.backupStatus = status;
-  }
+  },
 };
 
 // Functions to get data from the API
@@ -67,17 +67,17 @@ const actions = {
     const api = await API.get(`${process.env.VUE_APP_BACKEND_URL}/ping`);
     commit("setApi", {
       operational: !!(api && api.version),
-      version: api && api.version ? api.version : ""
+      version: api && api.version ? api.version : "",
     });
   },
   async getBackupStatus({ commit }) {
     const status = await API.get(
-      `${process.env.VUE_APP_MANAGER_API_URL}/v1/system/backup-status`
+      `${process.env.VUE_APP_BACKEND_URL}/v1/system/backup-status`
     );
     if (status && status.timestamp) {
       commit("setBackupStatus", status);
     }
-  }
+  },
 };
 
 const getters = {};
@@ -87,5 +87,5 @@ export default {
   state,
   getters,
   actions,
-  mutations
+  mutations,
 };

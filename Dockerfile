@@ -12,7 +12,7 @@ COPY apps/backend/package.json ./apps/backend/package.json
 # have all been explicitly declared in apps/backend/package.json it can be removed.
 # Currently the backend is implicitly depending on child deps from the frontend package.
 COPY apps/frontend/package.json ./apps/frontend/package.json
-RUN yarn install
+RUN yarn
 
 # Copy project files and folders
 COPY apps/backend ./apps/backend
@@ -28,13 +28,13 @@ WORKDIR /app
 # Copy package.json and install dependencies
 COPY package.json ./
 COPY apps/frontend/package.json ./apps/frontend/package.json
-RUN yarn install
+RUN yarn
 
 # Copy project files and folders
 COPY apps/frontend ./apps/frontend
 
 # Build assets
-RUN npm run build:frontend
+RUN yarn run build:frontend
 
 
 

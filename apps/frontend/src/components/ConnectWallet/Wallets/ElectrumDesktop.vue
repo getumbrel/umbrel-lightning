@@ -6,26 +6,33 @@
         <b-link v-b-modal.tor-modal>Click here</b-link> for instructions.
       </step>
       <step>
-        Open Electrum Wallet and click the colored dot on the bottom right to open network settings.
+        Open Electrum Wallet and click the colored dot on the bottom right to
+        open network settings.
       </step>
       <step>
-        Uncheck <span class="font-weight-bold">"Select server automatically"</span>.
+        Uncheck <span class="font-bold">"Select server automatically"</span>.
       </step>
       <step>
-        In the <span class="font-weight-bold">"Server"</span>, enter
-        <input-copy class="my-1" :value="`${urls.bitcoin.electrum.address}:${urls.bitcoin.electrum.port}:t`" auto-width></input-copy>
+        In the <span class="font-bold">"Server"</span>, enter
+        <input-copy
+          class="my-1"
+          :value="
+            `${urls.bitcoin.electrum.address}:${urls.bitcoin.electrum.port}:t`
+          "
+          auto-width
+        ></input-copy>
+      </step>
+      <step> Go to the <span class="font-bold">"Proxy"</span> tab. </step>
+      <step>
+        Check <span class="font-bold">"Use Tor proxy at port 9050"</span>
       </step>
       <step>
-        Go to the <span class="font-weight-bold">"Proxy"</span> tab.
+        Click <span class="font-bold">"Close"</span>. Wait for a few seconds and
+        the dot at the bottom right should turn blue.
       </step>
       <step>
-        Check <span class="font-weight-bold">"Use Tor proxy at port 9050"</span>
-      </step>
-      <step>
-        Click <span class="font-weight-bold">"Close"</span>. Wait for a few seconds and the dot at the bottom right should turn blue.
-      </step>
-      <step>
-        Congratulations! You've successfully connected Electrum Wallet to your Umbrel.
+        Congratulations! You've successfully connected Electrum Wallet to your
+        Umbrel.
       </step>
     </step-list>
 
@@ -44,14 +51,14 @@ import InputCopy from "@/components/Utility/InputCopy";
 
 export default {
   props: {
-    urls: Object
+    urls: Object,
   },
   components: {
     ConnectionDetails,
     StepList,
     Step,
     InputCopy,
-    TorSetup
-  }
+    TorSetup,
+  },
 };
 </script>

@@ -36,16 +36,15 @@ export default {
       isIframe: window.self !== window.top,
       loading: true,
       loadingProgress: 0,
-      loadingPollInProgress: false
+      loadingPollInProgress: false,
     };
   },
   computed: {
     ...mapState({
-      isApiOperational: state => state.system.api.operational
-    })
+      isApiOperational: (state) => state.system.api.operational,
+    }),
   },
   methods: {
-    //TODO: move this to the specific layout that needs this 100vh fix
     updateViewPortHeightCSS() {
       return document.documentElement.style.setProperty(
         "--vh100",
@@ -77,9 +76,10 @@ export default {
       // Add slight delay so the progress bar makes
       // it to 100% before disappearing
       setTimeout(() => (this.loading = false), 300);
-    }
+    },
   },
   created() {
+    document.title = "LND - Umbrel";
     //for 100vh consistency
     this.updateViewPortHeightCSS();
     window.addEventListener("resize", this.updateViewPortHeightCSS);
@@ -102,16 +102,16 @@ export default {
           );
         }
       },
-      immediate: true
-    }
+      immediate: true,
+    },
   },
   beforeDestroy() {
     window.removeEventListener("resize", this.updateViewPortHeightCSS);
     window.clearInterval(this.loadingInterval);
   },
   components: {
-    Loading
-  }
+    Loading,
+  },
 };
 </script>
 

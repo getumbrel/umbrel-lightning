@@ -27,6 +27,8 @@ const transaction = require("routes/v1/lnd/transaction.js");
 const util = require("routes/v1/lnd/util.js");
 const wallet = require("routes/v1/lnd/wallet.js");
 const pages = require("routes/v1/pages.js");
+const system = require("routes/v1/system/index.js");
+const external = require("routes/v1/external.js");
 const ping = require("routes/ping.js");
 const app = express();
 
@@ -52,6 +54,8 @@ app.use("/v1/lnd/transaction", transaction);
 app.use("/v1/lnd/wallet", wallet);
 app.use("/v1/lnd/util", util);
 app.use("/v1/pages", pages);
+app.use("/v1/system", system);
+app.use("/v1/external", external);
 app.use("/ping", ping);
 
 app.use(errorHandleMiddleware);
@@ -60,6 +64,8 @@ app.use((req, res) => {
 });
 
 module.exports = app;
+
+// TODO: add creation logic
 
 // LND Unlocker
 if (constants.LND_WALLET_PASSWORD) {

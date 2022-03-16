@@ -2,13 +2,14 @@ const express = require("express");
 const router = express.Router();
 
 const lightning = require("logic/lightning.js");
+
 const safeHandler = require("utils/safeHandler");
 const validator = require("utils/validator.js");
 
 router.get(
   "/uris",
   safeHandler((req, res) =>
-    lightning.getPublicUris().then(uris => res.json(uris))
+    lightning.getPublicUris().then((uris) => res.json(uris))
   )
 );
 
@@ -17,21 +18,21 @@ router.get(
 router.get(
   "/status",
   safeHandler((req, res) =>
-    lightning.getStatus().then(status => res.json(status))
+    lightning.getStatus().then((status) => res.json(status))
   )
 );
 
 router.get(
   "/sync",
   safeHandler((req, res) =>
-    lightning.getSyncStatus().then(status => res.json(status))
+    lightning.getSyncStatus().then((status) => res.json(status))
   )
 );
 
 router.get(
   "/version",
   safeHandler((req, res) =>
-    lightning.getVersion().then(version => res.json(version))
+    lightning.getVersion().then((version) => res.json(version))
   )
 );
 
@@ -46,7 +47,7 @@ router.get(
       return next(error);
     }
 
-    return lightning.getNodeAlias(pubkey).then(alias => res.json(alias));
+    return lightning.getNodeAlias(pubkey).then((alias) => res.json(alias));
   })
 );
 

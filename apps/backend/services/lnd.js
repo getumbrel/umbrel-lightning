@@ -31,22 +31,21 @@ const lnrpc = lnrpcDescriptor.lnrpc;
 const DEFAULT_RECOVERY_WINDOW = 250;
 const GRPC_PARAMS = {
   "grpc.max_receive_message_length": -1,
-  "grpc.max_send_message_length": -1
+  "grpc.max_send_message_length": -1,
 };
 
 // Initialize RPC client will attempt to connect to the lnd rpc with a tls.cert and admin.macaroon. If the wallet has
 // not bee created yet, then the client will only be initialized with the tls.cert. There may be times when lnd wallet
 // is reset and the tls.cert and admin.macaroon will change.
 async function initializeRPCClient() {
-  console.log("process.env: ", process.env);
   return diskService
     .readFile(TLS_FILE)
-    .then(lndCert => {
+    .then((lndCert) => {
       const sslCreds = grpc.credentials.createSsl(lndCert);
 
       return diskService
         .readFile(MACAROON_FILE)
-        .then(macaroon => {
+        .then((macaroon) => {
           // build meta data credentials
           const metadata = new grpc.Metadata();
           metadata.add("macaroon", macaroon.toString("hex"));
@@ -63,12 +62,12 @@ async function initializeRPCClient() {
               sslCreds,
               macaroonCreds
             ),
-            state: true
+            state: true,
           };
         })
         .catch(() => ({
           credentials: sslCreds,
-          state: "WALLET_CREATION_ONLY"
+          state: "WALLET_CREATION_ONLY",
         }));
     })
     .then(({ credentials, state }) => {
@@ -82,7 +81,7 @@ async function initializeRPCClient() {
           LND_HOST + ":" + LND_PORT,
           credentials
         ),
-        state: state // eslint-disable-line object-shorthand
+        state: state, // eslint-disable-line object-shorthand
       };
     });
 }
@@ -108,7 +107,7 @@ async function addInvoice(amount, memo) {
   const rpcPayload = {
     value: amount,
     memo: memo, // eslint-disable-line object-shorthand
-    expiry: 3600 // Should we make this ENV specific for ease of testing?
+    expiry: 3600, // Should we make this ENV specific for ease of testing?
   };
 
   const conn = await initializeRPCClient();
@@ -123,7 +122,7 @@ async function addInvoice(amount, memo) {
   if (grpcResponse && grpcResponse.paymentRequest) {
     return {
       rHash: grpcResponse.rHash,
-      paymentRequest: grpcResponse.paymentRequest
+      paymentRequest: grpcResponse.paymentRequest,
     };
   } else {
     throw new LndError("Unable to parse invoice from lnd");
@@ -137,7 +136,7 @@ async function changePassword(currentPassword, newPassword) {
 
   const rpcPayload = {
     current_password: currentPasswordBuff,
-    new_password: newPasswordBuff
+    new_password: newPasswordBuff,
   };
 
   const conn = await initializeRPCClient();
@@ -154,9 +153,9 @@ function closeChannel(fundingTxId, index, force) {
   const rpcPayload = {
     channel_point: {
       funding_txid_str: fundingTxId,
-      output_index: index
+      output_index: index,
     },
-    force: force // eslint-disable-line object-shorthand
+    force: force, // eslint-disable-line object-shorthand
   };
 
   return initializeRPCClient().then(
@@ -165,13 +164,13 @@ function closeChannel(fundingTxId, index, force) {
         try {
           const call = lightning.CloseChannel(rpcPayload);
 
-          call.on("data", chan => {
+          call.on("data", (chan) => {
             if (chan.update === "close_pending") {
               resolve();
             }
           });
 
-          call.on("error", error => {
+          call.on("error", (error) => {
             reject(new LndError("Unable to close channel", error));
           });
         } catch (error) {
@@ -186,8 +185,8 @@ function connectToPeer(pubKey, ip, port) {
   const rpcPayload = {
     addr: {
       pubkey: pubKey,
-      host: ip + ":" + port
-    }
+      host: ip + ":" + port,
+    },
   };
 
   return initializeRPCClient().then(({ lightning }) =>
@@ -197,7 +196,7 @@ function connectToPeer(pubKey, ip, port) {
 
 function decodePaymentRequest(paymentRequest) {
   const rpcPayload = {
-    pay_req: paymentRequest
+    pay_req: paymentRequest,
   };
 
   return initializeRPCClient()
@@ -209,7 +208,7 @@ function decodePaymentRequest(paymentRequest) {
         "decode payment request"
       )
     )
-    .then(invoice => {
+    .then((invoice) => {
       // add on payment request for extra details
       invoice.paymentRequest = paymentRequest;
 
@@ -223,7 +222,7 @@ async function estimateFee(address, amt, confTarget) {
 
   const rpcPayload = {
     AddrToAmount: addrToAmount,
-    target_conf: confTarget
+    target_conf: confTarget,
   };
 
   const conn = await initializeRPCClient();
@@ -238,7 +237,7 @@ async function estimateFee(address, amt, confTarget) {
 
 async function generateAddress() {
   const rpcPayload = {
-    type: 0
+    type: 0,
   };
 
   const conn = await initializeRPCClient();
@@ -282,7 +281,7 @@ function getForwardingEvents(startTime, endTime, indexOffset) {
   const rpcPayload = {
     start_time: startTime,
     end_time: endTime,
-    index_offset: indexOffset
+    index_offset: indexOffset,
   };
 
   return initializeRPCClient().then(({ lightning }) =>
@@ -301,10 +300,16 @@ function getInfo() {
   );
 }
 
+function getState() {
+  return initializeRPCClient().then(({ lightning }) =>
+    promiseify(lightning, lightning.GetState, {}, "get lnd state")
+  );
+}
+
 function getNodeInfo(pubkey, includeChannels) {
   const rpcPayload = {
     pub_key: pubkey,
-    include_channels: includeChannels
+    include_channels: includeChannels,
   };
   return initializeRPCClient().then(({ lightning }) =>
     promiseify(
@@ -324,7 +329,7 @@ function getOpenChannels() {
     .then(({ lightning }) =>
       promiseify(lightning, lightning.ListChannels, {}, "list channels")
     )
-    .then(grpcResponse => grpcResponse.channels);
+    .then((grpcResponse) => grpcResponse.channels);
 }
 
 function getClosedChannels() {
@@ -332,7 +337,7 @@ function getClosedChannels() {
     .then(({ lightning }) =>
       promiseify(lightning, lightning.ClosedChannels, {}, "closed channels")
     )
-    .then(grpcResponse => grpcResponse.channels);
+    .then((grpcResponse) => grpcResponse.channels);
 }
 
 // Returns a list of all outgoing payments.
@@ -348,7 +353,7 @@ function getPeers() {
     .then(({ lightning }) =>
       promiseify(lightning, lightning.ListPeers, {}, "get peer information")
     )
-    .then(grpcResponse => {
+    .then((grpcResponse) => {
       if (grpcResponse && grpcResponse.peers) {
         return grpcResponse.peers;
       } else {
@@ -383,7 +388,7 @@ function initWallet(options) {
   const rpcPayload = {
     wallet_password: passwordBuff,
     cipher_seed_mnemonic: options.mnemonic,
-    recovery_window: DEFAULT_RECOVERY_WINDOW
+    recovery_window: DEFAULT_RECOVERY_WINDOW,
   };
 
   return initializeRPCClient().then(({ walletUnlocker, state }) => {
@@ -404,7 +409,7 @@ function initWallet(options) {
 function getInvoices() {
   const rpcPayload = {
     reversed: true, // Returns most recent
-    num_max_invoices: 100
+    num_max_invoices: 100,
   };
 
   return initializeRPCClient().then(({ lightning }) =>
@@ -423,13 +428,13 @@ function getOnChainTransactions() {
         "list on-chain transactions"
       )
     )
-    .then(grpcResponse => grpcResponse.transactions);
+    .then((grpcResponse) => grpcResponse.transactions);
 }
 
 async function listUnspent() {
   const rpcPayload = {
     min_confs: 1,
-    max_confs: 10000000 // Use arbitrarily high maximum confirmation limit.
+    max_confs: 10000000, // Use arbitrarily high maximum confirmation limit.
   };
 
   const conn = await initializeRPCClient();
@@ -445,7 +450,7 @@ async function listUnspent() {
 function openChannel(pubKey, amt, satPerByte) {
   const rpcPayload = {
     node_pubkey_string: pubKey,
-    local_funding_amount: amt
+    local_funding_amount: amt,
   };
 
   if (satPerByte) {
@@ -463,7 +468,7 @@ function sendCoins(addr, amt, satPerByte, sendAll) {
   const rpcPayload = {
     addr: addr, // eslint-disable-line object-shorthand
     amount: amt,
-    send_all: sendAll
+    send_all: sendAll,
   };
 
   if (satPerByte) {
@@ -480,7 +485,7 @@ function sendCoins(addr, amt, satPerByte, sendAll) {
 function sendPaymentSync(paymentRequest, amt) {
   const rpcPayload = {
     payment_request: paymentRequest,
-    amt: amt // eslint-disable-line object-shorthand
+    amt: amt, // eslint-disable-line object-shorthand
   };
 
   return initializeRPCClient()
@@ -492,7 +497,7 @@ function sendPaymentSync(paymentRequest, amt) {
         "send lightning payment"
       )
     )
-    .then(response => {
+    .then((response) => {
       // sometimes the error comes in on the response...
       if (response.paymentError) {
         throw new LndError(
@@ -508,7 +513,7 @@ function unlockWallet(password) {
   const passwordBuff = Buffer.from(password, "utf8");
 
   const rpcPayload = {
-    wallet_password: passwordBuff
+    wallet_password: passwordBuff,
   };
 
   // TODO how to determine if wallet is already unlocked?
@@ -534,7 +539,7 @@ function updateChannelPolicy(
   const rpcPayload = {
     base_fee_msat: baseFeeMsat,
     fee_rate: feeRate,
-    time_lock_delta: timeLockDelta
+    time_lock_delta: timeLockDelta,
   };
 
   if (global) {
@@ -542,7 +547,7 @@ function updateChannelPolicy(
   } else {
     rpcPayload.chan_point = {
       funding_txid_str: fundingTxid,
-      output_index: outputIndex
+      output_index: outputIndex,
     };
   }
 
@@ -568,6 +573,7 @@ module.exports = {
   getFeeReport,
   getForwardingEvents,
   getInfo,
+  getState,
   getNodeInfo,
   getInvoices,
   getOpenChannels,
@@ -584,5 +590,5 @@ module.exports = {
   sendCoins,
   sendPaymentSync,
   unlockWallet,
-  updateChannelPolicy
+  updateChannelPolicy,
 };

@@ -3,11 +3,10 @@ const lightningLogic = require("logic/lightning");
 const SECONDS = 1000;
 const MINUTES = 60 * SECONDS;
 
-const delay = ms => new Promise(resolve => setTimeout(resolve, ms));
+const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
 module.exports = class LndUnlocker {
   constructor(password) {
-    console.log("password: ", password);
     this.password = password;
     this.running = false;
     this.unlocked = false;
@@ -23,7 +22,6 @@ module.exports = class LndUnlocker {
     } catch (e) {
       try {
         await lightningLogic.unlockWallet(this.password);
-        console.log("LndUnlocker: Wallet unlocked!");
         return true;
       } catch (e) {
         console.log("LndUnlocker: Wallet failed to unlock!");
