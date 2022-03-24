@@ -7,6 +7,10 @@ const path = require("path");
 const morgan = require("morgan");
 const bodyParser = require("body-parser");
 const cors = require("cors");
+const { CipherSeed } = require("aezeed");
+
+const lightningLogic = require("logic/lightning");
+const LndUnlocker = require("logic/lnd-unlocker");
 
 const constants = require("utils/const.js");
 
@@ -16,6 +20,7 @@ const camelCaseReqMiddleware = require("middlewares/camelCaseRequest.js")
   .camelCaseRequest;
 const corsOptions = require("middlewares/cors.js").corsOptions;
 const errorHandleMiddleware = require("middlewares/errorHandling.js");
+const LndError = require("models/errors.js").LndError;
 
 const logger = require("utils/logger.js");
 
@@ -30,6 +35,7 @@ const pages = require("routes/v1/pages.js");
 const system = require("routes/v1/system/index.js");
 const external = require("routes/v1/external.js");
 const ping = require("routes/ping.js");
+const { Cipher } = require("crypto");
 const app = express();
 
 // Handles CORS
@@ -65,11 +71,56 @@ app.use((req, res) => {
 
 module.exports = app;
 
-// TODO: add creation logic
+async function init() {
+  // only init if we have a seed.
+  // maybe not required if wallet already created?
+  if (constants.LND_SEED) {
+    const lndStatus = await lightningLogic.getStatus();
+
+    if (lndStatus.operational) {
+      try {
+        const foo = CipherSeed.fromMnemonic(process.env.APP_SEED);
+        console.log("foo: ", foo);
+        console.log("foo.salt.toString('hex'): ", foo.salt.toString("hex"));
+
+        // const seedBuffer = Buffer.from(process.env.APP_SEED_HEX, "hex");
+        // const saltBuffer = Buffer.from(process.env.APP_SEED_SALT, "hex");
+        // const seed = new CipherSeed(seedBuffer, saltBuffer).toMnemonic();
+
+        // const password = constants.LND_WALLET_PASSWORD;
+
+        // lightningLogic
+        //   .initializeWallet(password, seed)
+        //   .then(() => {
+        //     // New wallet created successfully, so unlock
+        //     lndUnlocker = new LndUnlocker(constants.LND_WALLET_PASSWORD);
+        //     lndUnlocker.start();
+        //   })
+        //   .catch((error) => {
+        //     if (error instanceof LndError) {
+        //       // Wallet already exists, so unlock
+        //       if (
+        //         error.error &&
+        //         error.error.details ===
+        //           "Macaroon exists, therefore wallet already exists"
+        //       ) {
+        //         lndUnlocker = new LndUnlocker(constants.LND_WALLET_PASSWORD);
+        //         lndUnlocker.start();
+        //       }
+        //     }
+        //   });
+      } catch (e) {
+        console.log("initializeWallet error: ", e);
+      }
+    }
+  }
+}
+
+init();
 
 // LND Unlocker
-if (constants.LND_WALLET_PASSWORD) {
-  const LndUnlocker = require("logic/lnd-unlocker");
-  lndUnlocker = new LndUnlocker(constants.LND_WALLET_PASSWORD);
-  lndUnlocker.start();
-}
+// if (constants.LND_WALLET_PASSWORD) {
+//   const LndUnlocker = require("logic/lnd-unlocker");
+//   lndUnlocker = new LndUnlocker(constants.LND_WALLET_PASSWORD);
+//   lndUnlocker.start();
+// }

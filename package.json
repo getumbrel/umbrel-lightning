@@ -1,8 +1,9 @@
 {
   "name": "umbrel-lnd",
+  "author": "Umbrel",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "private": true,
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev:frontend": "npm run serve -w umbrel-lnd-frontend",
@@ -10,8 +11,6 @@
     "dev:backend": "npm run start -w umbrel-lnd-backend"
   },
   "keywords": [],
-  "author": "Umbrel",
-  "private": true,
   "workspaces": [
     "apps/*"
   ]

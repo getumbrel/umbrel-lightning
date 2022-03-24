@@ -79,7 +79,6 @@ function readFile(filePath, encoding) {
   return new Promise((resolve, reject) =>
     fs.readFile(filePath, encoding, (err, str) => {
       if (err) {
-        console.log("err: ", err);
         reject(err);
       } else {
         resolve(str);
