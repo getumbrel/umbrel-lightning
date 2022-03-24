@@ -79,36 +79,38 @@ async function init() {
 
     if (lndStatus.operational) {
       try {
-        const foo = CipherSeed.fromMnemonic(process.env.APP_SEED);
-        console.log("foo: ", foo);
-        console.log("foo.salt.toString('hex'): ", foo.salt.toString("hex"));
+        const seedBuffer = Buffer.from(process.env.APP_SEED_HEX, "hex");
+        const saltBuffer = Buffer.from(process.env.APP_SEED_SALT, "hex");
+        const seed = new CipherSeed(
+          seedBuffer,
+          saltBuffer,
+          0,
+          4826
+        ).toMnemonic();
+        const parsedSeed = seed.split(" ");
 
-        // const seedBuffer = Buffer.from(process.env.APP_SEED_HEX, "hex");
-        // const saltBuffer = Buffer.from(process.env.APP_SEED_SALT, "hex");
-        // const seed = new CipherSeed(seedBuffer, saltBuffer).toMnemonic();
+        const password = constants.LND_WALLET_PASSWORD;
 
-        // const password = constants.LND_WALLET_PASSWORD;
-
-        // lightningLogic
-        //   .initializeWallet(password, seed)
-        //   .then(() => {
-        //     // New wallet created successfully, so unlock
-        //     lndUnlocker = new LndUnlocker(constants.LND_WALLET_PASSWORD);
-        //     lndUnlocker.start();
-        //   })
-        //   .catch((error) => {
-        //     if (error instanceof LndError) {
-        //       // Wallet already exists, so unlock
-        //       if (
-        //         error.error &&
-        //         error.error.details ===
-        //           "Macaroon exists, therefore wallet already exists"
-        //       ) {
-        //         lndUnlocker = new LndUnlocker(constants.LND_WALLET_PASSWORD);
-        //         lndUnlocker.start();
-        //       }
-        //     }
-        //   });
+        lightningLogic
+          .initializeWallet(password, parsedSeed)
+          .then(() => {
+            // New wallet created successfully, so unlock
+            lndUnlocker = new LndUnlocker(constants.LND_WALLET_PASSWORD);
+            lndUnlocker.start();
+          })
+          .catch((error) => {
+            if (error instanceof LndError) {
+              // Wallet already exists, so unlock
+              if (
+                error.error &&
+                error.error.details ===
+                  "Macaroon exists, therefore wallet already exists"
+              ) {
+                lndUnlocker = new LndUnlocker(constants.LND_WALLET_PASSWORD);
+                lndUnlocker.start();
+              }
+            }
+          });
       } catch (e) {
         console.log("initializeWallet error: ", e);
       }

@@ -1,32 +1,34 @@
 version: "3.7"
 
 services:
-  # app:
-  #   build:
-  #     dockerfile: ./Dockerfile
-  #     context: ./
-  #   command: npm run dev:backend
-  #   restart: on-failure
-  #   volumes:
-  #     - ${PWD}/data/lnd:/data/.lnd
-  #     - ${PWD}/data/statuses:/statuses
-  #   environment:
-  #     PORT: "3006"
-  #     BITCOIN_HOST: "bitcoind"
-  #     RPC_PORT: "18443"
-  #     RPC_USER: "umbrel"
-  #     RPC_PASSWORD: "2hmQlIgYfjFoMGAwBQPdvpJ6vDuQbOoBfG_LxznanAk="
-  #     LND_NETWORK: "regtest"
-  #     LND_HOST: "lnd"
-  #     LND_REST_HIDDEN_SERVICE_FILE: "/var/lib/tor/lnd-rest/hostname"
-  #     LND_GRPC_HIDDEN_SERVICE_FILE: "/var/lib/tor/lnd-grpc/hostname"
-  #     TLS_FILE: "/data/.lnd/tls.cert"
-  #     MACAROON_DIR: /data/.lnd/data/chain/bitcoin/regtest/
-  #     DEVICE_HOSTS: ${DEVICE_HOSTS:-"http://umbrel.local"}
-  #     CHANNEL_BACKUP_FILE: /data/.lnd/data/chain/bitcoin/regtest/channel.backup
-  #     APP_SEED: "foo"
-  #   ports:
-  #     - "3006:3006"
+  app:
+    build:
+      dockerfile: ./Dockerfile
+      context: ./
+    command: npm run dev:backend
+    restart: on-failure
+    volumes:
+      - ${PWD}/data/lnd:/data/.lnd
+      - ${PWD}/data/statuses:/statuses
+    environment:
+      PORT: "3006"
+      BITCOIN_HOST: "bitcoind"
+      RPC_PORT: "18443"
+      RPC_USER: "umbrel"
+      RPC_PASSWORD: "2hmQlIgYfjFoMGAwBQPdvpJ6vDuQbOoBfG_LxznanAk="
+      LND_NETWORK: "regtest"
+      LND_HOST: "lnd"
+      LND_REST_HIDDEN_SERVICE_FILE: "/var/lib/tor/lnd-rest/hostname"
+      LND_GRPC_HIDDEN_SERVICE_FILE: "/var/lib/tor/lnd-grpc/hostname"
+      TLS_FILE: "/data/.lnd/tls.cert"
+      MACAROON_DIR: /data/.lnd/data/chain/bitcoin/regtest/
+      DEVICE_HOSTS: ${DEVICE_HOSTS:-"http://umbrel.local"}
+      CHANNEL_BACKUP_FILE: /data/.lnd/data/chain/bitcoin/regtest/channel.backup
+      APP_SEED: "abstract earth ladder crunch acquire multiply team grain describe pulse flavor choice gentle safe wave gather inject size tomorrow unhappy cake goose winter private"
+      APP_SEED_HEX: "14e58034766cd6b0af1c123e56b501c1"
+      APP_SEED_SALT: "3f90f6a204"
+    ports:
+      - "3006:3006"
   lnd:
     image: lightninglabs/lnd:v0.14.1-beta@sha256:810f290f4da51adaf57d53bc1f1e65b52b03c543f322da0b98fb8c47be94a27a
     user: 1000:1000
