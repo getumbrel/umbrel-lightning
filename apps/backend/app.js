@@ -7,12 +7,12 @@ const path = require("path");
 const morgan = require("morgan");
 const bodyParser = require("body-parser");
 const cors = require("cors");
-const { CipherSeed } = require("aezeed");
 
 const lightningLogic = require("logic/lightning");
 const LndUnlocker = require("logic/lnd-unlocker");
 
 const constants = require("utils/const.js");
+const deterministicAezeed = require("utils/deterministic-aezeed.js")
 
 // Keep requestCorrelationId middleware as the first middleware. Otherwise we risk losing logs.
 const requestCorrelationMiddleware = require("middlewares/requestCorrelationId.js"); // eslint-disable-line id-length
@@ -79,14 +79,7 @@ async function init() {
 
     if (lndStatus.operational) {
       try {
-        const seedBuffer = Buffer.from(process.env.APP_SEED_HEX, "hex");
-        const saltBuffer = Buffer.from(process.env.APP_SEED_SALT, "hex");
-        const seed = new CipherSeed(
-          seedBuffer,
-          saltBuffer,
-          0,
-          4826
-        ).toMnemonic();
+        const seed = deterministicAezeed(constants.LND_SEED);
         const parsedSeed = seed.split(" ");
 
         const password = constants.LND_WALLET_PASSWORD;

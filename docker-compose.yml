@@ -24,9 +24,7 @@ services:
       MACAROON_DIR: /data/.lnd/data/chain/bitcoin/regtest/
       DEVICE_HOSTS: ${DEVICE_HOSTS:-"http://umbrel.local"}
       CHANNEL_BACKUP_FILE: /data/.lnd/data/chain/bitcoin/regtest/channel.backup
-      APP_SEED: "abstract earth ladder crunch acquire multiply team grain describe pulse flavor choice gentle safe wave gather inject size tomorrow unhappy cake goose winter private"
-      APP_SEED_HEX: "14e58034766cd6b0af1c123e56b501c1"
-      APP_SEED_SALT: "3f90f6a204"
+      APP_SEED: "0000000000000000000000000000000000000000000000000000000000000000"
     ports:
       - "3006:3006"
   lnd:
