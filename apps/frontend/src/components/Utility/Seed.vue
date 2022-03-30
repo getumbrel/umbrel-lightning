@@ -1,10 +1,10 @@
 <template>
-  <div>
+  <div class="d-flex flex-column w-100 mx-auto">
     <span
       class="word-count block mx-auto bg-primary text-white text-center mb-2"
       >{{ index + 1 }}</span
     >
-    <div class="d-flex align-items-center">
+    <div class="d-flex align-items-center mx-auto">
       <button
         class="btn-neu-circle btn-neu-circle-previous btn-neu"
         :disabled="index === 0"
@@ -70,8 +70,8 @@ export default {
     words: Array,
     recover: {
       type: Boolean,
-      default: false,
-    },
+      default: false
+    }
   },
   data() {
     return {
@@ -101,8 +101,8 @@ export default {
         "",
         "",
         "",
-        "",
-      ],
+        ""
+      ]
     };
   },
   computed: {},
@@ -128,7 +128,7 @@ export default {
           this.$emit("complete");
         }
       }
-    },
+    }
   },
   mounted() {},
   watch: {
@@ -145,11 +145,11 @@ export default {
       }
       // Emit entered words
       this.$emit("input", this.inputWords);
-    },
+    }
   },
   components: {
-    ScrambledText,
-  },
+    ScrambledText
+  }
 };
 </script>
 

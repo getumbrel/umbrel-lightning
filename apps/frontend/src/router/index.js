@@ -6,7 +6,7 @@ import store from "@/store";
 import TransitionWrapperLayout from "../layouts/TransitionWrapperLayout.vue";
 import DashboardLayout from "../layouts/DashboardLayout.vue";
 
-import Home from "../views/Home.vue";
+import Home from "../views/Home/Home.vue";
 import ConnectWallet from "../views/ConnectWallet.vue";
 import Logout from "../views/Logout.vue";
 
