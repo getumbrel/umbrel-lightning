@@ -12,7 +12,7 @@ const lightningLogic = require("logic/lightning");
 const LndUnlocker = require("logic/lnd-unlocker");
 
 const constants = require("utils/const.js");
-const deterministicAezeed = require("utils/deterministic-aezeed.js")
+const deterministicAezeed = require("utils/deterministic-aezeed.js");
 
 // Keep requestCorrelationId middleware as the first middleware. Otherwise we risk losing logs.
 const requestCorrelationMiddleware = require("middlewares/requestCorrelationId.js"); // eslint-disable-line id-length
@@ -87,18 +87,19 @@ async function init() {
         lightningLogic
           .initializeWallet(password, parsedSeed)
           .then(() => {
+            console.log("Wallet created!");
             // New wallet created successfully, so unlock
             lndUnlocker = new LndUnlocker(constants.LND_WALLET_PASSWORD);
             lndUnlocker.start();
           })
-          .catch((error) => {
+          .catch(error => {
             if (error instanceof LndError) {
               // Wallet already exists, so unlock
               if (
-                error.error &&
-                error.error.details ===
-                  "Macaroon exists, therefore wallet already exists"
+                error.message ===
+                "Macaroon exists, therefore wallet already exists"
               ) {
+                console.log("Wallet already exists, unlocking...");
                 lndUnlocker = new LndUnlocker(constants.LND_WALLET_PASSWORD);
                 lndUnlocker.start();
               }
