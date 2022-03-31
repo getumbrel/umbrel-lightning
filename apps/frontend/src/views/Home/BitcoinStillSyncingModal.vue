@@ -35,7 +35,7 @@ import { mapState } from "vuex";
 export default {
   computed: {
     ...mapState({
-      isNotSynced: state => !state.lightning.syncedToChain;
+      isNotSynced: state => !state.lightning.syncedToChain
     })
   }
 };
