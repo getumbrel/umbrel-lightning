@@ -88,6 +88,8 @@
 
           <lightning-address-modal></lightning-address-modal>
           <secret-words-modal></secret-words-modal>
+          <terms-modal></terms-modal>
+          <bitcoin-syncing-modal></bitcoin-syncing-modal>
         </div>
       </div>
     </div>
@@ -241,30 +243,32 @@
 </template>
 
 <script>
-import { mapState } from 'vuex';
-import moment from 'moment';
+import { mapState } from "vuex";
+import moment from "moment";
 
-import API from '@/helpers/api';
+import API from "@/helpers/api";
 
-import CardWidget from '@/components/CardWidget';
-import Stat from '@/components/Utility/Stat';
-import LightningWallet from '@/components/LightningWallet';
-import BitcoinWallet from '@/components/BitcoinWallet';
-import ToggleSwitch from '@/components/ToggleSwitch';
-import ChannelList from '@/components/Channels/List';
-import ChannelOpen from '@/components/Channels/Open';
-import ChannelManage from '@/components/Channels/Manage';
-import AppHeader from '@/components/AppHeader';
-import SatsBtcSwitch from '@/components/Utility/SatsBtcSwitch.vue';
+import CardWidget from "@/components/CardWidget";
+import Stat from "@/components/Utility/Stat";
+import LightningWallet from "@/components/LightningWallet";
+import BitcoinWallet from "@/components/BitcoinWallet";
+import ToggleSwitch from "@/components/ToggleSwitch";
+import ChannelList from "@/components/Channels/List";
+import ChannelOpen from "@/components/Channels/Open";
+import ChannelManage from "@/components/Channels/Manage";
+import AppHeader from "@/components/AppHeader";
+import SatsBtcSwitch from "@/components/Utility/SatsBtcSwitch.vue";
 
-import LightningAddressModal from './LightningAddressModal.vue';
-import SecretWordsModal from './SecretWordsModal.vue';
+import LightningAddressModal from "./LightningAddressModal.vue";
+import SecretWordsModal from "./SecretWordsModal.vue";
+import TermsModal from "./TermsModal.vue";
+import BitcoinStillSyncingModal from "./BitcoinStillSyncingModal";
 
 export default {
   data() {
     return {
-      status: 'Running',
-      selectedChannel: {},
+      status: "Running",
+      selectedChannel: {}
     };
   },
   computed: {
@@ -280,53 +284,56 @@ export default {
       channels: state => state.lightning.channels,
       unit: state => state.system.unit,
       backupStatus: state => state.system.backupStatus,
-    }),
+      termsAcknowledged: state => state.system.termsAcknowledged
+    })
   },
   methods: {
     getReadableTime(timestamp) {
-      return moment(timestamp).format('MMM D, h:mm:ss a');
+      return moment(timestamp).format("MMM D, h:mm:ss a");
     },
     async downloadChannelBackup() {
       await API.download(
         `${process.env.VUE_APP_BACKEND_URL}/v1/lnd/util/download-channel-backup`,
         {},
         true,
-        'my-umbrel-channels.backup'
+        "my-umbrel-channels.backup"
       );
     },
     manageChannel(channel) {
       if (channel) {
         this.selectedChannel = channel;
-        this.$refs['manage-channel-modal'].show();
+        this.$refs["manage-channel-modal"].show();
       }
     },
     onChannelOpen() {
       //refresh channels, balance and txs
       this.fetchPageData();
-      this.$refs['open-channel-modal'].hide();
+      this.$refs["open-channel-modal"].hide();
 
       //refresh bitcoin balance and txs
-      this.$store.dispatch('bitcoin/getBalance');
-      this.$store.dispatch('bitcoin/getTransactions');
+      this.$store.dispatch("bitcoin/getBalance");
+      this.$store.dispatch("bitcoin/getTransactions");
     },
     onChannelClose() {
       //refresh channels, balance and txs
       this.fetchPageData();
-      this.$refs['manage-channel-modal'].hide();
+      this.$refs["manage-channel-modal"].hide();
 
       //refresh bitcoin balance and txs
-      this.$store.dispatch('bitcoin/getBalance');
-      this.$store.dispatch('bitcoin/getTransactions');
+      this.$store.dispatch("bitcoin/getBalance");
+      this.$store.dispatch("bitcoin/getTransactions");
     },
     fetchPageData() {
-      this.$store.dispatch('lightning/getLndPageData');
-    },
+      this.$store.dispatch("lightning/getLndPageData");
+    }
   },
   created() {
     this.fetchPageData();
-    this.$store.dispatch('lightning/getLndConnectUrls');
-    this.$store.dispatch('system/getBackupStatus');
+    this.$store.dispatch("lightning/getLndConnectUrls");
+    this.$store.dispatch("system/getBackupStatus");
+    this.$store.dispatch("system/getTermsAcknowledgeStatus");
     this.interval = window.setInterval(this.fetchPageData, 10000);
+    this.$bvModal.show("terms-modal");
   },
   beforeDestroy() {
     window.clearInterval(this.interval);
@@ -334,7 +341,7 @@ export default {
   watch: {
     password: function() {
       this.isIncorrectPassword = false;
-    },
+    }
   },
   components: {
     AppHeader,
@@ -349,7 +356,9 @@ export default {
     SatsBtcSwitch,
     LightningAddressModal,
     SecretWordsModal,
-  },
+    TermsModal,
+    BitcoinSyncingModal: BitcoinStillSyncingModal
+  }
 };
 </script>
 

@@ -3,7 +3,7 @@ module.exports = {
   LN_REQUIRED_CONFIRMATIONS: 3,
   LND_STATUS_CODES: {
     UNAVAILABLE: 14,
-    UNKNOWN: 2,
+    UNKNOWN: 2
   },
   MANAGED_CHANNELS_FILE: "/channel-data/managedChannels.json",
   LND_SEED: process.env.APP_SEED,
@@ -13,7 +13,7 @@ module.exports = {
   STATUS_CODES: {
     BAD_GATEWAY: 502,
     FORBIDDEN: 403,
-    OK: 200,
+    OK: 200
   },
   LND_REST_HIDDEN_SERVICE:
     process.env.LND_REST_HIDDEN_SERVICE || "/var/lib/tor/lnd-rest/hostname",
@@ -29,4 +29,7 @@ module.exports = {
 
   BACKUP_STATUS_FILE:
     process.env.BACKUP_STATUS_FILE || "/statuses/backup-status.json",
+
+  TERMS_ACKNOWLEDGE_FILE:
+    process.env.TERMS_ACKNOWLEDGE_FILE || "/statuses/terms-acknowledge.json"
 };

@@ -23,4 +23,22 @@ router.get(
   })
 );
 
+router.get(
+  "/terms-acknowledge",
+  safeHandler(async (req, res) => {
+    const terms = await systemLogic.getTermsAcknowledge();
+
+    return res.status(constants.STATUS_CODES.OK).json(terms);
+  })
+);
+
+router.post(
+  "/terms-acknowledge",
+  safeHandler(async (req, res) => {
+    const terms = await systemLogic.writeTermsAcknowledge();
+
+    return res.status(constants.STATUS_CODES.OK).json(terms);
+  })
+);
+
 module.exports = router;

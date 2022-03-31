@@ -14,6 +14,24 @@ async function getBackupStatus() {
   }
 }
 
+async function getTermsAcknowledge() {
+  try {
+    const terms = await diskLogic.readTermsAcknowledgeFile();
+    return terms.accepted;
+  } catch (error) {
+    throw new NodeError("Unable to get terms status");
+  }
+}
+
+async function writeTermsAcknowledge() {
+  try {
+    const status = await diskLogic.writeTermsAcknowledgeFile();
+    return status;
+  } catch (error) {
+    throw new NodeError("Unable to write terms status");
+  }
+}
+
 async function getLndConnectUrls() {
   let cert;
   try {
@@ -39,7 +57,7 @@ async function getLndConnectUrls() {
   const restTor = encode({
     host: restTorHost,
     cert,
-    macaroon,
+    macaroon
   });
 
   let grpcTorHost;
@@ -52,32 +70,34 @@ async function getLndConnectUrls() {
   const grpcTor = encode({
     host: grpcTorHost,
     cert,
-    macaroon,
+    macaroon
   });
 
   let restLocalHost = `${constants.DEVICE_HOSTNAME}:8080`;
   const restLocal = encode({
     host: restLocalHost,
     cert,
-    macaroon,
+    macaroon
   });
 
   let grpcLocalHost = `${constants.DEVICE_HOSTNAME}:10009`;
   const grpcLocal = encode({
     host: grpcLocalHost,
     cert,
-    macaroon,
+    macaroon
   });
 
   return {
     restTor,
     restLocal,
     grpcTor,
-    grpcLocal,
+    grpcLocal
   };
 }
 
 module.exports = {
   getBackupStatus,
-  getLndConnectUrls,
+  getTermsAcknowledge,
+  writeTermsAcknowledge,
+  getLndConnectUrls
 };

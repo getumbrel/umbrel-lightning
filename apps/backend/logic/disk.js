@@ -5,6 +5,10 @@ function readBackupStatusFile() {
   return diskService.readJsonFile(constants.BACKUP_STATUS_FILE);
 }
 
+function readTermsAcknowledgeFile() {
+  return diskService.readJsonFile(constants.TERMS_ACKNOWLEDGE_FILE);
+}
+
 function readManagedChannelsFile() {
   return diskService
     .readJsonFile(constants.MANAGED_CHANNELS_FILE)
@@ -13,6 +17,12 @@ function readManagedChannelsFile() {
 
 function writeManagedChannelsFile(data) {
   return diskService.writeJsonFile(constants.MANAGED_CHANNELS_FILE, data);
+}
+
+function writeTermsAcknowledgeFile() {
+  return diskService.writeJsonFile(constants.TERMS_ACKNOWLEDGE_FILE, {
+    accepted: true
+  });
 }
 
 function readLndRestHiddenService() {
@@ -33,10 +43,12 @@ function readLndAdminMacaroon() {
 
 module.exports = {
   readBackupStatusFile,
+  readTermsAcknowledgeFile,
   readManagedChannelsFile,
   writeManagedChannelsFile,
+  writeTermsAcknowledgeFile,
   readLndRestHiddenService,
   readLndGrpcHiddenService,
   readLndCert,
-  readLndAdminMacaroon,
+  readLndAdminMacaroon
 };
