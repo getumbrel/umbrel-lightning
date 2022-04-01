@@ -14,16 +14,15 @@ const mutations = {
 
 // Functions to get data from the API
 const actions = {
-  async getSeed({ commit, state }, { password, otpToken }) {
+  async getSeed({ commit }, { password }) {
     let rawSeed;
 
     //get user's stored seed if already registered
-    if (state.registered && password) {
+    if (password) {
       rawSeed = await API.post(
         `${process.env.VUE_APP_MANAGER_API_URL}/v1/account/seed`,
         {
-          password,
-          otpToken
+          password
         },
         false
       );

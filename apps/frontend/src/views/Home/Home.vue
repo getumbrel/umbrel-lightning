@@ -88,7 +88,6 @@
 
           <lightning-address-modal></lightning-address-modal>
           <secret-words-modal></secret-words-modal>
-          <terms-modal></terms-modal>
           <bitcoin-syncing-modal></bitcoin-syncing-modal>
         </div>
       </div>
@@ -261,7 +260,6 @@ import SatsBtcSwitch from "@/components/Utility/SatsBtcSwitch.vue";
 
 import LightningAddressModal from "./LightningAddressModal.vue";
 import SecretWordsModal from "./SecretWordsModal.vue";
-import TermsModal from "./TermsModal.vue";
 import BitcoinStillSyncingModal from "./BitcoinStillSyncingModal";
 
 export default {
@@ -356,7 +354,6 @@ export default {
     SatsBtcSwitch,
     LightningAddressModal,
     SecretWordsModal,
-    TermsModal,
     BitcoinSyncingModal: BitcoinStillSyncingModal
   }
 };
