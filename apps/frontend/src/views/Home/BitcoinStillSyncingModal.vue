@@ -2,7 +2,7 @@
   <b-modal
     id="bitcoin-syncing-modal"
     size="xl"
-    v-model="this.isNotSynced"
+    v-model="this.displayModal"
     centered
     hide-footer
     hide-header
@@ -35,7 +35,9 @@ import { mapState } from "vuex";
 export default {
   computed: {
     ...mapState({
-      isNotSynced: state => !state.lightning.syncedToChain
+      // only display if we are synced to change and user has gone through onboarding flow
+      displayModal: state =>
+        !state.lightning.syncedToChain && state.system.acknowledged
     })
   }
 };
