@@ -7,6 +7,7 @@
     hide-header
     no-close-on-esc
     no-close-on-backdrop
+    v-model="this.displayModal"
   >
     <template v-if="step === 0">
       <div class="py-4 px-3">
@@ -82,7 +83,11 @@ export default {
       this.step = this.step - 1;
     },
     goToTerms() {
-      this.step = 2;
+      if (this.acknowledged) {
+        this.$bvModal.hide("secret-words-modal");
+      } else {
+        this.step = 2;
+      }
     },
     finish() {
       this.$bvModal.hide("secret-words-modal");
@@ -92,7 +97,9 @@ export default {
   },
   computed: {
     ...mapState({
-      seed: state => state.user.seed
+      seed: state => state.user.seed,
+      displayModal: state => !state.system.acknowledged,
+      acknowledged: state => state.system.acknowledged
     })
   },
   components: {
