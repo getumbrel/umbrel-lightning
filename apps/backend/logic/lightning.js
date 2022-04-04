@@ -9,6 +9,7 @@ const NodeError = require("models/errors.js").NodeError;
 
 const lndService = require("services/lnd.js");
 const bitcoindLogic = require("logic/bitcoind.js");
+const diskLogic = require("logic/disk.js");
 
 const constants = require("utils/const.js");
 const convert = require("utils/convert.js");
@@ -23,7 +24,7 @@ const PENDING_CHANNEL_TYPES = [
   PENDING_OPEN_CHANNELS,
   PENDING_CLOSING_CHANNELS,
   PENDING_FORCE_CLOSING_CHANNELS,
-  WAITING_CLOSE_CHANNELS,
+  WAITING_CLOSE_CHANNELS
 ];
 
 const MAINNET_GENESIS_BLOCK_TIMESTAMP = 1231035305;
@@ -38,22 +39,22 @@ const OPEN_CHANNEL_EXTRA_WEIGHT = 10;
 
 const FEE_RATE_TOO_LOW_ERROR = {
   code: "FEE_RATE_TOO_LOW",
-  text: "Mempool reject low fee transaction. Increase fee rate.",
+  text: "Mempool reject low fee transaction. Increase fee rate."
 };
 
 const INSUFFICIENT_FUNDS_ERROR = {
   code: "INSUFFICIENT_FUNDS",
-  text: "Lower amount or increase confirmation target.",
+  text: "Lower amount or increase confirmation target."
 };
 
 const INVALID_ADDRESS = {
   code: "INVALID_ADDRESS",
-  text: "Please validate the Bitcoin address is correct.",
+  text: "Please validate the Bitcoin address is correct."
 };
 
 const OUTPUT_IS_DUST_ERROR = {
   code: "OUTPUT_IS_DUST",
-  text: "Transaction output is dust.",
+  text: "Transaction output is dust."
 };
 
 // Converts a byte object into a hex string.
@@ -270,18 +271,18 @@ async function estimateFeeGroupSweep(address, amt, mempoolMinFee) {
       CHEAPEST_BLOCK_CONF_TARGET,
       0,
       amt
-    ),
+    )
   ];
 
   const [fast, normal, slow, cheapest] = await Promise.all(
-    calls.map((p) => p.catch((error) => handleEstimateFeeError(error)))
+    calls.map(p => p.catch(error => handleEstimateFeeError(error)))
   );
 
   return {
     fast: fast, // eslint-disable-line object-shorthand
     normal: normal, // eslint-disable-line object-shorthand
     slow: slow, // eslint-disable-line object-shorthand
-    cheapest: cheapest, // eslint-disable-line object-shorthand
+    cheapest: cheapest // eslint-disable-line object-shorthand
   };
 }
 
@@ -304,18 +305,18 @@ async function estimateFeeGroup(address, amt, mempoolMinFee) {
     estimateFeeWrapper(address, amt, mempoolMinFee, FAST_BLOCK_CONF_TARGET),
     estimateFeeWrapper(address, amt, mempoolMinFee, NORMAL_BLOCK_CONF_TARGET),
     estimateFeeWrapper(address, amt, mempoolMinFee, SLOW_BLOCK_CONF_TARGET),
-    estimateFeeWrapper(address, amt, mempoolMinFee, CHEAPEST_BLOCK_CONF_TARGET),
+    estimateFeeWrapper(address, amt, mempoolMinFee, CHEAPEST_BLOCK_CONF_TARGET)
   ];
 
   const [fast, normal, slow, cheapest] = await Promise.all(
-    calls.map((p) => p.catch((error) => handleEstimateFeeError(error)))
+    calls.map(p => p.catch(error => handleEstimateFeeError(error)))
   );
 
   return {
     fast: fast, // eslint-disable-line object-shorthand
     normal: normal, // eslint-disable-line object-shorthand
     slow: slow, // eslint-disable-line object-shorthand
-    cheapest: cheapest, // eslint-disable-line object-shorthand
+    cheapest: cheapest // eslint-disable-line object-shorthand
   };
 }
 
@@ -346,6 +347,9 @@ async function generateSeed() {
   if (lndStatus.operational) {
     const response = await lndService.generateSeed();
 
+    // save generated mnemonic to user file
+    await diskLogic.writeUserFile({ seed: response.cipherSeedMnemonic.join() });
+
     return { seed: response.cipherSeedMnemonic };
   }
 
@@ -363,11 +367,11 @@ function getChannelBalance() {
 function getChannelCount() {
   return lndService
     .getOpenChannels()
-    .then((response) => ({ count: response.length }));
+    .then(response => ({ count: response.length }));
 }
 
 function getChannelPolicy() {
-  return lndService.getFeeReport().then((feeReport) => feeReport.channelFees);
+  return lndService.getFeeReport().then(feeReport => feeReport.channelFees);
 }
 
 function getForwardingEvents(startTime, endTime, indexOffset) {
@@ -411,7 +415,7 @@ async function getOnChainTransactions() {
   for (const pendingGroup of [
     pendingChannelRPC.pendingClosingChannels,
     pendingChannelRPC.pendingForceClosingChannels,
-    pendingChannelRPC.waitingCloseChannels,
+    pendingChannelRPC.waitingCloseChannels
   ]) {
     if (pendingGroup.length === 0) {
       continue;
@@ -671,7 +675,7 @@ function getPendingChannels() {
 
 // Returns all associated public uris for this node.
 function getPublicUris() {
-  return lndService.getInfo().then((info) => info.uris);
+  return lndService.getInfo().then(info => info.uris);
 }
 
 function getGeneralInfo() {
@@ -714,7 +718,7 @@ async function getSyncStatus() {
   return {
     percent: percentSynced,
     knownBlockCount: info.blockHeight,
-    processedBlocks: processedBlocks, // eslint-disable-line object-shorthand
+    processedBlocks: processedBlocks // eslint-disable-line object-shorthand
   };
 }
 
@@ -730,7 +734,7 @@ async function initializeWallet(password, seed) {
   if (lndStatus.operational) {
     await lndService.initWallet({
       mnemonic: seed,
-      password: password, // eslint-disable-line object-shorthand
+      password: password // eslint-disable-line object-shorthand
     });
 
     return;
@@ -839,7 +843,7 @@ async function getStatus() {
   if (!bitcoindStatus.operational) {
     return {
       operational: false,
-      unlocked: false,
+      unlocked: false
     };
   }
 
@@ -850,7 +854,7 @@ async function getStatus() {
 
     return {
       operational: true,
-      unlocked: true,
+      unlocked: true
     };
   } catch (error) {
     // lnd might be active, but not possible to contact
@@ -858,19 +862,19 @@ async function getStatus() {
     if (error instanceof LndError) {
       const operationalErrors = [
         "wallet locked, unlock it to enable full RPC access",
-        "wallet not created, create one to enable full RPC access",
+        "wallet not created, create one to enable full RPC access"
       ];
 
       if (error.error && operationalErrors.includes(error.error.details)) {
         return {
           operational: true,
-          unlocked: false,
+          unlocked: false
         };
       }
 
       return {
         operational: false,
-        unlocked: false,
+        unlocked: false
       };
     }
 
@@ -980,5 +984,5 @@ module.exports = {
   unlockWallet,
   getGeneralInfo,
   getVersion,
-  updateChannelPolicy,
+  updateChannelPolicy
 };

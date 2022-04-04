@@ -25,6 +25,21 @@ function writeTermsAcknowledgeFile() {
   });
 }
 
+async function writeUserFile(json) {
+  return diskService.writeJsonFile(constants.USER_FILE, json);
+}
+
+async function readUserFile() {
+  const defaultProperties = {
+    name: "",
+    password: "",
+    seed: "",
+    installedApps: []
+  };
+  const userFile = await diskService.readJsonFile(constants.USER_FILE);
+  return { ...defaultProperties, ...userFile };
+}
+
 function readLndRestHiddenService() {
   return constants.LND_REST_HIDDEN_SERVICE;
 }
@@ -47,6 +62,8 @@ module.exports = {
   readManagedChannelsFile,
   writeManagedChannelsFile,
   writeTermsAcknowledgeFile,
+  writeUserFile,
+  readUserFile,
   readLndRestHiddenService,
   readLndGrpcHiddenService,
   readLndCert,

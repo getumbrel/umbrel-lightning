@@ -10,9 +10,9 @@ const cors = require("cors");
 
 const lightningLogic = require("logic/lightning");
 const LndUnlocker = require("logic/lnd-unlocker");
+const systemLogic = require("logic/system");
 
 const constants = require("utils/const.js");
-const deterministicAezeed = require("utils/deterministic-aezeed.js");
 
 // Keep requestCorrelationId middleware as the first middleware. Otherwise we risk losing logs.
 const requestCorrelationMiddleware = require("middlewares/requestCorrelationId.js"); // eslint-disable-line id-length
@@ -35,7 +35,6 @@ const pages = require("routes/v1/pages.js");
 const system = require("routes/v1/system/index.js");
 const external = require("routes/v1/external.js");
 const ping = require("routes/ping.js");
-const { Cipher } = require("crypto");
 const app = express();
 
 // Handles CORS
@@ -72,42 +71,42 @@ app.use((req, res) => {
 module.exports = app;
 
 async function init() {
-  // only init if we have a seed.
-  // maybe not required if wallet already created?
-  if (constants.LND_SEED) {
-    const lndStatus = await lightningLogic.getStatus();
+  let seed;
+  try {
+    const { seed: retrievedSeed } = await systemLogic.getSeed();
+    seed = retrievedSeed;
+  } catch (e) {
+    const generatedSeed = await lightningLogic.generateSeed();
+    seed = generatedSeed;
+  }
 
-    if (lndStatus.operational) {
-      try {
-        const seed = deterministicAezeed(constants.LND_SEED);
-        const parsedSeed = seed.split(" ");
-
-        const password = constants.LND_WALLET_PASSWORD;
-
-        lightningLogic
-          .initializeWallet(password, parsedSeed)
-          .then(() => {
-            console.log("Wallet created!");
-            // New wallet created successfully, so unlock
-            lndUnlocker = new LndUnlocker(constants.LND_WALLET_PASSWORD);
-            lndUnlocker.start();
-          })
-          .catch(error => {
-            if (error instanceof LndError) {
-              // Wallet already exists, so unlock
-              if (
-                error.message ===
-                "Macaroon exists, therefore wallet already exists"
-              ) {
-                console.log("Wallet already exists, unlocking...");
-                lndUnlocker = new LndUnlocker(constants.LND_WALLET_PASSWORD);
-                lndUnlocker.start();
-              }
+  // sanity check to ensure seed was retrieved or generated
+  if (seed) {
+    try {
+      const password = constants.LND_WALLET_PASSWORD;
+      lightningLogic
+        .initializeWallet(password, seed)
+        .then(() => {
+          console.log("Wallet created!");
+          // New wallet created successfully, so unlock
+          lndUnlocker = new LndUnlocker(constants.LND_WALLET_PASSWORD);
+          lndUnlocker.start();
+        })
+        .catch(error => {
+          if (error instanceof LndError) {
+            // Wallet already exists, so unlock
+            if (
+              error.message ===
+              "Macaroon exists, therefore wallet already exists"
+            ) {
+              console.log("Wallet already exists, unlocking...");
+              lndUnlocker = new LndUnlocker(constants.LND_WALLET_PASSWORD);
+              lndUnlocker.start();
             }
-          });
-      } catch (e) {
-        console.log("initializeWallet error: ", e);
-      }
+          }
+        });
+    } catch (e) {
+      console.log("initializeWallet error: ", e);
     }
   }
 }

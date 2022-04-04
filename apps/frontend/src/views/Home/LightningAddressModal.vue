@@ -62,7 +62,8 @@ import { mapState } from "vuex";
 export default {
   computed: {
     ...mapState({
-      uris: state => state.lightning.uris
+      uris: state => state.lightning.uris,
+      pubkey: state => state.lightning.pubkey
     })
   }
 };

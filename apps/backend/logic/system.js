@@ -5,6 +5,17 @@ const NodeError = require("models/errors.js").NodeError;
 
 const constants = require("utils/const.js");
 
+async function getSeed() {
+  try {
+    const { seed } = await diskLogic.readUserFile();
+
+    return { seed: seed.split(",") };
+  } catch (error) {
+    console.log("error: ", error);
+    throw new NodeError("Unable to retrieve mnemonic seed");
+  }
+}
+
 async function getBackupStatus() {
   try {
     const status = await diskLogic.readBackupStatusFile();
@@ -96,6 +107,7 @@ async function getLndConnectUrls() {
 }
 
 module.exports = {
+  getSeed,
   getBackupStatus,
   getTermsAcknowledge,
   writeTermsAcknowledge,

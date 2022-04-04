@@ -35,7 +35,6 @@ export default {
   },
   methods: {
     async acknowledgeTerms() {
-      console.log("this.$refs: ", this.$refs);
       this.sendingRequest = true;
       await this.$store.dispatch("system/setTermsAcknowledgeStatus");
       this.sendingRequest = false;

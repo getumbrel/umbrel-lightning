@@ -14,31 +14,18 @@ const mutations = {
 
 // Functions to get data from the API
 const actions = {
-  async getSeed({ commit }, { password }) {
-    let rawSeed;
-
+  async getSeed({ commit }) {
     //get user's stored seed if already registered
-    if (password) {
-      rawSeed = await API.post(
-        `${process.env.VUE_APP_MANAGER_API_URL}/v1/account/seed`,
-        {
-          password
-        },
-        false
-      );
-      if (rawSeed.data) {
-        rawSeed = rawSeed.data;
-      }
-    } else {
-      //get a new seed if new user
-      rawSeed = await API.get(
-        `${process.env.VUE_APP_BACKEND_URL}/v1/lnd/wallet/seed`
-      );
-    }
+    const rawSeed = await API.get(
+      `${process.env.VUE_APP_BACKEND_URL}/v1/system/seed`
+    );
 
     if (rawSeed && rawSeed.seed) {
       commit("setSeed", rawSeed.seed);
     }
+  },
+  async clearSeed({ commit }) {
+    commit("setSeed", "");
   }
 };
 

@@ -41,4 +41,9 @@ router.post(
   })
 );
 
+router.get(
+  "/seed",
+  safeHandler((req, res) => systemLogic.getSeed().then(seed => res.json(seed)))
+);
+
 module.exports = router;

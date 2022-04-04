@@ -10,6 +10,7 @@ services:
     volumes:
       - ${PWD}/data/lnd:/data/.lnd
       - ${PWD}/data/statuses:/statuses
+      - ${PWD}/data/db:/db
     environment:
       PORT: "3006"
       BITCOIN_HOST: "bitcoind"

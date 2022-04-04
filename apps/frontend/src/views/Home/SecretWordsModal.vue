@@ -76,7 +76,6 @@ export default {
   },
   methods: {
     nextStep() {
-      console.log("hit, ");
       this.step = this.step + 1;
     },
     prevStep() {
@@ -94,6 +93,20 @@ export default {
       // this resets the modal to show words without flickering on modal disappear
       setTimeout(() => (this.step = 0), 1000);
     }
+  },
+  async created() {
+    // only call getSeed when displaying secret modal
+    this.$root.$on("bv::modal::shown", async (bvEvent, modalId) => {
+      if (modalId === "secret-words-modal") {
+        await this.$store.dispatch("user/getSeed");
+      }
+    });
+    // clear the seed from state after viewing
+    this.$root.$on("bv::modal::hidden", async (bvEvent, modalId) => {
+      if (modalId === "secret-words-modal") {
+        this.$store.dispatch("user/clearSeed");
+      }
+    });
   },
   computed: {
     ...mapState({
