@@ -76,8 +76,12 @@ async function init() {
     const { seed: retrievedSeed } = await systemLogic.getSeed();
     seed = retrievedSeed;
   } catch (e) {
-    const generatedSeed = await lightningLogic.generateSeed();
-    seed = generatedSeed;
+    try {
+      const { seed: generatedSeed } = await lightningLogic.generateSeed();
+      seed = generatedSeed;
+    } catch(e) {
+      console.error('Error generating seed');
+    }
   }
 
   // sanity check to ensure seed was retrieved or generated
@@ -106,16 +110,11 @@ async function init() {
           }
         });
     } catch (e) {
-      console.log("initializeWallet error: ", e);
+      console.error("initializeWallet error: ", e);
     }
+  } else {
+    console.error('No seed retrieved or generated')
   }
 }
 
 init();
-
-// LND Unlocker
-// if (constants.LND_WALLET_PASSWORD) {
-//   const LndUnlocker = require("logic/lnd-unlocker");
-//   lndUnlocker = new LndUnlocker(constants.LND_WALLET_PASSWORD);
-//   lndUnlocker.start();
-// }
