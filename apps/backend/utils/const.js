@@ -20,6 +20,8 @@ module.exports = {
     process.env.LND_REST_HIDDEN_SERVICE || "/var/lib/tor/lnd-rest/hostname",
   LND_GRPC_HIDDEN_SERVICE:
     process.env.LND_GRPC_HIDDEN_SERVICE || "/var/lib/tor/lnd-grpc/hostname",
+  LND_REST_PORT: process.env.LND_REST_PORT || 8080,
+  LND_GRPC_PORT: process.env.LND_GRPC_PORT || 10009,
   LND_CERT_FILE: process.env.TLS_FILE || "/lnd/tls.cert",
   LND_ADMIN_MACAROON_FILE:
     process.env.MACAROON_FILE || process.env.MACAROON_DIR

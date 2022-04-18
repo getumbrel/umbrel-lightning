@@ -61,7 +61,7 @@ async function getLndConnectUrls() {
   let restTorHost;
   try {
     restTorHost = await diskLogic.readLndRestHiddenService();
-    restTorHost += ":8080";
+    restTorHost += `:${constants.LND_REST_PORT}}`;
   } catch (error) {
     throw new NodeError("Unable to read lnd REST hostname file");
   }
@@ -74,7 +74,7 @@ async function getLndConnectUrls() {
   let grpcTorHost;
   try {
     grpcTorHost = await diskLogic.readLndGrpcHiddenService();
-    grpcTorHost += ":10009";
+    grpcTorHost += `:${constants.LND_GRPC_PORT}`;
   } catch (error) {
     throw new NodeError("Unable to read lnd gRPC hostname file");
   }
@@ -84,14 +84,14 @@ async function getLndConnectUrls() {
     macaroon
   });
 
-  let restLocalHost = `${constants.DEVICE_HOSTNAME}:8080`;
+  let restLocalHost = `${constants.DEVICE_HOSTNAME}:${constants.LND_REST_PORT}}`;
   const restLocal = encode({
     host: restLocalHost,
     cert,
     macaroon
   });
 
-  let grpcLocalHost = `${constants.DEVICE_HOSTNAME}:10009`;
+  let grpcLocalHost = `${constants.DEVICE_HOSTNAME}:${constants.LND_GRPC_PORT}`;
   const grpcLocal = encode({
     host: grpcLocalHost,
     cert,
