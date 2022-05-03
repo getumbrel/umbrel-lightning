@@ -6,7 +6,6 @@ const express = require("express");
 const path = require("path");
 const morgan = require("morgan");
 const bodyParser = require("body-parser");
-const cors = require("cors");
 
 const lightningLogic = require("logic/lightning");
 const LndUnlocker = require("logic/lnd-unlocker");
@@ -36,9 +35,6 @@ const system = require("routes/v1/system/index.js");
 const external = require("routes/v1/external.js");
 const ping = require("routes/ping.js");
 const app = express();
-
-// Handles CORS
-app.use(cors(corsOptions));
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
