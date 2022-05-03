@@ -66,7 +66,24 @@ app.use((req, res) => {
 
 module.exports = app;
 
+const delay = ms => new Promise(resolve => setTimeout(resolve, ms));
+
+const waitForLnd = async () => {
+  while (true) {
+    console.log('Waiting for LND...');
+    const {operational} = await lightningLogic.getStatus();
+    if (operational) {
+      console.log('LND ready!');
+      break;
+    }
+    await delay(1000);
+  }
+};
+
 async function init() {
+
+  await waitForLnd();
+
   let seed;
   try {
     const { seed: retrievedSeed } = await systemLogic.getSeed();
