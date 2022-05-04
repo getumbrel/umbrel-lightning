@@ -9,7 +9,7 @@
     </p>
     <p class="mb-4 w-75">
       Lightning Network is an experimental technology. This app is in beta and
-      it is it is considered #reckless to put any life altering amounts of BTC
+      it is considered #reckless to put any life altering amounts of BTC
       into the network.
     </p>
     <b-button
