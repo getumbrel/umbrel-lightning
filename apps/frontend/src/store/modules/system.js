@@ -7,6 +7,7 @@ const state = () => ({
     status: "", //success, failed
     timestamp: null
   },
+  acknowledged: true, // assume true to prevent modal flickering
   loading: true,
   unit: "sats", //sats or btc
   api: {
@@ -35,6 +36,9 @@ const mutations = {
   },
   setBackupStatus(state, status) {
     state.backupStatus = status;
+  },
+  setTermsAcknowledgeStatus(state, status) {
+    state.acknowledged = status;
   }
 };
 
@@ -72,10 +76,26 @@ const actions = {
   },
   async getBackupStatus({ commit }) {
     const status = await API.get(
-      `${process.env.VUE_APP_MANAGER_API_URL}/v1/system/backup-status`
+      `${process.env.VUE_APP_BACKEND_URL}/v1/system/backup-status`
     );
     if (status && status.timestamp) {
       commit("setBackupStatus", status);
+    }
+  },
+  async getTermsAcknowledgeStatus({ commit }) {
+    const acknowledged = await API.get(
+      `${process.env.VUE_APP_BACKEND_URL}/v1/system/terms-acknowledge`
+    );
+
+    commit("setTermsAcknowledgeStatus", acknowledged);
+  },
+  async setTermsAcknowledgeStatus({ commit }) {
+    const acknowledged = await API.post(
+      `${process.env.VUE_APP_BACKEND_URL}/v1/system/terms-acknowledge`
+    );
+
+    if (acknowledged) {
+      commit("setTermsAcknowledgeStatus", true);
     }
   }
 };

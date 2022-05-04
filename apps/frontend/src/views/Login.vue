@@ -1,16 +1,14 @@
 <template>
-  <div>
+  <div class="h-screen">
     <!-- <div
-      class="d-flex flex-column align-items-center justify-content-center min-vh100 p-2"
+      class="d-flex flex-column align-items-center justify-items-center min-vh100 p-2"
       v-if="loading"
     >
       <img alt="Umbrel" src="@/assets/logo.svg" class="mb-2 logo" />
       <b-spinner class="my-5"></b-spinner>
     </div>-->
 
-    <div
-      class="d-flex flex-column align-items-center justify-content-center min-vh100 p-2"
-    >
+    <div class="d-flex flex-column align-items-center justify-items-center p-2">
       <img alt="Umbrel" src="@/assets/logo.svg" class="mb-2 logo" />
       <h1 class="text-center mb-2">welcome back</h1>
       <p v-if="!showOtpInput" class="text-muted w-75 text-center">
@@ -31,7 +29,7 @@
           placeholder="Password"
           :inputClass="[
             isIncorrectPassword ? 'incorrect-password' : '',
-            'card-input w-100'
+            'card-input w-100',
           ]"
           :disabled="isLoggingIn"
         />
@@ -95,19 +93,19 @@ export default {
       loading: true,
       password: "",
       isIncorrectPassword: false,
-      isLoggingIn: false
+      isLoggingIn: false,
     };
   },
   watch: {
     password: function() {
       //bring up log in button after user retries new password after failed attempt
       this.isIncorrectPassword = false;
-    }
+    },
   },
   computed: {
     ...mapState({
-      registered: state => state.user.registered
-    })
+      registered: (state) => state.user.registered,
+    }),
   },
   async created() {
     //redirect to dashboard if already logged in
@@ -121,7 +119,7 @@ export default {
       try {
         await this.$store.dispatch("user/login", {
           password: this.password,
-          otpToken: this.otpToken
+          otpToken: this.otpToken,
         });
       } catch (error) {
         this.isLoggingIn = false;
@@ -141,7 +139,7 @@ export default {
             autoHideDelay: 3000,
             variant: "danger",
             solid: true,
-            toaster: "b-toaster-bottom-right"
+            toaster: "b-toaster-bottom-right",
           });
         }
         return;
@@ -157,12 +155,12 @@ export default {
       return this.$router.push(
         this.$router.history.current.query.redirect || "/dashboard"
       );
-    }
+    },
   },
   components: {
     InputPassword,
-    InputOtpToken
-  }
+    InputOtpToken,
+  },
 };
 </script>
 

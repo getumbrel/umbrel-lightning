@@ -8,16 +8,16 @@
       <step>
         Open Lily Wallet, click the green circle in the top right corner, and
         then
-        <span class="font-weight-bold">"Network settings"</span>.
+        <span class="font-bold">"Network settings"</span>.
       </step>
       <step>
         Click the and click
-        <span class="font-weight-bold">"Change Data Source"</span> option and
-        then <span class="font-weight-bold">"Connect to Custom Node"</span> to
-        bring up the connection modal.
+        <span class="font-bold">"Change Data Source"</span> option and then
+        <span class="font-bold">"Connect to Custom Node"</span> to bring up the
+        connection modal.
       </step>
       <step>
-        For <span class="font-weight-bold">"Host"</span> enter
+        For <span class="font-bold">"Host"</span> enter
         <input-copy
           class="my-1"
           :value="`http://${urls.bitcoin.rpc.address}:${urls.bitcoin.rpc.port}`"
@@ -25,7 +25,7 @@
         ></input-copy>
       </step>
       <step>
-        For <span class="font-weight-bold">"Username"</span> enter
+        For <span class="font-bold">"Username"</span> enter
         <input-copy
           class="my-1"
           :value="urls.bitcoin.rpc.rpcuser"
@@ -33,7 +33,7 @@
         ></input-copy>
       </step>
       <step>
-        For <span class="font-weight-bold">"Password"</span> enter
+        For <span class="font-bold">"Password"</span> enter
         <input-copy
           class="my-1"
           :value="urls.bitcoin.rpc.rpcpassword"
@@ -41,8 +41,8 @@
         ></input-copy>
       </step>
       <step>
-        Click <span class="font-weight-bold">"Connect to Node"</span> to verify
-        if Lily Wallet is able to connect to your Umbrel.
+        Click <span class="font-bold">"Connect to Node"</span> to verify if Lily
+        Wallet is able to connect to your Umbrel.
       </step>
       <step>
         Congratulations! You have successfully connected Lily Wallet to your

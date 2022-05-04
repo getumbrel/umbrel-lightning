@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 
 const lightning = require("logic/lightning.js");
+
 const safeHandler = require("utils/safeHandler");
 const validator = require("utils/validator.js");
 

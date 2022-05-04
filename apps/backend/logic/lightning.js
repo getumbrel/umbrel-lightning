@@ -8,8 +8,8 @@ const LndError = require("models/errors.js").LndError;
 const NodeError = require("models/errors.js").NodeError;
 
 const lndService = require("services/lnd.js");
-const diskLogic = require("logic/disk");
 const bitcoindLogic = require("logic/bitcoind.js");
+const diskLogic = require("logic/disk.js");
 
 const constants = require("utils/const.js");
 const convert = require("utils/convert.js");
@@ -395,81 +395,85 @@ async function getInvoices() {
 
 // Returns a list of all on chain transactions.
 async function getOnChainTransactions() {
-  const transactions = await lndService.getOnChainTransactions();
-  const openChannels = await lndService.getOpenChannels();
-  const closedChannels = await lndService.getClosedChannels();
-  const pendingChannelRPC = await lndService.getPendingChannels();
-
-  const pendingOpeningChannelTransactions = [];
-  for (const pendingChannel of pendingChannelRPC.pendingOpenChannels) {
-    const pendingTransaction = pendingChannel.channel.channelPoint
-      .split(":")
-      .shift();
-    pendingOpeningChannelTransactions.push(pendingTransaction);
-  }
-
-  const pendingClosingChannelTransactions = [];
-  for (const pendingGroup of [
-    pendingChannelRPC.pendingClosingChannels,
-    pendingChannelRPC.pendingForceClosingChannels,
-    pendingChannelRPC.waitingCloseChannels
-  ]) {
-    if (pendingGroup.length === 0) {
-      continue;
+  try {
+    const transactions = await lndService.getOnChainTransactions();
+    const openChannels = await lndService.getOpenChannels();
+    const closedChannels = await lndService.getClosedChannels();
+    const pendingChannelRPC = await lndService.getPendingChannels();
+  
+    const pendingOpeningChannelTransactions = [];
+    for (const pendingChannel of pendingChannelRPC.pendingOpenChannels) {
+      const pendingTransaction = pendingChannel.channel.channelPoint
+        .split(":")
+        .shift();
+      pendingOpeningChannelTransactions.push(pendingTransaction);
     }
-    for (const pendingChannel of pendingGroup) {
-      pendingClosingChannelTransactions.push(pendingChannel.closingTxid);
+  
+    const pendingClosingChannelTransactions = [];
+    for (const pendingGroup of [
+      pendingChannelRPC.pendingClosingChannels,
+      pendingChannelRPC.pendingForceClosingChannels,
+      pendingChannelRPC.waitingCloseChannels
+    ]) {
+      if (pendingGroup.length === 0) {
+        continue;
+      }
+      for (const pendingChannel of pendingGroup) {
+        pendingClosingChannelTransactions.push(pendingChannel.closingTxid);
+      }
     }
-  }
-
-  const openChannelTransactions = [];
-  for (const channel of openChannels) {
-    const openTransaction = channel.channelPoint.split(":").shift();
-    openChannelTransactions.push(openTransaction);
-  }
-
-  const closedChannelTransactions = [];
-  for (const channel of closedChannels) {
-    const closedTransaction = channel.closingTxHash.split(":").shift();
-    closedChannelTransactions.push(closedTransaction);
-
-    const openTransaction = channel.channelPoint.split(":").shift();
-    openChannelTransactions.push(openTransaction);
-  }
-
-  const reversedTransactions = [];
-  for (const transaction of transactions) {
-    const txHash = transaction.txHash;
-
-    if (openChannelTransactions.includes(txHash)) {
-      transaction.type = "CHANNEL_OPEN";
-    } else if (closedChannelTransactions.includes(txHash)) {
-      transaction.type = "CHANNEL_CLOSE";
-    } else if (pendingOpeningChannelTransactions.includes(txHash)) {
-      transaction.type = "PENDING_OPEN";
-    } else if (pendingClosingChannelTransactions.includes(txHash)) {
-      transaction.type = "PENDING_CLOSE";
-    } else if (transaction.amount < 0) {
-      transaction.type = "ON_CHAIN_TRANSACTION_SENT";
-    } else if (transaction.amount > 0 && transaction.destAddresses.length > 0) {
-      transaction.type = "ON_CHAIN_TRANSACTION_RECEIVED";
-
-      // Positive amounts are either incoming transactions or a WaitingCloseChannel. There is no way to determine which
-      // until the transaction has at least one confirmation. Then a WaitingCloseChannel will become a pending Closing
-      // channel and will have an associated tx id.
-    } else if (
-      transaction.amount > 0 &&
-      transaction.destAddresses.length === 0
-    ) {
-      transaction.type = "PENDING_CLOSE";
-    } else {
-      transaction.type = "UNKNOWN";
+  
+    const openChannelTransactions = [];
+    for (const channel of openChannels) {
+      const openTransaction = channel.channelPoint.split(":").shift();
+      openChannelTransactions.push(openTransaction);
     }
-
-    reversedTransactions.unshift(transaction);
+  
+    const closedChannelTransactions = [];
+    for (const channel of closedChannels) {
+      const closedTransaction = channel.closingTxHash.split(":").shift();
+      closedChannelTransactions.push(closedTransaction);
+  
+      const openTransaction = channel.channelPoint.split(":").shift();
+      openChannelTransactions.push(openTransaction);
+    }
+  
+    const reversedTransactions = [];
+    for (const transaction of transactions) {
+      const txHash = transaction.txHash;
+  
+      if (openChannelTransactions.includes(txHash)) {
+        transaction.type = "CHANNEL_OPEN";
+      } else if (closedChannelTransactions.includes(txHash)) {
+        transaction.type = "CHANNEL_CLOSE";
+      } else if (pendingOpeningChannelTransactions.includes(txHash)) {
+        transaction.type = "PENDING_OPEN";
+      } else if (pendingClosingChannelTransactions.includes(txHash)) {
+        transaction.type = "PENDING_CLOSE";
+      } else if (transaction.amount < 0) {
+        transaction.type = "ON_CHAIN_TRANSACTION_SENT";
+      } else if (transaction.amount > 0 && transaction.destAddresses.length > 0) {
+        transaction.type = "ON_CHAIN_TRANSACTION_RECEIVED";
+  
+        // Positive amounts are either incoming transactions or a WaitingCloseChannel. There is no way to determine which
+        // until the transaction has at least one confirmation. Then a WaitingCloseChannel will become a pending Closing
+        // channel and will have an associated tx id.
+      } else if (
+        transaction.amount > 0 &&
+        transaction.destAddresses.length === 0
+      ) {
+        transaction.type = "PENDING_CLOSE";
+      } else {
+        transaction.type = "UNKNOWN";
+      }
+  
+      reversedTransactions.unshift(transaction);
+    }
+  
+    return reversedTransactions;
+  } catch(e) {
+    console.error('getOnChainTransactions error: ', e.message)
   }
-
-  return reversedTransactions;
 }
 
 function getTxnHashFromChannelPoint(channelPoint) {
@@ -478,154 +482,158 @@ function getTxnHashFromChannelPoint(channelPoint) {
 
 // Returns a list of all open channels.
 const getChannels = async () => {
-  // const managedChannelsCall = getManagedChannels();
-  const openChannelsCall = lndService.getOpenChannels();
-  const pendingChannels = await lndService.getPendingChannels();
-
-  const allChannels = [];
-
-  // Combine all pending channel types
-  for (const channel of pendingChannels.waitingCloseChannels) {
-    channel.type = "WAITING_CLOSING_CHANNEL";
-    allChannels.push(channel);
-  }
-
-  for (const channel of pendingChannels.pendingForceClosingChannels) {
-    channel.type = "FORCE_CLOSING_CHANNEL";
-    allChannels.push(channel);
-  }
-
-  for (const channel of pendingChannels.pendingClosingChannels) {
-    channel.type = "PENDING_CLOSING_CHANNEL";
-    allChannels.push(channel);
-  }
-
-  for (const channel of pendingChannels.pendingOpenChannels) {
-    channel.type = "PENDING_OPEN_CHANNEL";
-
-    // Make our best guess as to if this channel was created by us.
-    if (channel.channel.remoteBalance === "0") {
-      channel.initiator = true;
-    } else {
-      channel.initiator = false;
+  try {
+    // const managedChannelsCall = getManagedChannels();
+    const openChannelsCall = await lndService.getOpenChannels();
+    const pendingChannels = await lndService.getPendingChannels();
+  
+    const allChannels = [];
+  
+    // Combine all pending channel types
+    for (const channel of pendingChannels.waitingCloseChannels) {
+      channel.type = "WAITING_CLOSING_CHANNEL";
+      allChannels.push(channel);
     }
-
-    // Include commitFee in balance. This helps us avoid the leaky sats issue by making balances more consistent.
-    if (channel.initiator) {
-      channel.channel.localBalance = String(
-        parseInt(channel.channel.localBalance, 10) +
-          parseInt(channel.commitFee, 10)
-      );
-    } else {
-      channel.channel.remoteBalance = String(
-        parseInt(channel.channel.remoteBalance, 10) +
-          parseInt(channel.commitFee, 10)
-      );
+  
+    for (const channel of pendingChannels.pendingForceClosingChannels) {
+      channel.type = "FORCE_CLOSING_CHANNEL";
+      allChannels.push(channel);
     }
-
-    allChannels.push(channel);
-  }
-
-  // If we have any pending channels, we need to call get chain transactions to determine how many confirmations are
-  // left for each pending channel. This gets the entire history of on chain transactions.
-  // TODO: Once pagination is available, we should develop a different strategy.
-  let chainTxnCall = null;
-  let chainTxns = null;
-  if (allChannels.length > 0) {
-    chainTxnCall = lndService.getOnChainTransactions();
-  }
-
-  // Combine open channels
-  const openChannels = await openChannelsCall;
-
-  for (const channel of openChannels) {
-    channel.type = "OPEN";
-
-    // Include commitFee in balance. This helps us avoid the leaky sats issue by making balances more consistent.
-    if (channel.initiator) {
-      channel.localBalance = String(
-        parseInt(channel.localBalance, 10) + parseInt(channel.commitFee, 10)
-      );
-    } else {
-      channel.remoteBalance = String(
-        parseInt(channel.remoteBalance, 10) + parseInt(channel.commitFee, 10)
-      );
+  
+    for (const channel of pendingChannels.pendingClosingChannels) {
+      channel.type = "PENDING_CLOSING_CHANNEL";
+      allChannels.push(channel);
     }
-
-    allChannels.push(channel);
-  }
-
-  // Add additional managed channel data if it exists
-  // Call this async, because it reads from disk
-  // const managedChannels = await managedChannelsCall;
-
-  if (chainTxnCall !== null) {
-    const chainTxnList = await chainTxnCall;
-
-    // Convert list to object for efficient searching
-    chainTxns = {};
-    for (const txn of chainTxnList) {
-      chainTxns[txn.txHash] = txn;
-    }
-  }
-
-  // Iterate through all channels
-  for (const channel of allChannels) {
-    // Pending channels have an inner channel object.
-    if (channel.channel) {
-      // Use remotePubkey for consistency with open channels
-      channel.remotePubkey = channel.channel.remoteNodePub;
-      channel.channelPoint = channel.channel.channelPoint;
-      channel.capacity = channel.channel.capacity;
-      channel.localBalance = channel.channel.localBalance;
-      channel.remoteBalance = channel.channel.remoteBalance;
-
-      delete channel.channel;
-
-      // Determine the number of confirmation remaining for this channel
-
-      // We might have invalid channels that dne in the onChainTxList. Skip these channels
-      const knownChannel =
-        chainTxns[getTxnHashFromChannelPoint(channel.channelPoint)];
-      if (!knownChannel) {
-        channel.managed = false;
-        channel.name = "";
-        channel.purpose = "";
-
-        continue;
+  
+    for (const channel of pendingChannels.pendingOpenChannels) {
+      channel.type = "PENDING_OPEN_CHANNEL";
+  
+      // Make our best guess as to if this channel was created by us.
+      if (channel.channel.remoteBalance === "0") {
+        channel.initiator = true;
+      } else {
+        channel.initiator = false;
       }
-      const numConfirmations = knownChannel.numConfirmations;
-
-      if (channel.type === "FORCE_CLOSING_CHANNEL") {
-        // BlocksTilMaturity is provided by Lnd for forced closing channels once they have one confirmation
-        channel.remainingConfirmations = channel.blocksTilMaturity;
-      } else if (channel.type === "PENDING_CLOSING_CHANNEL") {
-        // Lnd seams to be clearing these channels after just one confirmation and thus they never exist in this state.
-        // Defaulting to 1 just in case.
-        channel.remainingConfirmations = 1;
-      } else if (channel.type === "PENDING_OPEN_CHANNEL") {
-        channel.remainingConfirmations =
-          constants.LN_REQUIRED_CONFIRMATIONS - numConfirmations;
+  
+      // Include commitFee in balance. This helps us avoid the leaky sats issue by making balances more consistent.
+      if (channel.initiator) {
+        channel.channel.localBalance = String(
+          parseInt(channel.channel.localBalance, 10) +
+            parseInt(channel.commitFee, 10)
+        );
+      } else {
+        channel.channel.remoteBalance = String(
+          parseInt(channel.channel.remoteBalance, 10) +
+            parseInt(channel.commitFee, 10)
+        );
+      }
+  
+      allChannels.push(channel);
+    }
+  
+    // If we have any pending channels, we need to call get chain transactions to determine how many confirmations are
+    // left for each pending channel. This gets the entire history of on chain transactions.
+    // TODO: Once pagination is available, we should develop a different strategy.
+    let chainTxnCall = null;
+    let chainTxns = null;
+    if (allChannels.length > 0) {
+      chainTxnCall = lndService.getOnChainTransactions();
+    }
+  
+    // Combine open channels
+    const openChannels = await openChannelsCall;
+  
+    for (const channel of openChannels) {
+      channel.type = "OPEN";
+  
+      // Include commitFee in balance. This helps us avoid the leaky sats issue by making balances more consistent.
+      if (channel.initiator) {
+        channel.localBalance = String(
+          parseInt(channel.localBalance, 10) + parseInt(channel.commitFee, 10)
+        );
+      } else {
+        channel.remoteBalance = String(
+          parseInt(channel.remoteBalance, 10) + parseInt(channel.commitFee, 10)
+        );
+      }
+  
+      allChannels.push(channel);
+    }
+  
+    // Add additional managed channel data if it exists
+    // Call this async, because it reads from disk
+    // const managedChannels = await managedChannelsCall;
+  
+    if (chainTxnCall !== null) {
+      const chainTxnList = await chainTxnCall;
+  
+      // Convert list to object for efficient searching
+      chainTxns = {};
+      for (const txn of chainTxnList) {
+        chainTxns[txn.txHash] = txn;
       }
     }
-
-    // Fetch remote node alias and set it
-    const { alias } = await getNodeAlias(channel.remotePubkey);
-    channel.remoteAlias = alias || "";
-
-    // If a managed channel exists, set the name and purpose
-    // if (Object.prototype.hasOwnProperty.call(managedChannels, channel.channelPoint)) {
-    //   channel.managed = true;
-    //   channel.name = managedChannels[channel.channelPoint].name;
-    //   channel.purpose = managedChannels[channel.channelPoint].purpose;
-    // } else {
-    //   channel.managed = false;
-    //   channel.name = '';
-    //   channel.purpose = '';
-    // }
+  
+    // Iterate through all channels
+    for (const channel of allChannels) {
+      // Pending channels have an inner channel object.
+      if (channel.channel) {
+        // Use remotePubkey for consistency with open channels
+        channel.remotePubkey = channel.channel.remoteNodePub;
+        channel.channelPoint = channel.channel.channelPoint;
+        channel.capacity = channel.channel.capacity;
+        channel.localBalance = channel.channel.localBalance;
+        channel.remoteBalance = channel.channel.remoteBalance;
+  
+        delete channel.channel;
+  
+        // Determine the number of confirmation remaining for this channel
+  
+        // We might have invalid channels that dne in the onChainTxList. Skip these channels
+        const knownChannel =
+          chainTxns[getTxnHashFromChannelPoint(channel.channelPoint)];
+        if (!knownChannel) {
+          channel.managed = false;
+          channel.name = "";
+          channel.purpose = "";
+  
+          continue;
+        }
+        const numConfirmations = knownChannel.numConfirmations;
+  
+        if (channel.type === "FORCE_CLOSING_CHANNEL") {
+          // BlocksTilMaturity is provided by Lnd for forced closing channels once they have one confirmation
+          channel.remainingConfirmations = channel.blocksTilMaturity;
+        } else if (channel.type === "PENDING_CLOSING_CHANNEL") {
+          // Lnd seams to be clearing these channels after just one confirmation and thus they never exist in this state.
+          // Defaulting to 1 just in case.
+          channel.remainingConfirmations = 1;
+        } else if (channel.type === "PENDING_OPEN_CHANNEL") {
+          channel.remainingConfirmations =
+            constants.LN_REQUIRED_CONFIRMATIONS - numConfirmations;
+        }
+      }
+  
+      // Fetch remote node alias and set it
+      const { alias } = await getNodeAlias(channel.remotePubkey);
+      channel.remoteAlias = alias || "";
+  
+      // If a managed channel exists, set the name and purpose
+      // if (Object.prototype.hasOwnProperty.call(managedChannels, channel.channelPoint)) {
+      //   channel.managed = true;
+      //   channel.name = managedChannels[channel.channelPoint].name;
+      //   channel.purpose = managedChannels[channel.channelPoint].purpose;
+      // } else {
+      //   channel.managed = false;
+      //   channel.name = '';
+      //   channel.purpose = '';
+      // }
+    }
+  
+    return allChannels;
+  } catch(e) {
+    console.error('Error getting channels: ', e.message);
   }
-
-  return allChannels;
 };
 
 // Returns a list of all outgoing payments.
@@ -835,7 +843,6 @@ function sendCoins(addr, amt, satPerByte, sendAll) {
 // Returns if lnd is operation and if the wallet is unlocked.
 async function getStatus() {
   const bitcoindStatus = await bitcoindLogic.getStatus();
-  console.log("bitcoindStatus: ", bitcoindStatus);
 
   // lnd requires bitcoind to be operational.
   if (!bitcoindStatus.operational) {
@@ -883,7 +890,6 @@ async function getStatus() {
 // Unlock and existing wallet.
 async function unlockWallet(password) {
   const lndStatus = await getStatus();
-  console.log("lndStatus: ", lndStatus);
 
   if (lndStatus.operational) {
     try {

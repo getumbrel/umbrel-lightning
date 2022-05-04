@@ -28,8 +28,8 @@
         <div class="pt-2">
           <div class="d-flex w-100 justify-content-between px-3 px-lg-4 mb-4">
             <div>
-              <span class="d-block">Bitcoin</span>
-              <small class="d-block" style="opacity: 0.4"
+              <span class="block">Bitcoin</span>
+              <small class="block" style="opacity: 0.4"
                 >Run Bitcoin Core on Tor</small
               >
             </div>
@@ -41,8 +41,8 @@
           </div>
           <div class="d-flex w-100 justify-content-between px-3 px-lg-4 mb-4">
             <div>
-              <span class="d-block">Lightning</span>
-              <small class="d-block" style="opacity: 0.4"
+              <span class="block">Lightning</span>
+              <small class="block" style="opacity: 0.4"
                 >Run Lightning Network on Tor</small
               >
             </div>
@@ -55,8 +55,8 @@
           <div class="px-3 px-lg-4 mb-4">
             <div class="d-flex justify-content-between w-100 mb-3">
               <div class="w-75">
-                <span class="d-block">Remote access</span>
-                <small class="d-block" style="opacity: 0.4"
+                <span class="block">Remote access</span>
+                <small class="block" style="opacity: 0.4"
                   >Remotely access your Umbrel from anywhere using a Tor browser
                   on this URL</small
                 >
@@ -85,8 +85,8 @@
         <div class="pt-2">
           <div class="d-flex w-100 justify-content-between px-3 px-lg-4 mb-4">
             <div>
-              <span class="d-block">Two-factor auth (2FA)</span>
-              <small class="d-block" style="opacity: 0.4"
+              <span class="block">Two-factor auth (2FA)</span>
+              <small class="block" style="opacity: 0.4"
                 >An extra layer of security to login</small
               >
             </div>
@@ -222,8 +222,8 @@
         <div class="pt-0">
           <div class="d-flex w-100 justify-content-between px-3 px-lg-4 mb-4">
             <div>
-              <span class="d-block">Password</span>
-              <small class="d-block" style="opacity: 0.4"
+              <span class="block">Password</span>
+              <small class="block" style="opacity: 0.4"
                 >Change your Umbrel's password</small
               >
             </div>
@@ -280,7 +280,7 @@
                   inputGroupClass="neu-input-group"
                   :inputClass="[
                     isIncorrectPassword ? 'incorrect-password' : '',
-                    'form-control form-control-lg neu-input w-100'
+                    'form-control form-control-lg neu-input w-100',
                   ]"
                   :disabled="isChangingPassword"
                 />
@@ -344,8 +344,8 @@
         <div class="pt-0">
           <div class="d-flex w-100 justify-content-between px-3 px-lg-4 mb-4">
             <div>
-              <span class="d-block">Secret words</span>
-              <small class="d-block" style="opacity: 0.4"
+              <span class="block">Secret words</span>
+              <small class="block" style="opacity: 0.4"
                 >Note down your 24 secret words</small
               >
             </div>
@@ -395,27 +395,27 @@
         class="card-app-list"
         :loading="isCheckingForUpdate || isUpdating"
       >
-        <div class="d-block pt-2"></div>
+        <div class="block pt-2"></div>
 
         <!-- Uptime monitoring is only available on Umbrel OS -->
         <div class="pt-0" v-if="isUmbrelOS">
           <div class="d-flex w-100 justify-content-between px-3 px-lg-4 mb-4">
             <div>
-              <span class="d-block">Uptime</span>
-              <small class="d-block" style="opacity: 0.4"
+              <span class="block">Uptime</span>
+              <small class="block" style="opacity: 0.4"
                 >Time since last restart</small
               >
             </div>
             <div class="text-right">
-              <span class="d-block">{{ getUptime }}</span>
+              <span class="block">{{ getUptime }}</span>
             </div>
           </div>
         </div>
         <div class="pt-0">
           <div class="d-flex w-100 justify-content-between px-3 px-lg-4 mb-4">
             <div>
-              <span class="d-block">Shutdown</span>
-              <small class="d-block" style="opacity: 0.4"
+              <span class="block">Shutdown</span>
+              <small class="block" style="opacity: 0.4"
                 >Power off your Umbrel</small
               >
             </div>
@@ -427,8 +427,8 @@
         <div class="pt-0">
           <div class="d-flex w-100 justify-content-between px-3 px-lg-4 mb-4">
             <div>
-              <span class="d-block">Restart</span>
-              <small class="d-block" style="opacity: 0.4"
+              <span class="block">Restart</span>
+              <small class="block" style="opacity: 0.4"
                 >Restart your Umbrel</small
               >
             </div>
@@ -455,8 +455,8 @@
         <div class="pt-0">
           <div class="d-flex w-100 justify-content-between px-3 px-lg-4 mb-4">
             <div>
-              <span class="d-block">Troubleshoot</span>
-              <small class="d-block" style="opacity: 0.4"
+              <span class="block">Troubleshoot</span>
+              <small class="block" style="opacity: 0.4"
                 >View logs for troubleshooting</small
               >
             </div>
@@ -505,13 +505,10 @@
                   </a>
                 </div>
               </template>
-              <div v-if="debugFailed" class="d-flex justify-content-center">
+              <div v-if="debugFailed" class="d-flex justify-items-center">
                 Error: Failed to fetch debug data.
               </div>
-              <div
-                v-else-if="loadingDebug"
-                class="d-flex justify-content-center"
-              >
+              <div v-else-if="loadingDebug" class="d-flex justify-items-center">
                 <b-spinner></b-spinner>
               </div>
               <pre class="px-2 text-light">{{ debugContents }}</pre>
@@ -553,7 +550,7 @@
               >
             </span>
             <div v-show="availableUpdate.version">
-              <span class="d-block">
+              <span class="block">
                 <b-icon icon="bell-fill" variant="success"></b-icon>
                 <small class="text-muted ml-1"
                   >Umbrel v{{ availableUpdate.version }} is now available to
@@ -623,19 +620,19 @@ export default {
       isCorrectOtp: false,
       isIncorrectOtp: false,
       isFetchingOtpUri: false,
-      isTogglingOtpAuth: false
+      isTogglingOtpAuth: false,
     };
   },
   computed: {
     ...mapState({
-      version: state => state.system.version,
-      onionAddress: state => state.system.onionAddress,
-      availableUpdate: state => state.system.availableUpdate,
-      updateStatus: state => state.system.updateStatus,
-      debugResult: state => state.system.debugResult,
-      isUmbrelOS: state => state.system.isUmbrelOS,
-      uptime: state => state.system.uptime,
-      otpEnabled: state => state.user.otpEnabled
+      version: (state) => state.system.version,
+      onionAddress: (state) => state.system.onionAddress,
+      availableUpdate: (state) => state.system.availableUpdate,
+      updateStatus: (state) => state.system.updateStatus,
+      debugResult: (state) => state.system.debugResult,
+      isUmbrelOS: (state) => state.system.isUmbrelOS,
+      uptime: (state) => state.system.uptime,
+      otpEnabled: (state) => state.user.otpEnabled,
     }),
     otpSecretKey() {
       if (!this.otpUri) {
@@ -669,7 +666,7 @@ export default {
         return false;
       }
       return true;
-    }
+    },
   },
   created() {
     this.$store.dispatch("system/getOnionAddress");
@@ -702,7 +699,7 @@ export default {
             autoHideDelay: 3000,
             variant: "danger",
             solid: true,
-            toaster: "b-toaster-bottom-right"
+            toaster: "b-toaster-bottom-right",
           });
         }
       }
@@ -712,7 +709,7 @@ export default {
       try {
         await this.$store.dispatch("user/enableOtpAuth", {
           otpToken,
-          otpUri: this.otpUri
+          otpUri: this.otpUri,
         });
         this.isCorrectOtp = true;
 
@@ -727,7 +724,7 @@ export default {
             autoHideDelay: 3000,
             variant: "success",
             solid: true,
-            toaster: "b-toaster-bottom-right"
+            toaster: "b-toaster-bottom-right",
           }
         );
         this.$bvModal.hide("enable-otp-auth-modal");
@@ -743,7 +740,7 @@ export default {
             autoHideDelay: 3000,
             variant: "danger",
             solid: true,
-            toaster: "b-toaster-bottom-right"
+            toaster: "b-toaster-bottom-right",
           });
         }
       }
@@ -770,7 +767,7 @@ export default {
             autoHideDelay: 3000,
             variant: "success",
             solid: true,
-            toaster: "b-toaster-bottom-right"
+            toaster: "b-toaster-bottom-right",
           }
         );
         this.$bvModal.hide("disable-otp-auth-modal");
@@ -786,7 +783,7 @@ export default {
             autoHideDelay: 3000,
             variant: "danger",
             solid: true,
-            toaster: "b-toaster-bottom-right"
+            toaster: "b-toaster-bottom-right",
           });
         }
       }
@@ -805,14 +802,14 @@ export default {
           autoHideDelay: 3000,
           variant: "danger",
           solid: true,
-          toaster: "b-toaster-bottom-right"
+          toaster: "b-toaster-bottom-right",
         });
       }
 
       const payload = {
         password: this.currentPassword,
         newPassword: this.newPassword,
-        otpToken: this.otpToken
+        otpToken: this.otpToken,
       };
 
       this.isChangingPassword = true;
@@ -850,7 +847,7 @@ export default {
             autoHideDelay: 3000,
             variant: "danger",
             solid: true,
-            toaster: "b-toaster-bottom-right"
+            toaster: "b-toaster-bottom-right",
           });
         }
         this.isChangingPassword = false;
@@ -864,7 +861,7 @@ export default {
           autoHideDelay: 3000,
           variant: "success",
           solid: true,
-          toaster: "b-toaster-bottom-right"
+          toaster: "b-toaster-bottom-right",
         }
       );
 
@@ -909,7 +906,7 @@ export default {
     },
     downloadTextFile(contents, fileName) {
       const blob = new Blob([contents], {
-        type: "text/plain;charset=utf-8;"
+        type: "text/plain;charset=utf-8;",
       });
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement("a");
@@ -917,7 +914,7 @@ export default {
       a.download = fileName;
       a.click();
       window.URL.revokeObjectURL(url);
-    }
+    },
   },
   beforeDestroy() {
     if (this.pollUpdateStatus) {
@@ -927,7 +924,7 @@ export default {
   watch: {
     currentPassword: function() {
       this.isIncorrectPassword = false;
-    }
+    },
   },
   components: {
     CardWidget,
@@ -936,8 +933,8 @@ export default {
     InputPassword,
     InputCopy,
     InputOtpToken,
-    Seed
-  }
+    Seed,
+  },
 };
 </script>
 

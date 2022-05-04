@@ -3,14 +3,14 @@
     <div class="mb-4">
       <div class="d-flex justify-content-between">
         <h4
-          class="text-primary font-weight-bold"
+          class="text-primary font-bold"
           v-b-tooltip.hover.right
           :title="channel.localBalance | satsToUSD"
         >
           {{ channel.localBalance | unit | localize }} {{ unit | formatUnit }}
         </h4>
         <h4
-          class="text-success font-weight-bold text-right"
+          class="text-success font-bold text-right"
           v-b-tooltip.hover.left
           :title="channel.remoteBalance | satsToUSD"
         >
@@ -35,14 +35,12 @@
           class="d-flex justify-content-between align-items-center mt-1 mb-3"
         >
           <span class="text-muted">Status</span>
-          <span class="text-capitalize font-weight-bold">{{
-            channel.status
-          }}</span>
+          <span class="text-capitalize font-bold">{{ channel.status }}</span>
         </div>
 
         <div class="d-flex justify-content-between align-items-center mb-3">
           <span class="text-muted">Channel Type</span>
-          <span class="text-capitalize font-weight-bold"
+          <span class="text-capitalize font-bold"
             >{{ channel.private ? "Private" : "Public" }} Channel</span
           >
         </div>
@@ -50,7 +48,7 @@
         <div class="d-flex justify-content-between align-items-center mb-3">
           <span class="text-muted">Remote Peer Alias</span>
           <div class="w-75 text-right">
-            <span class="font-weight-bold" style="overflow-wrap: break-word;">{{
+            <span class="font-bold" style="overflow-wrap: break-word;">{{
               channel.remoteAlias
             }}</span>
           </div>
@@ -61,7 +59,7 @@
           v-if="channel.status !== 'Closing'"
         >
           <span class="text-muted">Opened By</span>
-          <span class="text-capitalize font-weight-bold">{{
+          <span class="text-capitalize font-bold">{{
             channel.initiator ? "Your node" : "Remote peer"
           }}</span>
         </div>
@@ -71,7 +69,7 @@
           <span
             v-b-tooltip.hover.left
             :title="channel.localBalance | satsToUSD"
-            class="text-capitalize font-weight-bold"
+            class="text-capitalize font-bold"
           >
             {{ channel.localBalance | unit | localize }}
             {{ unit | formatUnit }}
@@ -83,7 +81,7 @@
           <span
             v-b-tooltip.hover.left
             :title="channel.remoteBalance | satsToUSD"
-            class="text-capitalize font-weight-bold"
+            class="text-capitalize font-bold"
           >
             {{ channel.remoteBalance | unit | localize }}
             {{ unit | formatUnit }}
@@ -95,7 +93,7 @@
           <span
             v-b-tooltip.hover.left
             :title="channel.capacity | satsToUSD"
-            class="text-capitalize font-weight-bold"
+            class="text-capitalize font-bold"
           >
             {{ channel.capacity | unit | localize }}
             {{ unit | formatUnit }}
@@ -107,7 +105,7 @@
           v-if="channel.status === 'Online'"
         >
           <span class="text-muted">Withdrawal Timelock</span>
-          <span class="text-capitalize font-weight-bold"
+          <span class="text-capitalize font-bold"
             >{{ parseInt(channel.csvDelay).toLocaleString() }} Blocks</span
           >
         </div>
@@ -117,7 +115,7 @@
           v-if="channel.status === 'Online'"
         >
           <span class="text-muted">Commit Fee</span>
-          <span class="text-capitalize font-weight-bold">
+          <span class="text-capitalize font-bold">
             {{ channel.commitFee | unit | localize }}
             {{ unit | formatUnit }}
           </span>
@@ -126,15 +124,13 @@
         <div class="d-flex justify-content-between align-items-center mb-3">
           <span class="text-muted">Remote Pub Key</span>
           <div class="w-75 text-right">
-            <small
-              class="font-weight-bold"
-              style="overflow-wrap: break-word;"
-              >{{ channel.remotePubkey }}</small
-            >
+            <small class="font-bold" style="overflow-wrap: break-word;">{{
+              channel.remotePubkey
+            }}</small>
           </div>
         </div>
 
-        <div class="d-flex justify-content-end" v-if="canCloseChannel">
+        <div class="d-flex justify-end" v-if="canCloseChannel">
           <b-button class="mt-2" variant="danger" @click="reviewChannelClose"
             >Close Channel</b-button
           >
@@ -155,7 +151,7 @@
           fraudulent.
         </b-alert>
 
-        <div class="d-flex justify-content-end">
+        <div class="d-flex justify-end">
           <b-button
             class="mt-2"
             variant="danger"
@@ -175,12 +171,12 @@ import API from "@/helpers/api";
 
 export default {
   props: {
-    channel: Object
+    channel: Object,
   },
   data() {
     return {
       isReviewingChannelClose: false,
-      isClosing: false
+      isClosing: false,
     };
   },
   computed: {
@@ -195,7 +191,7 @@ export default {
         return false;
       }
       return true;
-    }
+    },
   },
   methods: {
     reviewChannelClose() {
@@ -207,7 +203,7 @@ export default {
       try {
         const payload = {
           channelPoint: this.channel.channelPoint,
-          force: !this.channel.active // Avoids force closing if channel is active
+          force: !this.channel.active, // Avoids force closing if channel is active
         };
         await API.delete(
           `${process.env.VUE_APP_BACKEND_URL}/v1/lnd/channel/close`,
@@ -220,7 +216,7 @@ export default {
             autoHideDelay: 3000,
             variant: "success",
             solid: true,
-            toaster: "b-toaster-bottom-right"
+            toaster: "b-toaster-bottom-right",
           });
         }, 200);
       } catch (err) {
@@ -231,16 +227,16 @@ export default {
             autoHideDelay: 3000,
             variant: "danger",
             solid: true,
-            toaster: "b-toaster-bottom-right"
+            toaster: "b-toaster-bottom-right",
           }
         );
       }
       this.isClosing = false;
-    }
+    },
   },
   components: {
-    Bar
-  }
+    Bar,
+  },
 };
 </script>
 

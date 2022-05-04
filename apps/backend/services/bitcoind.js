@@ -8,20 +8,12 @@ const BITCOIND_HOST = process.env.BITCOIN_HOST || "127.0.0.1";
 const BITCOIND_RPC_USER = process.env.RPC_USER;
 const BITCOIND_RPC_PASSWORD = process.env.RPC_PASSWORD;
 
-console.log(
-  "xxx: ",
-  BITCOIND_RPC_PORT,
-  BITCOIND_HOST,
-  BITCOIND_RPC_USER,
-  BITCOIND_RPC_PASSWORD
-);
-
 const rpcClient = new RpcClient({
   protocol: "http",
   user: BITCOIND_RPC_USER, // eslint-disable-line object-shorthand
   pass: BITCOIND_RPC_PASSWORD, // eslint-disable-line object-shorthand
   host: BITCOIND_HOST,
-  port: BITCOIND_RPC_PORT
+  port: BITCOIND_RPC_PORT,
 });
 
 function promiseify(rpcObj, rpcFn, what) {
@@ -145,5 +137,5 @@ module.exports = {
   getPeerInfo,
   getMempoolInfo,
   getNetworkInfo,
-  help
+  help,
 };

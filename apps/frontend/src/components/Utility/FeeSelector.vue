@@ -1,7 +1,7 @@
 <template>
   <div>
     <div class="d-flex w-100 justify-content-between">
-      <small class="text-muted d-block mb-0">Transaction Fee</small>
+      <small class="text-muted block mb-0">Transaction Fee</small>
       <b-form-checkbox
         v-model="useCustomFee"
         class=""
@@ -31,10 +31,10 @@
           <div
             :class="[
               'vue-slider-dot-tooltip-inner vue-slider-dot-tooltip-inner-top',
-              { focus }
+              { focus },
             ]"
           >
-            <span class="vue-slider-dot-tooltip-text d-block"
+            <span class="vue-slider-dot-tooltip-text block"
               >{{ value }} sat/vB
             </span>
             <small class="text-muted"
@@ -76,10 +76,10 @@
           <div
             :class="[
               'vue-slider-dot-tooltip-inner vue-slider-dot-tooltip-inner-top',
-              { focus }
+              { focus },
             ]"
           >
-            <span class="vue-slider-dot-tooltip-text d-block mb-0"
+            <span class="vue-slider-dot-tooltip-text block mb-0"
               >{{ fee[value].perByte }} sat/vB
             </span>
             <small class="text-muted"
@@ -94,29 +94,29 @@
 
 <script>
 import VueSlider from "vue-slider-component";
-import "vue-slider-component/theme/default.css";
+// import "vue-slider-component/theme/default.css";
 
 export default {
   props: {
     fee: Object,
     customMinFee: {
       type: Number,
-      default: 1
+      default: 1,
     },
     customMaxFee: {
       type: Number,
-      default: 350
+      default: 350,
     },
     disabled: {
       type: Boolean,
-      default: false
-    }
+      default: false,
+    },
   },
   data() {
     return {
       chosenFee: "normal",
       useCustomFee: false,
-      customFee: 30
+      customFee: 30,
     };
   },
   computed: {
@@ -146,20 +146,20 @@ export default {
         intervals.push("fast");
       }
       return intervals;
-    }
+    },
   },
   methods: {
     emitValue() {
       if (this.useCustomFee) {
         const fee = {
           type: "custom",
-          satPerByte: parseInt(this.customFee, 10)
+          satPerByte: parseInt(this.customFee, 10),
         };
         this.$emit("change", fee);
       } else {
         const fee = {
           type: this.chosenFee,
-          satPerByte: parseInt(this.fee[this.chosenFee].perByte, 10)
+          satPerByte: parseInt(this.fee[this.chosenFee].perByte, 10),
         };
         this.$emit("change", fee);
       }
@@ -177,7 +177,7 @@ export default {
       if (fee === "cheapest") {
         return "24 hrs";
       }
-    }
+    },
   },
   watch: {
     useCustomFee: function() {
@@ -185,11 +185,11 @@ export default {
     },
     "fee.fast.total": function() {
       this.emitValue();
-    }
+    },
   },
   components: {
-    VueSlider
-  }
+    VueSlider,
+  },
 };
 </script>
 

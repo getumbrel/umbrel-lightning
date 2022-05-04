@@ -20,6 +20,7 @@ import { toPrecision } from "@/helpers/units";
 const state = () => ({
   operational: false,
   unlocked: false,
+  syncedToChain: true, // assume true to prevent modal flickering
   version: "",
   currentBlock: 0,
   blockHeight: 0,
@@ -91,6 +92,10 @@ const mutations = {
 
   setNumActiveChannels(state, numActiveChannels) {
     state.numActiveChannels = numActiveChannels;
+  },
+
+  setSyncedToChain(state, syncedToChain) {
+    state.syncedToChain = syncedToChain;
   },
 
   setChannels(state, channels) {
@@ -199,6 +204,7 @@ const actions = {
       commit("setVersion", lightningInfo.version);
       commit("setNumPeers", lightningInfo.numPeers);
       commit("setNumActiveChannels", lightningInfo.numActiveChannels);
+      commit("setSyncedToChain", lightningInfo.syncedToChain);
     }
   },
 
@@ -433,7 +439,7 @@ const actions = {
 
   async getLndConnectUrls({ commit }) {
     const urls = await API.get(
-      `${process.env.VUE_APP_MANAGER_API_URL}/v1/system/lndconnect-urls`
+      `${process.env.VUE_APP_BACKEND_URL}/v1/system/lndconnect-urls`
     );
     if (urls) {
       commit("setLndConnectUrls", urls);

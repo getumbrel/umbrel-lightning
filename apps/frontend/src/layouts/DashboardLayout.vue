@@ -1,29 +1,5 @@
 <template>
-  <div>
-    <b-row class="mx-0">
-      <b-col col lg="12">
-        <div class="content-container">
-          <transition name="change-page" mode="out-in">
-            <!-- Content -->
-            <router-view></router-view>
-          </transition>
-        </div>
-
-        <!-- Footer -->
-        <footer class="d-flex justify-content-end text-muted pr-sm-2 pr-xl-3">
-          <p>
-            <small>
-              <a href="https://getumbrel.com" target="_blank">getumbrel.com</a>
-              |
-              <a href="https://community.getumbrel.com" target="_blank"
-                >community</a
-              >
-            </small>
-          </p>
-        </footer>
-      </b-col>
-    </b-row>
-  </div>
+  <router-view></router-view>
 </template>
 
 <script>
@@ -33,9 +9,9 @@ import API from "@/helpers/api";
 export default {
   computed: {
     ...mapState({
-      name: state => state.user.name,
-      chain: state => state.bitcoin.chain
-    })
+      name: (state) => state.user.name,
+      chain: (state) => state.bitcoin.chain,
+    }),
   },
   methods: {
     logout() {
@@ -60,7 +36,7 @@ export default {
         true,
         "my-umbrel-channels.backup"
       );
-    }
+    },
   },
   created() {
     //load this data once:
@@ -77,7 +53,7 @@ export default {
     }
   },
   watch: {},
-  components: {}
+  components: {},
 };
 </script>
 

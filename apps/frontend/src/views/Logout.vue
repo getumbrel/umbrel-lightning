@@ -4,7 +4,7 @@
       <h1>logout</h1>
       <p class="text-muted">Not gunna leave you too soon 😉</p>
     </div>
-    <b-row></b-row>
+    <div class="d-flexflex-wrap"></div>
   </div>
 </template>
 
@@ -15,7 +15,7 @@ export default {
   },
   computed: {},
   methods: {},
-  components: {}
+  components: {},
 };
 </script>
 

@@ -1,6 +1,7 @@
-version: '3.7'
+version: "3.7"
 
 services:
+
   app:
     build:
       dockerfile: ./Dockerfile
@@ -8,7 +9,8 @@ services:
     command: npm run dev:backend
     restart: on-failure
     volumes:
-      - ${PWD}/data/lnd:/lnd:ro
+      - ${PWD}/data/lnd:/lnd/.lnd
+      - ${PWD}/data/app:/data
     environment:
       PORT: "3006"
       BITCOIN_HOST: "bitcoind"
@@ -17,10 +19,12 @@ services:
       RPC_PASSWORD: "2hmQlIgYfjFoMGAwBQPdvpJ6vDuQbOoBfG_LxznanAk="
       LND_NETWORK: "regtest"
       LND_HOST: "lnd"
-      LND_REST_HIDDEN_SERVICE_FILE: "/var/lib/tor/lnd-rest/hostname"
-      LND_GRPC_HIDDEN_SERVICE_FILE: "/var/lib/tor/lnd-grpc/hostname"
-      TLS_FILE: "/lnd/tls.cert"
-      DEVICE_HOSTS: 'foobar,jones'
+      TLS_FILE: "/lnd/.lnd/tls.cert"
+      MACAROON_DIR: /lnd/.lnd/data/chain/bitcoin/regtest/
+      CHANNEL_BACKUP_FILE: /lnd/.lnd/data/chain/bitcoin/regtest/channel.backup
+      BACKUP_STATUS_FILE: /data/backup-status.json
+      TOR_PROXY_IP: tor
+      TOR_PROXY_PORT: 9050
     ports:
       - "3006:3006"
 
@@ -32,9 +36,18 @@ services:
     environment:
       HOME: /data
     restart: on-failure
-
+    ports:
+      - "10009:10009"
   bitcoind:
     image: lncm/bitcoind:v22.0@sha256:37a1adb29b3abc9f972f0d981f45e41e5fca2e22816a023faa9fdc0084aa4507
     volumes:
       - ${PWD}/data/bitcoin:/data/.bitcoin
     restart: on-failure
+    ports:
+      - "18443:18443"
+
+  tor:
+    image: lncm/tor:0.4.5.7@sha256:a83e0d9fd1a35adf025f2f34237ec1810e2a59765988dce1dfb222ca8ef6583c
+    command: -f /data/torrc
+    volumes:
+      -  ${PWD}/data/tor:/data

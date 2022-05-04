@@ -6,32 +6,38 @@
         <b-link
           href="https://play.google.com/store/apps/details?id=org.torproject.android"
           target="_blank"
-        >Orbot</b-link> on your phone.
+          >Orbot</b-link
+        >
+        on your phone.
       </step>
       <step>
-        Open Orbot, tap the gear icon under <span class="font-weight-bold">"Tor-Enabled apps"</span> and add
-        Electrum Wallet.
+        Open Orbot, tap the gear icon under
+        <span class="font-bold">"Tor-Enabled apps"</span> and add Electrum
+        Wallet.
       </step>
       <step>
-        Tap <span class="font-weight-bold">"STOP"</span>, restart Orbot and turn on
-         <span class="font-weight-bold">"VPN Mode"</span>.
+        Tap <span class="font-bold">"STOP"</span>, restart Orbot and turn on
+        <span class="font-bold">"VPN Mode"</span>.
       </step>
       <step>
         Start Tor by tapping the big onion icon.
       </step>
       <step>
         Open Electrum Wallet, tap the settings icon and select
-        <span class="font-weight-bold">"Network"</span>.
+        <span class="font-bold">"Network"</span>.
+      </step>
+      <step> Set <span class="font-bold">"Auto-connect"</span> to OFF. </step>
+      <step>
+        Set the <span class="font-bold">"Server"</span> setting to
+        <input-copy
+          class="my-1"
+          :value="urls.bitcoin.electrum.connectionString"
+          auto-width
+        ></input-copy>
       </step>
       <step>
-        Set <span class="font-weight-bold">"Auto-connect"</span> to OFF.
-      </step>
-      <step>
-        Set the <span class="font-weight-bold">"Server"</span> setting to
-        <input-copy class="my-1" :value="urls.bitcoin.electrum.connectionString" auto-width></input-copy>
-      </step>
-      <step>
-        Congratulations! You have successfully connected Electrum Wallet to your Umbrel.
+        Congratulations! You have successfully connected Electrum Wallet to your
+        Umbrel.
       </step>
     </step-list>
   </connection-details>
@@ -45,13 +51,13 @@ import InputCopy from "@/components/Utility/InputCopy";
 
 export default {
   props: {
-    urls: Object
+    urls: Object,
   },
   components: {
     ConnectionDetails,
     StepList,
     Step,
-    InputCopy
-  }
+    InputCopy,
+  },
 };
 </script>

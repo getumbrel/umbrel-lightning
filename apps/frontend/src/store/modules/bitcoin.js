@@ -1,5 +1,4 @@
 import API from "@/helpers/api";
-import { toPrecision } from "@/helpers/units";
 
 // Initial state
 const state = () => ({
@@ -8,52 +7,33 @@ const state = () => ({
   version: "",
   ipAddress: "",
   onionAddress: "",
-  p2p: {
-    address: "",
-    port: "",
-    connectionString: ""
-  },
-  electrum: {
-    address: "",
-    port: "",
-    connectionString: ""
-  },
-  rpc: {
-    rpcuser: "",
-    rpcpassword: "",
-    address: "",
-    port: "",
-    connectionString: ""
-  },
   currentBlock: 0,
   chain: "",
-  blockHeight: 0,
-  blocks: [],
   percent: -1, //for loading state
   depositAddress: "",
   stats: {
     peers: -1,
     mempool: -1,
     hashrate: -1,
-    blockchainSize: -1
+    blockchainSize: -1,
   },
   peers: {
     total: 0,
     inbound: 0,
-    outbound: 0
+    outbound: 0,
   },
   balance: {
     total: -1, //loading
     confirmed: -1,
     pending: -1,
     pendingIn: -1,
-    pendingOut: -1
+    pendingOut: -1,
   },
   transactions: [
     { type: "loading" },
     { type: "loading" },
     { type: "loading" },
-    { type: "loading" }
+    { type: "loading" },
   ],
   pending: [],
   price: 0,
@@ -63,100 +43,38 @@ const state = () => ({
       perByte: "--",
       error: {
         code: "",
-        text: ""
-      }
+        text: "",
+      },
     },
     normal: {
       total: "--",
       perByte: "--",
       error: {
         code: "",
-        text: ""
-      }
+        text: "",
+      },
     },
     slow: {
       total: "--",
       perByte: "--",
       error: {
         code: "",
-        text: ""
-      }
+        text: "",
+      },
     },
     cheapest: {
       total: "--",
       perByte: "--",
       error: {
         code: "",
-        text: ""
-      }
-    }
-  }
+        text: "",
+      },
+    },
+  },
 });
 
 // Functions to update the state directly
 const mutations = {
-  isOperational(state, operational) {
-    state.operational = operational;
-  },
-
-  ipAddress(state, address) {
-    state.ipAddress = address;
-  },
-
-  syncStatus(state, sync) {
-    state.percent = Number(toPrecision(parseFloat(sync.percent) * 100, 2));
-    state.currentBlock = sync.currentBlock;
-    state.blockHeight = sync.headerCount;
-    state.chain = sync.chain;
-
-    if (sync.status === "calibrating") {
-      state.calibrating = true;
-    } else {
-      state.calibrating = false;
-    }
-  },
-
-  setBlocks(state, blocks) {
-    const mergedBlocks = [...blocks, ...state.blocks];
-    // remove duplicate blocks
-    const uniqueBlocks = mergedBlocks.filter(
-      (v, i, a) => a.findIndex(t => t.height === v.height) === i
-    );
-    // limit to latest 6 blocks
-    state.blocks = [...uniqueBlocks.slice(0, 6)];
-  },
-
-  setVersion(state, version) {
-    state.version = version.version;
-  },
-
-  setStats(state, stats) {
-    state.stats.peers = stats.peers;
-    state.stats.mempool = stats.mempool;
-    state.stats.blockchainSize = stats.blockchainSize;
-    state.stats.hashrate = stats.hashrate;
-  },
-
-  setP2PInfo(state, p2pInfo) {
-    state.p2p.address = p2pInfo.address;
-    state.p2p.port = p2pInfo.port;
-    state.p2p.connectionString = p2pInfo.connectionString;
-  },
-
-  setElectrumInfo(state, electrumInfo) {
-    state.electrum.address = electrumInfo.address;
-    state.electrum.port = electrumInfo.port;
-    state.electrum.connectionString = electrumInfo.connectionString;
-  },
-
-  setRpcInfo(state, rpcInfo) {
-    state.rpc.rpcuser = rpcInfo.rpcuser;
-    state.rpc.rpcpassword = rpcInfo.rpcpassword;
-    state.rpc.address = rpcInfo.address;
-    state.rpc.port = rpcInfo.port;
-    state.rpc.connectionString = rpcInfo.connectionString;
-  },
-
   peers(state, peers) {
     state.peers.total = peers.total || 0;
     state.peers.inbound = peers.inbound || 0;
@@ -202,7 +120,7 @@ const mutations = {
         state.fees[speed].perByte = "N/A";
         state.fees[speed].error = {
           code: estimate.code,
-          text: estimate.text
+          text: estimate.text,
         };
       } else {
         state.fees[speed].total = estimate.feeSat;
@@ -215,156 +133,11 @@ const mutations = {
 
   price(state, usd) {
     state.price = usd;
-  }
+  },
 };
 
 // Functions to get data from the API
 const actions = {
-  async getStatus({ commit }) {
-    const status = await API.get(
-      `${process.env.VUE_APP_BACKEND_URL}/v1/bitcoind/info/status`
-    );
-
-    if (status) {
-      commit("isOperational", status.operational);
-
-      // if (status.operational) {
-      //   dispatch("getSync");
-      // }
-    }
-  },
-
-  async getAddresses({ commit }) {
-    const addresses = await API.get(
-      `${process.env.VUE_APP_BACKEND_URL}/v1/bitcoind/info/addresses`
-    );
-
-    // Default onion address to not found.
-    commit("onionAddress", "Could not determine bitcoin onion address");
-
-    if (addresses) {
-      addresses.forEach(address => {
-        if (address.includes(".onion")) {
-          commit("onionAddress", address);
-        } else {
-          commit("ipAddress", address);
-        }
-      });
-    }
-  },
-
-  async getP2PInfo({ commit }) {
-    const p2pInfo = await API.get(
-      `${process.env.VUE_APP_MANAGER_API_URL}/v1/system/bitcoin-p2p-connection-details`
-    );
-
-    if (p2pInfo) {
-      commit("setP2PInfo", p2pInfo);
-    }
-  },
-
-  async getElectrumInfo({ commit }) {
-    const electrumInfo = await API.get(
-      `${process.env.VUE_APP_MANAGER_API_URL}/v1/system/electrum-connection-details`
-    );
-
-    if (electrumInfo) {
-      commit("setElectrumInfo", electrumInfo);
-    }
-  },
-
-  async getRpcInfo({ commit }) {
-    const rpcInfo = await API.get(
-      `${process.env.VUE_APP_MANAGER_API_URL}/v1/system/bitcoin-rpc-connection-details`
-    );
-
-    if (rpcInfo) {
-      commit("setRpcInfo", rpcInfo);
-    }
-  },
-
-  async getSync({ commit }) {
-    const sync = await API.get(
-      `${process.env.VUE_APP_BACKEND_URL}/v1/bitcoind/info/sync`
-    );
-
-    if (sync) {
-      commit("syncStatus", sync);
-    }
-  },
-
-  async getBlocks({ commit, state, dispatch }) {
-    await dispatch("getSync");
-
-    // Cache block height array of latest 3 blocks for loading view
-    const currentBlock = state.currentBlock;
-
-    // Don't fetch blocks if no new block has been found
-    if (state.blocks.length && currentBlock === state.blocks[0]["height"]) {
-      return;
-    }
-
-    // Don't fetch blocks if < 3 blocks primarily because we don't have a UI
-    // ready for a blockchain with < 3 blocks
-    if (currentBlock < 3) {
-      return;
-    }
-
-    //TODO: Fetch only new blocks
-    const latestThreeBlocks = await API.get(
-      `${
-        process.env.VUE_APP_BACKEND_URL
-      }/v1/bitcoind/info/blocks?from=${currentBlock - 2}&to=${currentBlock}`
-    );
-
-    if (!latestThreeBlocks.blocks) {
-      return;
-    }
-
-    // Update blocks
-    commit("setBlocks", latestThreeBlocks.blocks);
-  },
-
-  async getVersion({ commit }) {
-    const version = await API.get(
-      `${process.env.VUE_APP_BACKEND_URL}/v1/bitcoind/info/version`
-    );
-
-    if (version) {
-      commit("setVersion", version);
-    }
-  },
-
-  async getPeers({ commit }) {
-    const peers = await API.get(
-      `${process.env.VUE_APP_BACKEND_URL}/v1/bitcoind/info/connections`
-    );
-
-    if (peers) {
-      commit("peers", peers);
-    }
-  },
-
-  async getStats({ commit }) {
-    const stats = await API.get(
-      `${process.env.VUE_APP_BACKEND_URL}/v1/bitcoind/info/stats`
-    );
-
-    if (stats) {
-      const peers = stats.connections;
-      const mempool = stats.mempool;
-      const hashrate = stats.networkhashps;
-      const blockchainSize = stats.size;
-
-      commit("setStats", {
-        peers,
-        mempool,
-        hashrate,
-        blockchainSize
-      });
-    }
-  },
-
   async getBalance({ commit }) {
     const balance = await API.get(
       `${process.env.VUE_APP_BACKEND_URL}/v1/lnd/wallet/btc`
@@ -384,7 +157,7 @@ const actions = {
 
   async getPrice({ commit }) {
     const price = await API.get(
-      `${process.env.VUE_APP_MANAGER_API_URL}/v1/external/price`
+      `${process.env.VUE_APP_BACKEND_URL}/v1/external/price`
     );
 
     if (price) {
@@ -410,14 +183,14 @@ const actions = {
     if (fees) {
       commit("fees", fees);
     }
-  }
+  },
 };
 
 const getters = {
   status(state) {
     const data = {
       class: "loading",
-      text: "Loading..."
+      text: "Loading...",
     };
 
     if (state.operational) {
@@ -440,7 +213,7 @@ const getters = {
     }
 
     if (state.transactions) {
-      state.transactions.forEach(tx => {
+      state.transactions.forEach((tx) => {
         const amount = Number(tx.amount);
 
         let type = "incoming";
@@ -474,7 +247,7 @@ const getters = {
           timestamp: new Date(Number(tx.timeStamp) * 1000),
           description,
           hash: tx.txHash,
-          confirmations: tx.numConfirmations
+          confirmations: tx.numConfirmations,
         });
       });
 
@@ -485,7 +258,7 @@ const getters = {
     }
 
     return txs;
-  }
+  },
 };
 
 export default {
@@ -493,5 +266,5 @@ export default {
   state,
   getters,
   actions,
-  mutations
+  mutations,
 };
