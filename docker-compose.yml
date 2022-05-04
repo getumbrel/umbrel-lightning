@@ -1,6 +1,7 @@
 version: "3.7"
 
 services:
+
   app:
     build:
       dockerfile: ./Dockerfile
@@ -21,8 +22,11 @@ services:
       TLS_FILE: "/lnd/.lnd/tls.cert"
       MACAROON_DIR: /lnd/.lnd/data/chain/bitcoin/regtest/
       CHANNEL_BACKUP_FILE: /lnd/.lnd/data/chain/bitcoin/regtest/channel.backup
+      TOR_PROXY_IP: tor
+      TOR_PROXY_PORT: 9050
     ports:
       - "3006:3006"
+
   lnd:
     image: lightninglabs/lnd:v0.14.1-beta@sha256:810f290f4da51adaf57d53bc1f1e65b52b03c543f322da0b98fb8c47be94a27a
     user: 1000:1000
@@ -40,3 +44,9 @@ services:
     restart: on-failure
     ports:
       - "18443:18443"
+
+  tor:
+    image: lncm/tor:0.4.5.7@sha256:a83e0d9fd1a35adf025f2f34237ec1810e2a59765988dce1dfb222ca8ef6583c
+    command: -f /data/torrc
+    volumes:
+      -  ${PWD}/data/tor:/data
