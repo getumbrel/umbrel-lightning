@@ -18,13 +18,9 @@ services:
       RPC_PASSWORD: "2hmQlIgYfjFoMGAwBQPdvpJ6vDuQbOoBfG_LxznanAk="
       LND_NETWORK: "regtest"
       LND_HOST: "lnd"
-      LND_REST_HIDDEN_SERVICE_FILE: "/var/lib/tor/lnd-rest/hostname"
-      LND_GRPC_HIDDEN_SERVICE_FILE: "/var/lib/tor/lnd-grpc/hostname"
       TLS_FILE: "/lnd/.lnd/tls.cert"
       MACAROON_DIR: /lnd/.lnd/data/chain/bitcoin/regtest/
-      DEVICE_HOSTS: ${DEVICE_HOSTS:-"http://umbrel.local"}
       CHANNEL_BACKUP_FILE: /lnd/.lnd/data/chain/bitcoin/regtest/channel.backup
-      APP_SEED: "0000000000000000000000000000000000000000000000000000000000000000"
     ports:
       - "3006:3006"
   lnd:
