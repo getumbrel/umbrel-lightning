@@ -7,7 +7,7 @@ const state = () => ({
     status: "", //success, failed
     timestamp: null
   },
-  acknowledged: false,
+  acknowledged: true, // assume true to prevent modal flickering
   loading: true,
   unit: "sats", //sats or btc
   api: {
