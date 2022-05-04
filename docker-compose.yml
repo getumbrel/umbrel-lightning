@@ -22,6 +22,7 @@ services:
       TLS_FILE: "/lnd/.lnd/tls.cert"
       MACAROON_DIR: /lnd/.lnd/data/chain/bitcoin/regtest/
       CHANNEL_BACKUP_FILE: /lnd/.lnd/data/chain/bitcoin/regtest/channel.backup
+      BACKUP_STATUS_FILE: /data/backup-status.json
       TOR_PROXY_IP: tor
       TOR_PROXY_PORT: 9050
     ports:

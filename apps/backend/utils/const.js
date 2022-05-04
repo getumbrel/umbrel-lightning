@@ -32,7 +32,7 @@ module.exports = {
   TOR_PROXY_PORT: process.env.TOR_PROXY_PORT || 9050,
 
   BACKUP_STATUS_FILE:
-    process.env.BACKUP_STATUS_FILE || "/statuses/backup-status.json",
+    process.env.BACKUP_STATUS_FILE || "/data/backup-status.json",
 
   TERMS_ACKNOWLEDGE_FILE:
     process.env.TERMS_ACKNOWLEDGE_FILE || "/statuses/terms-acknowledge.json"
