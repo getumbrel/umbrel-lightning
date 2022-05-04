@@ -87,9 +87,7 @@ const actions = {
       `${process.env.VUE_APP_BACKEND_URL}/v1/system/terms-acknowledge`
     );
 
-    if (acknowledged) {
-      commit("setTermsAcknowledgeStatus", acknowledged);
-    }
+    commit("setTermsAcknowledgeStatus", acknowledged);
   },
   async setTermsAcknowledgeStatus({ commit }) {
     const acknowledged = await API.post(
