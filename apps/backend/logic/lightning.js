@@ -347,9 +347,6 @@ async function generateSeed() {
   if (lndStatus.operational) {
     const response = await lndService.generateSeed();
 
-    // save generated mnemonic to user file
-    await diskLogic.writeUserFile({ seed: response.cipherSeedMnemonic.join(",") });
-
     return { seed: response.cipherSeedMnemonic };
   }
 

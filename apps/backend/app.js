@@ -8,8 +8,7 @@ const morgan = require("morgan");
 const bodyParser = require("body-parser");
 
 const lightningLogic = require("logic/lightning");
-const LndUnlocker = require("logic/lnd-unlocker");
-const systemLogic = require("logic/system");
+const diskLogic = require("logic/disk");
 
 const constants = require("utils/const.js");
 
@@ -66,68 +65,57 @@ app.use((req, res) => {
 
 module.exports = app;
 
+const SECOND_IN_MS = 1000;
+const MINUTE_IN_MS = 60 * SECOND_IN_MS;
+
 const delay = ms => new Promise(resolve => setTimeout(resolve, ms));
 
-const waitForLnd = async () => {
+const initLnd = async () => {
+  // Wait for LND to be operational
   while (true) {
-    console.log('Waiting for LND...');
-    const {operational} = await lightningLogic.getStatus();
+    console.log('Checking LND status...');
+    const {operational, unlocked} = await lightningLogic.getStatus();
+    if (unlocked) {
+      console.log('LND already unlocked!');
+      return;
+    }
     if (operational) {
       console.log('LND ready!');
       break;
     }
-    await delay(1000);
+    console.log('Waiting for LND...');
+    await delay(SECOND_IN_MS);
   }
+
+  // Attempt to unlock
+  try {
+    console.log('Attempting to unlock wallet...');
+    await lightningLogic.unlockWallet(constants.LND_WALLET_PASSWORD);
+    console.log('Wallet unlocked!');
+    return;
+  } catch (error) {
+    const reason = error.error && error.error.details || error.message;
+    console.log(`Unlocking wallet failed: "${reason}"`);
+  }
+
+  // Attempt to create a new wallet
+  try {
+    console.log('Attempting to create new wallet...')
+    const {seed} = await lightningLogic.generateSeed();
+    await lightningLogic.initializeWallet(constants.LND_WALLET_PASSWORD, seed);
+    await diskLogic.writeUserFile({ seed: seed.join(",") });
+    console.log('Wallet created!');
+  } catch (error) {
+    const reason = error.error && error.error.details || error.message;
+    console.log(`Error: "${reason}"`);
+  }
+
 };
 
-async function init() {
-
-  await waitForLnd();
-
-  let seed;
-  try {
-    const { seed: retrievedSeed } = await systemLogic.getSeed();
-    seed = retrievedSeed;
-  } catch (e) {
-    try {
-      const { seed: generatedSeed } = await lightningLogic.generateSeed();
-      seed = generatedSeed;
-    } catch(e) {
-      console.error('Error generating seed');
-    }
+// Retry init every minute incase LND crashes
+(async () => {
+  while (true) {
+    await initLnd();
+    await delay(60 * MINUTE_IN_MS);
   }
-
-  // sanity check to ensure seed was retrieved or generated
-  if (seed) {
-    try {
-      const password = constants.LND_WALLET_PASSWORD;
-      lightningLogic
-        .initializeWallet(password, seed)
-        .then(() => {
-          console.log("Wallet created!");
-          // New wallet created successfully, so unlock
-          lndUnlocker = new LndUnlocker(constants.LND_WALLET_PASSWORD);
-          lndUnlocker.start();
-        })
-        .catch(error => {
-          if (error instanceof LndError) {
-            // Wallet already exists, so unlock
-            if (
-              error.message ===
-              "Macaroon exists, therefore wallet already exists"
-            ) {
-              console.log("Wallet already exists, unlocking...");
-              lndUnlocker = new LndUnlocker(constants.LND_WALLET_PASSWORD);
-              lndUnlocker.start();
-            }
-          }
-        });
-    } catch (e) {
-      console.error("initializeWallet error: ", e);
-    }
-  } else {
-    console.error('No seed retrieved or generated')
-  }
-}
-
-init();
+})();
