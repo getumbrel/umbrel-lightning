@@ -103,7 +103,7 @@ const initLnd = async () => {
     console.log('Attempting to create new wallet...')
     const {seed} = await lightningLogic.generateSeed();
     await lightningLogic.initializeWallet(constants.LND_WALLET_PASSWORD, seed);
-    await diskLogic.writeUserFile({ seed: seed.join(",") });
+    await diskLogic.updateJsonStore({seed})
     console.log('Wallet created!');
   } catch (error) {
     const reason = error.error && error.error.details || error.message;

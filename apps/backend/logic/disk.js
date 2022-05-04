@@ -56,7 +56,31 @@ function readLndAdminMacaroon() {
   return diskService.readFile(constants.LND_ADMIN_MACAROON_FILE);
 }
 
+async function getJsonStore() {
+  const defaultProperties = {
+    acceptedTerms: false,
+    seed: "",
+  };
+  try {
+    const jsonStore = await diskService.readJsonFile(constants.JSON_STORE_FILE);
+    return { ...defaultProperties, ...jsonStore };
+  } catch (error) {
+    return defaultProperties;
+  }
+}
+
+// There's a race condition here id you do two updates in parallel but it's fine for our current use case
+async function updateJsonStore(newProps) {
+  const jsonStore = await getJsonStore();
+  return diskService.writeJsonFile(constants.JSON_STORE_FILE, {
+    ...jsonStore,
+    ...newProps
+  });
+}
+
 module.exports = {
+  getJsonStore,
+  updateJsonStore,
   readBackupStatusFile,
   readTermsAcknowledgeFile,
   readManagedChannelsFile,

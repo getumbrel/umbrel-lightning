@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 
 const systemLogic = require("logic/system");
+const diskLogic = require('logic/disk');
 const safeHandler = require("utils/safeHandler");
 const constants = require("utils/const.js");
 
@@ -26,24 +27,28 @@ router.get(
 router.get(
   "/terms-acknowledge",
   safeHandler(async (req, res) => {
-    const terms = await systemLogic.getTermsAcknowledge();
+    const {acceptedTerms} = await diskLogic.getJsonStore();;
 
-    return res.status(constants.STATUS_CODES.OK).json(terms);
+    return res.json(acceptedTerms);
   })
 );
 
 router.post(
   "/terms-acknowledge",
   safeHandler(async (req, res) => {
-    const terms = await systemLogic.writeTermsAcknowledge();
+    await diskLogic.updateJsonStore({acceptedTerms: true});
 
-    return res.status(constants.STATUS_CODES.OK).json(terms);
+    return res.json(true);
   })
 );
 
 router.get(
   "/seed",
-  safeHandler((req, res) => systemLogic.getSeed().then(seed => res.json(seed)))
+  safeHandler(async (req, res) => {
+    const {seed} = await diskLogic.getJsonStore();
+
+    return res.json({seed});
+  })
 );
 
 module.exports = router;
