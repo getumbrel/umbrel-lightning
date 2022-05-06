@@ -7,11 +7,6 @@ WORKDIR /app
 # Copy package.json and install dependencies
 COPY package.json ./
 COPY apps/backend/package.json ./apps/backend/package.json
-# The following line should not be required, it makes the builds take longer and the
-# resulting docker image contains all the frontend build deps. Once the backend deps
-# have all been explicitly declared in apps/backend/package.json it can be removed.
-# Currently the backend is implicitly depending on child deps from the frontend package.
-COPY apps/frontend/package.json ./apps/frontend/package.json
 RUN npm install
 # Copy project files and folders
 COPY apps/backend ./apps/backend
