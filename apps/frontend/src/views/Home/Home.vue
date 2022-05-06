@@ -1,9 +1,13 @@
 <template>
   <div class="py-5 px-4">
     <div class="pb-2">
-      <div class="d-flex justify-content-between align-items-center">
+      <div
+        class="d-flex flex-column flex-md-row justify-content-between align-items-center"
+      >
         <app-header></app-header>
-        <div class="d-flex">
+        <div
+          class="d-flex col-12 col-md-4 justify-content-between justify-content-md-end mb-4 mb-md-0"
+        >
           <sats-btc-switch class="mr-3"></sats-btc-switch>
           <b-dropdown
             variant="link"
@@ -46,6 +50,10 @@
               >View secret words</b-dropdown-item
             >
             <b-dropdown-divider></b-dropdown-divider>
+            <b-dropdown-item href="#" v-b-modal.connect-wallet-modal
+              >Connect wallet</b-dropdown-item
+            >
+            <b-dropdown-divider></b-dropdown-divider>
             <b-dropdown-item
               href="#"
               @click.stop.prevent="downloadChannelBackup"
@@ -85,10 +93,6 @@
             <!-- <b-dropdown-divider /> -->
             <!-- <b-dropdown-item variant="danger" href="#" disabled>Stop LND</b-dropdown-item> -->
           </b-dropdown>
-
-          <lightning-address-modal></lightning-address-modal>
-          <secret-words-modal></secret-words-modal>
-          <bitcoin-syncing-modal></bitcoin-syncing-modal>
         </div>
       </div>
     </div>
@@ -238,6 +242,10 @@
         </card-widget>
       </b-col>
     </b-row>
+    <lightning-address-modal />
+    <secret-words-modal />
+    <connect-wallet-modal />
+    <initial-setup-modal />
   </div>
 </template>
 
@@ -260,7 +268,8 @@ import SatsBtcSwitch from "@/components/Utility/SatsBtcSwitch.vue";
 
 import LightningAddressModal from "./LightningAddressModal.vue";
 import SecretWordsModal from "./SecretWordsModal.vue";
-import BitcoinStillSyncingModal from "./BitcoinStillSyncingModal";
+import ConnectWalletModal from "./ConnectWalletModal";
+import InitialSetupModal from "./InitialSetupModal.vue";
 
 export default {
   data() {
@@ -323,18 +332,31 @@ export default {
     },
     fetchPageData() {
       this.$store.dispatch("lightning/getLndPageData");
+    },
+    fetchData() {
+      this.$store.dispatch("system/getUnit");
+      this.$store.dispatch("bitcoin/getSync");
+      this.$store.dispatch("bitcoin/getBalance");
+      this.$store.dispatch("bitcoin/getTransactions");
+      this.$store.dispatch("lightning/getSync");
+      this.$store.dispatch("lightning/getTransactions");
+      this.$store.dispatch("lightning/getChannels");
     }
   },
   created() {
     this.fetchPageData();
-    this.$store.dispatch("lightning/getLndConnectUrls");
+    this.fetchData();
     this.$store.dispatch("system/getBackupStatus");
-    this.$store.dispatch("system/getTermsAcknowledgeStatus");
-    this.interval = window.setInterval(this.fetchPageData, 10000);
-    this.$bvModal.show("terms-modal");
+    this.pageInterval = window.setInterval(this.fetchPageData, 10000);
+
+    //refresh this data every 20s:
+    this.dataInterval = window.setInterval(this.fetchData, 20000);
+    // show terms initially, then have modal take over logic
+    this.$bvModal.show("initial-setup-modal");
   },
   beforeDestroy() {
-    window.clearInterval(this.interval);
+    window.clearInterval(this.pageInterval);
+    window.clearInterval(this.dataInterval);
   },
   watch: {
     password: function() {
@@ -354,7 +376,8 @@ export default {
     SatsBtcSwitch,
     LightningAddressModal,
     SecretWordsModal,
-    BitcoinSyncingModal: BitcoinStillSyncingModal
+    ConnectWalletModal,
+    InitialSetupModal
   }
 };
 </script>

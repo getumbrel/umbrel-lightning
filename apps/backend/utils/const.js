@@ -18,9 +18,9 @@ module.exports = {
     OK: 200
   },
   LND_REST_HIDDEN_SERVICE:
-    process.env.LND_REST_HIDDEN_SERVICE || "/var/lib/tor/lnd-rest/hostname",
+    process.env.LND_REST_HIDDEN_SERVICE || "unset.onion",
   LND_GRPC_HIDDEN_SERVICE:
-    process.env.LND_GRPC_HIDDEN_SERVICE || "/var/lib/tor/lnd-grpc/hostname",
+    process.env.LND_GRPC_HIDDEN_SERVICE || "unset.onion",
   LND_REST_PORT: process.env.LND_REST_PORT || 8080,
   LND_GRPC_PORT: process.env.LND_GRPC_PORT || 10009,
   LND_CERT_FILE: process.env.TLS_FILE || "/lnd/tls.cert",

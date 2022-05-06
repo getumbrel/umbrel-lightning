@@ -5,7 +5,7 @@ const corsOptions = {
       "http://localhost:8080",
       "http://localhost",
       "http://umbrel.local",
-      ...process.env.DEVICE_HOSTS.split(",")
+      ...process.env.DEVICE_HOSTS?.split(",")
     ];
 
     if (whitelist.indexOf(origin) !== -1 || !origin) {

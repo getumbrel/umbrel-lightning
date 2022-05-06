@@ -61,7 +61,7 @@ async function getLndConnectUrls() {
   let restTorHost;
   try {
     restTorHost = await diskLogic.readLndRestHiddenService();
-    restTorHost += `:${constants.LND_REST_PORT}}`;
+    restTorHost += `:${constants.LND_REST_PORT}`;
   } catch (error) {
     throw new NodeError("Unable to read lnd REST hostname file");
   }

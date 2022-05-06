@@ -6,7 +6,7 @@
       src="@/assets/icon-app-lnd.svg"
     />
     <div>
-      <div class="d-flexalign-items-center">
+      <div class="d-flex align-items-center">
         <svg
           width="8"
           height="8"

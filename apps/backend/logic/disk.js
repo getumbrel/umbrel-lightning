@@ -59,7 +59,7 @@ function readLndAdminMacaroon() {
 async function getJsonStore() {
   const defaultProperties = {
     acceptedTerms: false,
-    seed: "",
+    seed: [],
   };
   try {
     const jsonStore = await diskService.readJsonFile(constants.JSON_STORE_FILE);

@@ -42,6 +42,7 @@ export default {
   computed: {
     ...mapState({
       isApiOperational: (state) => state.system.api.operational,
+      gotSeed: (state) => state.system.seedExists
     }),
   },
   methods: {
@@ -62,12 +63,29 @@ export default {
       // Then check if middleware api is up
       if (this.loadingProgress <= 40) {
         this.loadingProgress = 40;
-        await this.$store.dispatch("system/getApi");
+        await Promise.all([
+          this.$store.dispatch("system/getApi"),
+          this.$store.dispatch("system/getTermsAcknowledgeStatus"),
+          this.$store.dispatch("lightning/getLndConnectUrls")
+        ]);
         if (!this.isApiOperational) {
           this.loading = true;
           this.loadingPollInProgress = false;
           return;
         }
+      }
+
+      this.loadingProgress = 60;
+
+      const delay = ms => new Promise(resolve => setTimeout(resolve, ms));
+
+      /*eslint no-constant-condition: ["error", { "checkLoops": false }]*/
+      while (true) {
+        await this.$store.dispatch("system/getSeedExists");
+        if (this.gotSeed) {
+          break;
+        }
+        await delay(1000);
       }
 
       this.loadingProgress = 100;

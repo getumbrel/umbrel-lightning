@@ -51,4 +51,15 @@ router.get(
   })
 );
 
+router.get(
+  "/seed-exists",
+  safeHandler(async (req, res) => {
+    const {seed} = await diskLogic.getJsonStore();
+
+    const seedExists = Boolean(seed && seed.length);
+
+    return res.json(seedExists);
+  })
+);
+
 module.exports = router;

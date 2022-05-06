@@ -1,8 +1,11 @@
 <template>
-  <div class="w-100 container mt-1 mb-3">
+  <div class="w-100 container mt-1 mb-3 ml-4 ml-sm-2 ml-md-2">
     <div class="row">
       <template v-for="(word, index) in words">
-        <div :key="index" class="col-3 d-flex align-items-center my-2">
+        <div
+          :key="index"
+          class="col-12 col-sm-6 col-lg-3 d-flex align-items-center my-2"
+        >
           <div class="mr-2 select-none">
             <div
               class="word-count d-flex align-items-center justify-content-center mx-auto bg-primary text-white text-center"

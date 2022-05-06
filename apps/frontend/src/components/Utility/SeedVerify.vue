@@ -2,15 +2,17 @@
   <div class="w-100 container">
     <div class="row mt-1 mb-3">
       <template v-for="(word, index) in words">
-        <div :key="index" class="col-3 d-flex align-items-center mt-2 mb-2">
+        <div
+          :key="index"
+          class="col-12 col-sm-6 col-lg-3 d-flex align-items-center mt-2 mb-2"
+        >
           <b-input
-            id="input-sats"
-            class="mb-1 neu-input"
+            class="mb-1 verify-seed-input"
             :class="{
               error: inputWords[index] && inputWords[index] !== words[index]
             }"
             type="text"
-            size="lg"
+            size="md"
             min="1"
             lazy
             autocomplete="off"
@@ -24,7 +26,7 @@
       class="d-flex flex-column align-items-center justify-content-center w-100"
     >
       <p v-if="!valid" class="text-danger">The seed you input is not valid!</p>
-      <a href="#" class="text-center mb-3" @click="prevStep">
+      <a href="#" class="text-center mb-3 text-uppercase" @click="prevStep">
         Back
       </a>
       <div class="d-flex justify-content-end">
@@ -99,5 +101,22 @@ export default {
   width: 3rem;
   line-height: 3rem;
   border-radius: 50%;
+}
+
+.verify-seed-input {
+  font-weight: 700;
+  color: #141821;
+  border-radius: 4px;
+  background: #f8f8f8;
+
+  &::placeholder {
+    font-weight: 400 !important;
+    color: #b5b5b5;
+  }
+}
+
+.verify-seed-input:focus {
+  border: 1px solid #5351fb;
+  box-shadow: none;
 }
 </style>

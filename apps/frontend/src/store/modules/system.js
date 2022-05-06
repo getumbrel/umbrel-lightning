@@ -14,7 +14,8 @@ const state = () => ({
     operational: false,
     version: ""
   },
-  onionAddress: ""
+  onionAddress: "",
+  seedExists: false
 });
 
 // Functions to update the state directly
@@ -39,7 +40,10 @@ const mutations = {
   },
   setTermsAcknowledgeStatus(state, status) {
     state.acknowledged = status;
-  }
+  },
+  setSeedExists(state, seedExists) {
+    state.seedExists = seedExists;
+  },
 };
 
 // Functions to get data from the API
@@ -97,7 +101,13 @@ const actions = {
     if (acknowledged) {
       commit("setTermsAcknowledgeStatus", true);
     }
-  }
+  },
+  async getSeedExists({ commit }) {
+    const seedExists = await API.get(
+      `${process.env.VUE_APP_BACKEND_URL}/v1/system/seed-exists`
+    );
+    commit("setSeedExists", seedExists);
+  },
 };
 
 const getters = {};

@@ -23,12 +23,12 @@
       </div>
     </template>
     <div class="px-2 px-sm-3 pb-2 pb-sm-3">
-      <div class="d-flex align-items-center">
+      <div class="d-flex flex-column flex-md-row align-items-center">
         <!-- Pubkey QR Code -->
         <qr-code
           :value="uris.length ? uris[0] : pubkey"
           :size="180"
-          class="qr-image mx-auto"
+          class="qr-image mx-auto mb-4 mb-md-0"
           showLogo
         ></qr-code>
         <div class="w-100 align-self-center ml-3 ml-sm-4">
@@ -58,6 +58,8 @@
 
 <script>
 import { mapState } from "vuex";
+import InputCopy from "@/components/Utility/InputCopy";
+import QrCode from "@/components/Utility/QrCode";
 
 export default {
   computed: {
@@ -65,6 +67,10 @@ export default {
       uris: state => state.lightning.uris,
       pubkey: state => state.lightning.pubkey
     })
+  },
+  components: {
+    InputCopy,
+    QrCode
   }
 };
 </script>

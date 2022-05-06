@@ -72,12 +72,14 @@ async function getLocalSyncInfo() {
   var blockCount = blockChainInfo.blocks;
   var headerCount = blockChainInfo.headers;
   var percent = blockChainInfo.verificationprogress;
+  var initialblockdownload = blockChainInfo.initialblockdownload;
 
   return {
     chain,
     percent,
     currentBlock: blockCount,
     headerCount: headerCount, // eslint-disable-line object-shorthand,
+    initialblockdownload
   };
 }
 

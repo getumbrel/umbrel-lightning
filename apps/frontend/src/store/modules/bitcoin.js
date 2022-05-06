@@ -1,4 +1,5 @@
 import API from "@/helpers/api";
+import { toPrecision } from "@/helpers/units";
 
 // Initial state
 const state = () => ({
@@ -10,6 +11,7 @@ const state = () => ({
   currentBlock: 0,
   chain: "",
   percent: -1, //for loading state
+  initialblockdownload: false,
   depositAddress: "",
   stats: {
     peers: -1,
@@ -108,6 +110,17 @@ const mutations = {
     state.transactions = transactions;
   },
 
+  setSyncedToChain(state, syncedToChain) {
+    state.syncedToChain = syncedToChain;
+  },
+
+  setSync(state, sync) {
+    state.percent = Number(toPrecision(parseFloat(sync.percent) * 100, 2));
+    state.blockHeight = sync.knownBlockCount;
+    state.currentBlock = sync.processedBlocks;
+    state.initialblockdownload = sync.initialblockdownload;
+  },
+
   depositAddress(state, address) {
     state.depositAddress = address;
   },
@@ -145,6 +158,16 @@ const actions = {
 
     if (balance) {
       commit("balance", balance);
+    }
+  },
+
+  async getSync({ commit }) {
+    const sync = await API.get(
+      `${process.env.VUE_APP_BACKEND_URL}/v1/bitcoin/sync`
+    );
+
+    if (sync) {
+      commit("setSync", sync);
     }
   },
 

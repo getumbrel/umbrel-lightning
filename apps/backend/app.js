@@ -26,6 +26,7 @@ const address = require("routes/v1/lnd/address.js");
 const channel = require("routes/v1/lnd/channel.js");
 const info = require("routes/v1/lnd/info.js");
 const lightning = require("routes/v1/lnd/lightning.js");
+const bitcoin = require("routes/v1/bitcoind/info.js");
 const transaction = require("routes/v1/lnd/transaction.js");
 const util = require("routes/v1/lnd/util.js");
 const wallet = require("routes/v1/lnd/wallet.js");
@@ -50,6 +51,7 @@ app.use("/v1/lnd/address", address);
 app.use("/v1/lnd/channel", channel);
 app.use("/v1/lnd/info", info);
 app.use("/v1/lnd/lightning", lightning);
+app.use("/v1/bitcoin", bitcoin);
 app.use("/v1/lnd/transaction", transaction);
 app.use("/v1/lnd/wallet", wallet);
 app.use("/v1/lnd/util", util);
@@ -116,6 +118,6 @@ const initLnd = async () => {
 (async () => {
   while (true) {
     await initLnd();
-    await delay(60 * MINUTE_IN_MS);
+    await delay(1 * MINUTE_IN_MS);
   }
 })();

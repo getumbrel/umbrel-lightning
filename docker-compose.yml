@@ -23,6 +23,8 @@ services:
       MACAROON_DIR: /lnd/.lnd/data/chain/bitcoin/regtest/
       CHANNEL_BACKUP_FILE: /lnd/.lnd/data/chain/bitcoin/regtest/channel.backup
       BACKUP_STATUS_FILE: /data/backup-status.json
+      LND_REST_HIDDEN_SERVICE: rest.onion
+      LND_GRPC_HIDDEN_SERVICE: grpc.onion
       TOR_PROXY_IP: tor
       TOR_PROXY_PORT: 9050
     ports:
