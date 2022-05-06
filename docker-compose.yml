@@ -25,6 +25,7 @@ services:
       BACKUP_STATUS_FILE: /data/backup-status.json
       LND_REST_HIDDEN_SERVICE: rest.onion
       LND_GRPC_HIDDEN_SERVICE: grpc.onion
+      JSON_STORE_FILE: /data/state.json
       TOR_PROXY_IP: tor
       TOR_PROXY_PORT: 9050
     ports:

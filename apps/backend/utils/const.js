@@ -8,7 +8,6 @@ module.exports = {
   USER_FILE: process.env.USER_FILE || "/db/user.json",
   JSON_STORE_FILE: process.env.JSON_STORE_FILE || "/data/state.json",
   MANAGED_CHANNELS_FILE: "/channel-data/managedChannels.json",
-  LND_SEED: process.env.APP_SEED,
   LND_WALLET_PASSWORD: process.env.LND_WALLET_PASSWORD || "moneyprintergobrrr",
   REQUEST_CORRELATION_NAMESPACE_KEY: "umbrel-middleware-request",
   REQUEST_CORRELATION_ID_KEY: "reqId",
