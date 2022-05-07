@@ -2,7 +2,7 @@
   <div class="py-4 px-3">
     <div class="d-flex align-items-center w-100 flex flex-column text-center">
       <h2 class="lowercase">note down your secret words</h2>
-      <p class="mb-5" style="width: 85%;">
+      <p class="mb-3" style="width: 85%;">
         Keep these words at a secure place. You’ll need these to recover your
         funds if something goes wrong with your node.
       </p>

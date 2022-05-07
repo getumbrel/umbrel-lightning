@@ -1,7 +1,7 @@
 <template>
-  <div class="d-flex justify-content-start align-items-center mb-4">
+  <div class="d-flex flex-grow-1 justify-content-start align-items-center mb-4">
     <img
-      class="mr-3"
+      class="mr-2 mr-sm-3"
       style="height: 6rem; width: 6rem"
       src="@/assets/icon-app-lnd.svg"
     />
@@ -19,7 +19,7 @@
         <small class="ml-1 text-success">{{ status }}</small>
       </div>
       <h3 class="font-weight-bold mb-1">
-        Lightning Network Daemon
+        Lightning Node
       </h3>
       <span class="text-sm text-muted font-medium">
         {{
@@ -37,16 +37,16 @@ import { mapState } from "vuex";
 export default {
   data() {
     return {
-      status: "Running",
+      status: "Running"
     };
   },
   computed: {
     ...mapState({
-      lndVersion: (state) => state.lightning.version,
-    }),
+      lndVersion: state => state.lightning.version
+    })
   },
   created() {
     this.$store.dispatch("lnd/getVersion");
-  },
+  }
 };
 </script>

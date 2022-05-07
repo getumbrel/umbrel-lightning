@@ -1,99 +1,99 @@
 <template>
-  <div class="py-5 px-4">
+  <div class="py-4 px-2">
     <div class="pb-2">
       <div
-        class="d-flex flex-column flex-md-row justify-content-between align-items-center"
+        class="d-flex flex-wrap justify-content-between align-items-center mb-2"
       >
         <app-header></app-header>
+
         <div
-          class="d-flex col-12 col-md-4 justify-content-between justify-content-md-end mb-4 mb-md-0"
+          class="order-1 order-sm-2 order-md-1 col-auto col-sm-12 col-md-auto"
         >
-          <sats-btc-switch class="mr-3"></sats-btc-switch>
-          <b-dropdown
-            variant="link"
-            toggle-class="text-decoration-none p-0"
-            no-caret
-            right
-          >
-            <template v-slot:button-content>
-              <svg
-                width="18"
-                height="4"
-                viewBox="0 0 18 4"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  fill-rule="evenodd"
-                  clip-rule="evenodd"
-                  d="M2 4C3.10457 4 4 3.10457 4 2C4 0.89543 3.10457 0 2 0C0.89543 0 0 0.89543 0 2C0 3.10457 0.89543 4 2 4Z"
-                  fill="#6c757d"
-                />
-                <path
-                  fill-rule="evenodd"
-                  clip-rule="evenodd"
-                  d="M9 4C10.1046 4 11 3.10457 11 2C11 0.89543 10.1046 0 9 0C7.89543 0 7 0.89543 7 2C7 3.10457 7.89543 4 9 4Z"
-                  fill="#6c757d"
-                />
-                <path
-                  fill-rule="evenodd"
-                  clip-rule="evenodd"
-                  d="M16 4C17.1046 4 18 3.10457 18 2C18 0.89543 17.1046 0 16 0C14.8954 0 14 0.89543 14 2C14 3.10457 14.8954 4 16 4Z"
-                  fill="#6c757d"
-                />
-              </svg>
-            </template>
-            <b-dropdown-item href="#" v-b-modal.lightning-address-modal
-              >Lightning Address</b-dropdown-item
-            >
-            <b-dropdown-item href="#" v-b-modal.secret-words-modal
-              >View secret words</b-dropdown-item
-            >
-            <b-dropdown-divider></b-dropdown-divider>
-            <b-dropdown-item href="#" v-b-modal.connect-wallet-modal
-              >Connect wallet</b-dropdown-item
-            >
-            <b-dropdown-divider></b-dropdown-divider>
-            <b-dropdown-item
-              href="#"
-              @click.stop.prevent="downloadChannelBackup"
-              >Download channel backup file</b-dropdown-item
-            >
-            <b-dropdown-divider></b-dropdown-divider>
-            <b-dropdown-group>
-              <div class="dropdown-group">
-                <div class="d-flex w-100 justify-content-between">
-                  <div>
-                    <span class="d-block">Automatic backups</span>
-                    <small class="d-block">
-                      <a
-                        href="https://github.com/getumbrel/umbrel/blob/master/scripts/backup/README.md"
-                        target="blank"
-                        >Learn more</a
-                      >
-                    </small>
-                  </div>
-                  <toggle-switch
-                    class="align-self-center"
-                    disabled
-                    tooltip="Sorry, automatic backups cannot be disabled for now"
-                  ></toggle-switch>
-                </div>
-                <small
-                  v-if="backupStatus.status"
-                  class="d-block mt-2"
-                  style="opacity: 0.4"
-                >
-                  Last backup
-                  <span v-if="backupStatus.status === 'failed'">failed</span>
-                  at {{ getReadableTime(backupStatus.timestamp) }}
-                </small>
-              </div>
-            </b-dropdown-group>
-            <!-- <b-dropdown-divider /> -->
-            <!-- <b-dropdown-item variant="danger" href="#" disabled>Stop LND</b-dropdown-item> -->
-          </b-dropdown>
+          <sats-btc-switch></sats-btc-switch>
         </div>
+        <b-dropdown
+          class="order-2 order-sm-1 order-md-2 col-auto"
+          variant="link"
+          toggle-class="text-decoration-none p-0"
+          no-caret
+          right
+        >
+          <template v-slot:button-content>
+            <svg
+              width="18"
+              height="4"
+              viewBox="0 0 18 4"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                fill-rule="evenodd"
+                clip-rule="evenodd"
+                d="M2 4C3.10457 4 4 3.10457 4 2C4 0.89543 3.10457 0 2 0C0.89543 0 0 0.89543 0 2C0 3.10457 0.89543 4 2 4Z"
+                fill="#6c757d"
+              />
+              <path
+                fill-rule="evenodd"
+                clip-rule="evenodd"
+                d="M9 4C10.1046 4 11 3.10457 11 2C11 0.89543 10.1046 0 9 0C7.89543 0 7 0.89543 7 2C7 3.10457 7.89543 4 9 4Z"
+                fill="#6c757d"
+              />
+              <path
+                fill-rule="evenodd"
+                clip-rule="evenodd"
+                d="M16 4C17.1046 4 18 3.10457 18 2C18 0.89543 17.1046 0 16 0C14.8954 0 14 0.89543 14 2C14 3.10457 14.8954 4 16 4Z"
+                fill="#6c757d"
+              />
+            </svg>
+          </template>
+          <b-dropdown-item href="#" v-b-modal.lightning-address-modal
+            >Lightning Address</b-dropdown-item
+          >
+          <b-dropdown-item href="#" v-b-modal.secret-words-modal
+            >View secret words</b-dropdown-item
+          >
+          <b-dropdown-divider></b-dropdown-divider>
+          <b-dropdown-item href="#" v-b-modal.connect-wallet-modal
+            >Connect wallet</b-dropdown-item
+          >
+          <b-dropdown-divider></b-dropdown-divider>
+          <b-dropdown-item href="#" @click.stop.prevent="downloadChannelBackup"
+            >Download channel backup file</b-dropdown-item
+          >
+          <b-dropdown-divider></b-dropdown-divider>
+          <b-dropdown-group>
+            <div class="dropdown-group">
+              <div class="d-flex w-100 justify-content-between">
+                <div>
+                  <span class="d-block">Automatic backups</span>
+                  <small class="d-block">
+                    <a
+                      href="https://github.com/getumbrel/umbrel/blob/master/scripts/backup/README.md"
+                      target="blank"
+                      >Learn more</a
+                    >
+                  </small>
+                </div>
+                <toggle-switch
+                  class="align-self-center"
+                  disabled
+                  tooltip="Sorry, automatic backups cannot be disabled for now"
+                ></toggle-switch>
+              </div>
+              <small
+                v-if="backupStatus.status"
+                class="d-block mt-2"
+                style="opacity: 0.4"
+              >
+                Last backup
+                <span v-if="backupStatus.status === 'failed'">failed</span>
+                at {{ getReadableTime(backupStatus.timestamp) }}
+              </small>
+            </div>
+          </b-dropdown-group>
+          <!-- <b-dropdown-divider /> -->
+          <!-- <b-dropdown-item variant="danger" href="#" disabled>Stop LND</b-dropdown-item> -->
+        </b-dropdown>
       </div>
     </div>
     <b-row class="row-eq-height">

@@ -9,16 +9,17 @@
     </p>
     <p class="mb-4 w-75">
       Lightning Network is an experimental technology. This app is in beta and
-      it is considered #reckless to put any life altering amounts of BTC
-      into the network.
+      it is considered #reckless to put any life altering amounts of BTC into
+      the network.
     </p>
     <b-button
       variant="success"
       href="#"
       class="text-center mt-3"
+      :class="{ blink: sendingRequest }"
       v-on:click.stop.prevent="acknowledgeTerms"
     >
-      {{ sendingRequest ? "Agreeing..." : "I agree" }}
+      I agree
     </b-button>
   </div>
 </template>
@@ -43,3 +44,19 @@ export default {
   }
 };
 </script>
+
+<style scoped>
+.blink {
+  animation: blink 1.5s infinite ease;
+}
+
+@keyframes blink {
+  0%,
+  100% {
+    opacity: 0.2;
+  }
+  50% {
+    opacity: 0.6;
+  }
+}
+</style>

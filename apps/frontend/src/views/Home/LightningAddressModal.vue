@@ -31,7 +31,7 @@
           class="qr-image mx-auto mb-4 mb-md-0"
           showLogo
         ></qr-code>
-        <div class="w-100 align-self-center ml-3 ml-sm-4">
+        <div class="w-100 align-self-center ml-0 ml-md-4">
           <p>
             Other Lightning nodes can open payment channels to your node on the
             following address
