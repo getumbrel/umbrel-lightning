@@ -4,8 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "serve": "VUE_APP_API_URL= vue-cli-service serve",
-    "build": "VUE_APP_API_URL= vue-cli-service build --mode production",
+    "serve": "vue-cli-service serve",
+    "build": "vue-cli-service build --mode production",
     "lint": "vue-cli-service lint"
   },
   "keywords": [],

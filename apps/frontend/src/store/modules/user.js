@@ -17,7 +17,7 @@ const actions = {
   async getSeed({ commit }) {
     //get user's stored seed if already registered
     const rawSeed = await API.get(
-      `${process.env.VUE_APP_BACKEND_URL}/v1/system/seed`
+      `${process.env.VUE_APP_API_BASE_URL}/v1/system/seed`
     );
 
     if (rawSeed && rawSeed.seed) {

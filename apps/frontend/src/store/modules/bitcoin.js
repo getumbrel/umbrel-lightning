@@ -153,7 +153,7 @@ const mutations = {
 const actions = {
   async getBalance({ commit }) {
     const balance = await API.get(
-      `${process.env.VUE_APP_BACKEND_URL}/v1/lnd/wallet/btc`
+      `${process.env.VUE_APP_API_BASE_URL}/v1/lnd/wallet/btc`
     );
 
     if (balance) {
@@ -163,7 +163,7 @@ const actions = {
 
   async getSync({ commit }) {
     const sync = await API.get(
-      `${process.env.VUE_APP_BACKEND_URL}/v1/bitcoin/sync`
+      `${process.env.VUE_APP_API_BASE_URL}/v1/bitcoin/sync`
     );
 
     if (sync) {
@@ -173,14 +173,14 @@ const actions = {
 
   async getTransactions({ commit }) {
     const transactions = await API.get(
-      `${process.env.VUE_APP_BACKEND_URL}/v1/lnd/transaction`
+      `${process.env.VUE_APP_API_BASE_URL}/v1/lnd/transaction`
     );
     commit("transactions", transactions);
   },
 
   async getPrice({ commit }) {
     const price = await API.get(
-      `${process.env.VUE_APP_BACKEND_URL}/v1/external/price`
+      `${process.env.VUE_APP_API_BASE_URL}/v1/external/price`
     );
 
     if (price) {
@@ -190,7 +190,7 @@ const actions = {
 
   async getDepositAddress({ commit }) {
     const { address } = await API.get(
-      `${process.env.VUE_APP_BACKEND_URL}/v1/lnd/address`
+      `${process.env.VUE_APP_API_BASE_URL}/v1/lnd/address`
     );
 
     if (address) {
@@ -200,7 +200,7 @@ const actions = {
 
   async getFees({ commit }, { address, confTarget, amt, sweep }) {
     const fees = await API.get(
-      `${process.env.VUE_APP_BACKEND_URL}/v1/lnd/transaction/estimateFee?address=${address}&confTarget=${confTarget}&amt=${amt}&sweep=${sweep}`
+      `${process.env.VUE_APP_API_BASE_URL}/v1/lnd/transaction/estimateFee?address=${address}&confTarget=${confTarget}&amt=${amt}&sweep=${sweep}`
     );
 
     if (fees) {

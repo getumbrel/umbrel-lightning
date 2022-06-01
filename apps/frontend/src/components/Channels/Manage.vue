@@ -206,7 +206,7 @@ export default {
           force: !this.channel.active, // Avoids force closing if channel is active
         };
         await API.delete(
-          `${process.env.VUE_APP_BACKEND_URL}/v1/lnd/channel/close`,
+          `${process.env.VUE_APP_API_BASE_URL}/v1/lnd/channel/close`,
           payload
         );
         this.$emit("channelclose");

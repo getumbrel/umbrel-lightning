@@ -50,7 +50,7 @@ const mutations = {
 const actions = {
   async getVersion({ commit }) {
     const data = await API.get(
-      `${process.env.VUE_APP_BACKEND_URL}/v1/system/info`
+      `${process.env.VUE_APP_API_BASE_URL}/v1/system/info`
     );
     if (data && data.version) {
       let { version } = data;
@@ -72,7 +72,7 @@ const actions = {
     }
   },
   async getApi({ commit }) {
-    const api = await API.get(`${process.env.VUE_APP_BACKEND_URL}/ping`);
+    const api = await API.get(`${process.env.VUE_APP_API_BASE_URL}/ping`);
     commit("setApi", {
       operational: !!(api && api.version),
       version: api && api.version ? api.version : ""
@@ -80,7 +80,7 @@ const actions = {
   },
   async getBackupStatus({ commit }) {
     const status = await API.get(
-      `${process.env.VUE_APP_BACKEND_URL}/v1/system/backup-status`
+      `${process.env.VUE_APP_API_BASE_URL}/v1/system/backup-status`
     );
     if (status && status.timestamp) {
       commit("setBackupStatus", status);
@@ -88,14 +88,14 @@ const actions = {
   },
   async getTermsAcknowledgeStatus({ commit }) {
     const acknowledged = await API.get(
-      `${process.env.VUE_APP_BACKEND_URL}/v1/system/terms-acknowledge`
+      `${process.env.VUE_APP_API_BASE_URL}/v1/system/terms-acknowledge`
     );
 
     commit("setTermsAcknowledgeStatus", acknowledged);
   },
   async setTermsAcknowledgeStatus({ commit }) {
     const acknowledged = await API.post(
-      `${process.env.VUE_APP_BACKEND_URL}/v1/system/terms-acknowledge`
+      `${process.env.VUE_APP_API_BASE_URL}/v1/system/terms-acknowledge`
     );
 
     if (acknowledged) {
@@ -104,7 +104,7 @@ const actions = {
   },
   async getSeedExists({ commit }) {
     const seedExists = await API.get(
-      `${process.env.VUE_APP_BACKEND_URL}/v1/system/seed-exists`
+      `${process.env.VUE_APP_API_BASE_URL}/v1/system/seed-exists`
     );
     commit("setSeedExists", seedExists);
   },

@@ -840,7 +840,7 @@ export default {
 
       try {
         const res = await API.post(
-          `${process.env.VUE_APP_BACKEND_URL}/v1/lnd/transaction`,
+          `${process.env.VUE_APP_API_BASE_URL}/v1/lnd/transaction`,
           payload
         );
         const withdrawTx = res.data;

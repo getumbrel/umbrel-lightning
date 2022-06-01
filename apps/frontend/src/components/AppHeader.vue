@@ -3,7 +3,7 @@
     <img
       class="mr-2 mr-sm-3"
       style="height: 6rem; width: 6rem"
-      src="@/assets/icon-app-lnd.svg"
+      src="@/assets/icon.svg"
     />
     <div>
       <div class="d-flex align-items-center">

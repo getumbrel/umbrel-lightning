@@ -31,7 +31,7 @@ export default {
     },
     async downloadChannelBackup() {
       await API.download(
-        `${process.env.VUE_APP_BACKEND_URL}/v1/lnd/util/download-channel-backup`,
+        `${process.env.VUE_APP_API_BASE_URL}/v1/lnd/util/download-channel-backup`,
         {},
         true,
         "my-umbrel-channels.backup"
@@ -86,7 +86,6 @@ export default {
     margin-left: 1rem;
   }
   .input-search-icon {
-    content: url("~@/assets/icon-search.svg");
     position: absolute;
     top: calc(50% - 0.625rem);
     left: -0.25rem;

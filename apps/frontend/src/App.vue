@@ -5,7 +5,7 @@
         <div
           class="d-flex flex-column align-items-center justify-content-center min-vh100 p-2"
         >
-          <img alt="Umbrel" src="@/assets/logo.svg" class="mb-5 logo" />
+          <img alt="Umbrel" src="@/assets/icon.svg" class="mb-5 logo" />
           <span class="text-muted w-75 text-center">
             <small
               >For security reasons Umbrel cannot be embedded in an
@@ -97,7 +97,6 @@ export default {
     },
   },
   created() {
-    document.title = "LND - Umbrel";
     //for 100vh consistency
     this.updateViewPortHeightCSS();
     window.addEventListener("resize", this.updateViewPortHeightCSS);
