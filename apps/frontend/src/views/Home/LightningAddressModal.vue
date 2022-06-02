@@ -2,7 +2,7 @@
   <b-modal id="lightning-address-modal" size="lg" centered hide-footer>
     <template v-slot:modal-header="{ close }">
       <div class="px-2 px-sm-3 pt-2 d-flex justify-content-between w-100">
-        <h3 class="text-lowercase">Lightning Address</h3>
+        <h3 class="text-lowercase">Lightning address</h3>
         <!-- Emulate built in modal header close button action -->
         <a href="#" class="align-self-center" v-on:click.stop.prevent="close">
           <svg

@@ -1,8 +1,10 @@
 import API from "@/helpers/api";
 
+const emptySeedArray = ["", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", ""] // for loading placeholder
+
 // Initial state
 const state = () => ({
-  seed: []
+  seed: emptySeedArray,
 });
 
 // Functions to update the state directly
@@ -25,7 +27,7 @@ const actions = {
     }
   },
   async clearSeed({ commit }) {
-    commit("setSeed", "");
+    commit("setSeed", emptySeedArray);
   }
 };
 

@@ -1,5 +1,9 @@
 <template>
-  <router-view></router-view>
+  <div class="content-container px-2">
+    <transition name="change-page" mode="out-in">
+    <router-view></router-view>
+    </transition>
+  </div>
 </template>
 
 <script>
@@ -26,9 +30,6 @@ export default {
       this.$store.dispatch("lightning/getTransactions");
       this.$store.dispatch("lightning/getChannels");
     },
-    toggleMobileMenu() {
-      this.$store.commit("toggleMobileMenu");
-    },
     async downloadChannelBackup() {
       await API.download(
         `${process.env.VUE_APP_API_BASE_URL}/v1/lnd/util/download-channel-backup`,
@@ -39,9 +40,6 @@ export default {
     },
   },
   created() {
-    //load this data once:
-    this.$store.dispatch("user/getInfo");
-
     //refresh this data every 20s:
     this.fetchData();
     this.interval = window.setInterval(this.fetchData, 20000);
@@ -58,141 +56,11 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.nav-horizontal {
-  background: #fff;
-  position: sticky;
-  z-index: 9;
-}
-
-.nav-horizontal {
-  top: 0;
-}
-
 .content-container {
-  min-height: calc(100vh - 150px);
-}
-
-.input-search-form {
-  form {
-    position: relative;
-  }
-  .input-search {
-    border: none !important;
-    outline: none !important;
-    box-shadow: none !important;
-    width: calc(100vw - 200px);
-    max-width: 600px;
-    font-size: 1rem;
-    margin-left: 1rem;
-  }
-  .input-search-icon {
-    position: absolute;
-    top: calc(50% - 0.625rem);
-    left: -0.25rem;
-    height: 1.25rem;
-    width: auto;
-  }
-}
-
-::-webkit-input-placeholder {
-  /* Edge */
-  color: #c3c6d1;
-}
-
-:-ms-input-placeholder {
-  /* Internet Explorer 10-11 */
-  color: #c3c6d1;
-}
-
-::placeholder {
-  color: #c3c6d1;
-}
-
-.nav-hamburger-icon {
-  width: 24px;
-  cursor: pointer;
-  &:before,
-  &:after,
-  div {
-    background-color: #c3c6d1;
-    border-radius: 3px;
-    content: "";
-    display: block;
-    height: 4px;
-    width: 100%;
-    margin: 5px 0;
-    transition: transform 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-  }
-  div {
-    width: 20px;
-    margin-left: 4px;
-  }
-  &.active {
-    &:before {
-      transform: translateY(9px) rotate(135deg);
-    }
-    &:after {
-      transform: translateY(-9px) rotate(-135deg);
-    }
-    div {
-      transform: scale(0);
-    }
-  }
-}
-
-.mobile-vertical-menu {
-  position: fixed;
-  z-index: 9;
-  top: 84px;
-  right: 0;
-  width: 80vw;
-  max-width: 280px;
-  height: calc(var(--vh100, 100vh) - 84px);
-  background: #fff;
-  box-shadow: 0px 10px 30px rgba(209, 213, 223, 0.5);
-  transition: transform 0.6s cubic-bezier(0.77, 0, 0.175, 1);
-}
-
-.mobile-vertical-menu-enter {
-  // opacity: 0;
-  transform: translate3d(100%, 0, 0);
-}
-.mobile-vertical-menu-enter-to {
-  opacity: 1;
-  transform: translate3d(0, 0, 0);
-}
-.mobile-vertical-menu-leave {
-  opacity: 1;
-  transform: translate3d(0, 0, 0);
-}
-.mobile-vertical-menu-leave-to {
-  // opacity: 0;
-  transform: translate3d(100%, 0, 0);
-}
-
-.mobile-vertical-menu-fader {
-  position: fixed;
-  height: var(--vh100, 100vh);
-  width: 100vw;
-  left: 0;
-  top: 0;
-  background: rgba(0, 0, 0, 1);
-  z-index: 8;
-  opacity: 0.1;
-  transition: opacity 0.6s ease-in-out;
-}
-
-.mobile-vertical-menu-fader-enter {
-  opacity: 0;
-}
-.mobile-vertical-menu-fader-enter-to {
-  opacity: 0.1;
-}
-.mobile-vertical-menu-fader-leave {
-  opacity: 0.1;
-}
-.mobile-vertical-menu-fader-leave-to {
-  opacity: 0;
+  display: block;
+  width: 100%;
+  max-width: 1374px;
+  margin: auto;
 }
 
 // Page changing transitions

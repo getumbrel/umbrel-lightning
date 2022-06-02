@@ -1,7 +1,7 @@
 <template>
   <div>
     <span class="text-sm font-medium text-muted truncate">{{ title }}</span>
-    <div class="pb-3">
+    <div class="py-2">
       <div class="mb-1">
         <!-- Loading state -->
         <span
@@ -9,8 +9,8 @@
           v-if="numberValue === -1"
           style
         ></span>
-        <div class="d-flexitems-baseline" v-else>
-          <h3 class="font-semibold text-3xl mb-0">
+        <div class="d-flex align-items-baseline" v-else>
+          <h4 class="font-semibold text-3xl mb-0">
             <!-- suffix number like 100K, 120K, 2M, etc -->
             <CountUp
               :value="{
@@ -20,7 +20,7 @@
               :suffix="numberSuffix"
               countOnLoad
             />
-          </h3>
+          </h4>
           <span class="text-muted ml-1 text-xl">{{ suffix }}</span>
         </div>
       </div>

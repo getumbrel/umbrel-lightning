@@ -94,13 +94,10 @@ const actions = {
     commit("setTermsAcknowledgeStatus", acknowledged);
   },
   async setTermsAcknowledgeStatus({ commit }) {
-    const acknowledged = await API.post(
+    commit("setTermsAcknowledgeStatus", true); // update state to immediately hide modal
+    await API.post(
       `${process.env.VUE_APP_API_BASE_URL}/v1/system/terms-acknowledge`
     );
-
-    if (acknowledged) {
-      commit("setTermsAcknowledgeStatus", true);
-    }
   },
   async getSeedExists({ commit }) {
     const seedExists = await API.get(

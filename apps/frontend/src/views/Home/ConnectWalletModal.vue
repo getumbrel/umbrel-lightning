@@ -1,8 +1,8 @@
 <template>
-  <b-modal id="connect-wallet-modal" size="lg" centered hide-footer>
+  <b-modal id="connect-wallet-modal" size="xl" centered hide-footer>
     <template v-slot:modal-header="{ close }">
       <div class="px-2 px-sm-3 pt-2 d-flex justify-content-between w-100">
-        <h2 class="text-lowercase">connect wallet</h2>
+        <h3 class="text-lowercase">Connect your Lightning wallet to your node</h3>
         <!-- Emulate built in modal header close button action -->
         <a href="#" class="align-self-center" v-on:click.stop.prevent="close">
           <svg
@@ -35,7 +35,7 @@
                   ? restTor.lndconnectUrl
                   : grpcTor.lndconnectUrl
               "
-              :size="220"
+              :size="240"
               class="qr-image mx-auto"
               showLogo
             ></qr-code>
@@ -66,11 +66,6 @@
             </div>
             <!-- REST Section -->
             <div v-if="currentMode === 'rest'">
-              <p>
-                Looking for step-by-step instructions to connect your Lightning
-                Wallet to your node?
-                <a target="_blank" href="#">Click here</a>
-              </p>
               <div class="row">
                 <div class="col-12 col-sm-6">
                   <label class="mb-1 d-block"
@@ -152,11 +147,6 @@
             </div>
             <!-- GRPC Section -->
             <div v-if="currentMode === 'grpc'">
-              <p>
-                Looking for step-by-step instructions to connect your Lightning
-                Wallet to your node?
-                <a target="_blank" href="#">Click here</a>
-              </p>
               <div class="row">
                 <div class="col-12 col-sm-6">
                   <label class="mb-1 d-block"
@@ -236,6 +226,11 @@
                 </div>
               </div>
             </div>
+            <p class="mt-2 mb-4">
+              Looking for step-by-step instructions to connect your Lightning
+              wallet to your node?
+              <a target="_blank" href="#">Click here</a>
+            </p>
           </div>
         </div>
       </div>

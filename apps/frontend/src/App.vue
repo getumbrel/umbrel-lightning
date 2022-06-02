@@ -8,7 +8,7 @@
           <img alt="Umbrel" src="@/assets/icon.svg" class="mb-5 logo" />
           <span class="text-muted w-75 text-center">
             <small
-              >For security reasons Umbrel cannot be embedded in an
+              >For security reasons this app cannot be embedded in an
               iframe.</small
             >
           </span>

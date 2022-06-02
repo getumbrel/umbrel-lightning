@@ -2,7 +2,7 @@
   <div
     class="py-3 px-2 d-flex align-items-center w-100 flex flex-column text-center"
   >
-    <h2 class="lowercase">before we begin...</h2>
+    <h2>before we begin...</h2>
     <p>A word of caution.</p>
     <p class="h1">
       <b-icon icon="exclamation-circle" variant="warning"></b-icon>
@@ -16,10 +16,10 @@
       variant="success"
       href="#"
       class="text-center mt-3"
-      :class="{ blink: sendingRequest }"
+      :class="{ 'fade-in-out': sendingRequest }"
       v-on:click.stop.prevent="acknowledgeTerms"
     >
-      I agree
+      I understand &amp; agree
     </b-button>
   </div>
 </template>
@@ -45,18 +45,3 @@ export default {
 };
 </script>
 
-<style scoped>
-.blink {
-  animation: blink 1.5s infinite ease;
-}
-
-@keyframes blink {
-  0%,
-  100% {
-    opacity: 0.2;
-  }
-  50% {
-    opacity: 0.6;
-  }
-}
-</style>

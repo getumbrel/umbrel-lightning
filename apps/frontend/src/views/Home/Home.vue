@@ -4,15 +4,39 @@
       <div
         class="d-flex flex-wrap justify-content-between align-items-center mb-2"
       >
-        <app-header></app-header>
-
-        <div
-          class="order-1 order-sm-2 order-md-1 col-auto col-sm-12 col-md-auto"
-        >
-          <sats-btc-switch></sats-btc-switch>
+        <div class="d-flex flex-grow-1 justify-content-start align-items-center mb-4">
+          <img
+            class="app-icon mr-2 mr-sm-3"
+            src="@/assets/icon.svg"
+          />
+          <div>
+            <div class="d-flex align-items-center">
+              <svg
+                width="8"
+                height="8"
+                viewBox="0 0 8 8"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <circle cx="4" cy="4" r="4" fill="#00CD98" />
+              </svg>
+              <small class="ml-1 text-success">{{ status }}</small>
+            </div>
+            <h3 class="font-weight-bold mb-1">
+              Lightning Node
+            </h3>
+            <span class="text-sm text-muted font-medium">
+              {{
+                this.lndVersion ? `LND ${this.lndVersion.split(" commit")[0]}` : "..."
+              }}
+            </span>
+          </div>
         </div>
+
+        <div class="d-flex justify-content-between justify-content-sm-start w-xs-100">
+        <sats-btc-switch></sats-btc-switch>
         <b-dropdown
-          class="order-2 order-sm-1 order-md-2 col-auto"
+          class="ml-3"
           variant="link"
           toggle-class="text-decoration-none p-0"
           no-caret
@@ -47,20 +71,18 @@
             </svg>
           </template>
           <b-dropdown-item href="#" v-b-modal.lightning-address-modal
-            >Lightning Address</b-dropdown-item
+            >Lightning address</b-dropdown-item
+          >
+          <b-dropdown-item href="#" v-b-modal.connect-wallet-modal
+            >Connect wallet</b-dropdown-item
           >
           <b-dropdown-item href="#" v-b-modal.secret-words-modal
             >View secret words</b-dropdown-item
           >
           <b-dropdown-divider></b-dropdown-divider>
-          <b-dropdown-item href="#" v-b-modal.connect-wallet-modal
-            >Connect wallet</b-dropdown-item
-          >
-          <b-dropdown-divider></b-dropdown-divider>
           <b-dropdown-item href="#" @click.stop.prevent="downloadChannelBackup"
             >Download channel backup file</b-dropdown-item
           >
-          <b-dropdown-divider></b-dropdown-divider>
           <b-dropdown-group>
             <div class="dropdown-group">
               <div class="d-flex w-100 justify-content-between">
@@ -94,6 +116,7 @@
           <!-- <b-dropdown-divider /> -->
           <!-- <b-dropdown-item variant="danger" href="#" disabled>Stop LND</b-dropdown-item> -->
         </b-dropdown>
+        </div>
       </div>
     </div>
     <b-row class="row-eq-height">
@@ -263,7 +286,6 @@ import ToggleSwitch from "@/components/ToggleSwitch";
 import ChannelList from "@/components/Channels/List";
 import ChannelOpen from "@/components/Channels/Open";
 import ChannelManage from "@/components/Channels/Manage";
-import AppHeader from "@/components/AppHeader";
 import SatsBtcSwitch from "@/components/Utility/SatsBtcSwitch.vue";
 
 import LightningAddressModal from "./LightningAddressModal.vue";
@@ -290,8 +312,7 @@ export default {
       lndConnectUrls: state => state.lightning.lndConnectUrls,
       channels: state => state.lightning.channels,
       unit: state => state.system.unit,
-      backupStatus: state => state.system.backupStatus,
-      termsAcknowledged: state => state.system.termsAcknowledged
+      backupStatus: state => state.system.backupStatus
     })
   },
   methods: {
@@ -314,7 +335,7 @@ export default {
     },
     onChannelOpen() {
       //refresh channels, balance and txs
-      this.fetchPageData();
+      this.fetchData();
       this.$refs["open-channel-modal"].hide();
 
       //refresh bitcoin balance and txs
@@ -323,15 +344,12 @@ export default {
     },
     onChannelClose() {
       //refresh channels, balance and txs
-      this.fetchPageData();
+      this.fetchData();
       this.$refs["manage-channel-modal"].hide();
 
       //refresh bitcoin balance and txs
       this.$store.dispatch("bitcoin/getBalance");
       this.$store.dispatch("bitcoin/getTransactions");
-    },
-    fetchPageData() {
-      this.$store.dispatch("lightning/getLndPageData");
     },
     fetchData() {
       this.$store.dispatch("system/getUnit");
@@ -341,16 +359,15 @@ export default {
       this.$store.dispatch("lightning/getSync");
       this.$store.dispatch("lightning/getTransactions");
       this.$store.dispatch("lightning/getChannels");
+      this.$store.dispatch("lightning/getLndPageData");
     }
   },
   created() {
-    this.fetchPageData();
     this.fetchData();
     this.$store.dispatch("system/getBackupStatus");
-    this.pageInterval = window.setInterval(this.fetchPageData, 10000);
 
     //refresh this data every 20s:
-    this.dataInterval = window.setInterval(this.fetchData, 20000);
+    this.dataInterval = window.setInterval(this.fetchData, 2000);
     // show terms initially, then have modal take over logic
     this.$bvModal.show("initial-setup-modal");
   },
@@ -364,7 +381,6 @@ export default {
     }
   },
   components: {
-    AppHeader,
     BitcoinWallet,
     LightningWallet,
     CardWidget,
@@ -382,4 +398,10 @@ export default {
 };
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+.app-icon {
+  height: 120px;
+  width: 120px;
+  border-radius: 22%;
+}
+</style>

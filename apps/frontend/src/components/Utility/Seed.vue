@@ -13,7 +13,12 @@
               {{ index + 1 }}
             </div>
           </div>
-          <h5 class="mb-0">{{ word }}</h5>
+          <h5 v-if="word" class="mb-0">{{ word }}</h5>
+          <span
+            v-else
+            class="loading-placeholder loading-placeholder-lg mt-1"
+            style="max-width: 100px; width: 100%;"
+          ></span>
         </div>
       </template>
     </div>
