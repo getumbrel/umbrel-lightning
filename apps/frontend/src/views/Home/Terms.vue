@@ -2,7 +2,7 @@
   <div
     class="py-3 px-2 d-flex align-items-center w-100 flex flex-column text-center"
   >
-    <h2>before we begin...</h2>
+    <h2 class="text-lowercase">Before we begin...</h2>
     <p>A word of caution.</p>
     <p class="h1">
       <b-icon icon="exclamation-circle" variant="warning"></b-icon>
@@ -15,7 +15,7 @@
     <b-button
       variant="success"
       href="#"
-      class="text-center mt-3"
+      class="text-center mt-3 mb-2"
       :class="{ 'fade-in-out': sendingRequest }"
       v-on:click.stop.prevent="acknowledgeTerms"
     >

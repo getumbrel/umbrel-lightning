@@ -1,8 +1,8 @@
 <template>
   <div class="py-4 px-3">
     <div class="d-flex align-items-center w-100 flex flex-column text-center">
-      <h2 class="lowercase">enter your secret words</h2>
-      <p class="mb-5">
+      <h2 class="text-lowercase">Enter your secret words</h2>
+      <p class="mb-3">
         Enter your secret words in the exact order to verify you’ve correctly
         noted them down.
       </p>

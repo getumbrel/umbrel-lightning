@@ -464,7 +464,7 @@ body {
   &.modal-open {
     overflow: hidden !important;
     #app {
-      filter: blur(2px);
+      filter: blur(10px);
     }
   }
 }

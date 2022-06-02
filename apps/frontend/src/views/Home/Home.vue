@@ -369,12 +369,11 @@ export default {
     this.$store.dispatch("system/getBackupStatus");
 
     //refresh this data every 20s:
-    this.dataInterval = window.setInterval(this.fetchData, 2000);
+    this.dataInterval = window.setInterval(this.fetchData, 10000);
     // show terms initially, then have modal take over logic
-    this.$bvModal.show("initial-setup-modal");
+    this.$bvModal.show("onboarding-modal");
   },
   beforeDestroy() {
-    window.clearInterval(this.pageInterval);
     window.clearInterval(this.dataInterval);
   },
   watch: {

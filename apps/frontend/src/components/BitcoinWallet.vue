@@ -2,7 +2,7 @@
   <card-widget
     header="Bitcoin Wallet"
     :sub-title="unit | formatUnit"
-    icon="icon-app-bitcoin.svg"
+    icon="icon-bitcoin.svg"
     :loading="
       loading ||
         (transactions.length > 0 && transactions[0]['type'] === 'loading') ||

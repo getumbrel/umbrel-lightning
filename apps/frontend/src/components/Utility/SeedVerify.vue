@@ -9,7 +9,8 @@
           <b-input
             class="mb-1 verify-seed-input"
             :class="{
-              error: inputWords[index] && inputWords[index] !== words[index]
+              'border-danger': inputWords[index] && inputWords[index] !== words[index],
+              'border-success': inputWords[index] && inputWords[index] === words[index]
             }"
             type="text"
             size="md"
@@ -25,12 +26,12 @@
     <div
       class="d-flex flex-column align-items-center justify-content-center w-100"
     >
-      <p v-if="!valid" class="text-danger">The seed you input is not valid!</p>
+      <p v-if="!valid" class="text-danger">Incorrect secret words. Please try again.</p>
       <a href="#" class="text-center mb-3 text-uppercase" @click="prevStep">
         Back
       </a>
       <div class="d-flex justify-content-end">
-        <b-button variant="success" class="px-3" @click="validateAndNext"
+        <b-button variant="success" class="px-4" @click="validateAndNext"
           >Next</b-button
         >
       </div>
@@ -93,9 +94,6 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.error {
-  border: 1px solid red;
-}
 .word-count {
   height: 3rem;
   width: 3rem;

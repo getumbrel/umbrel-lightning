@@ -16,13 +16,13 @@
       v-if="!disableVerify"
       class="d-flex flex-column justify-content-center align-items-center mt-4"
     >
-      <div class="mb-4">
+      <div class="mb-3">
         <a href="#" class="text-center text-uppercase" @click.prevent="skipVerify">
           Note down later
         </a>
       </div>
       <div>
-        <b-button variant="success px-3" @click="nextStep">Next</b-button>
+        <b-button variant="success px-4" @click="nextStep">Next</b-button>
       </div>
     </div>
   </div>

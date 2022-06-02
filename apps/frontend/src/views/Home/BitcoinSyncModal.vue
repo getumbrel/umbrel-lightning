@@ -5,12 +5,12 @@
     <h3 class="text-lowercase">Almost there...</h3>
     <p class="h1 mb-4 mt-3">
       <img
-        style="height: 6rem; width: 6rem"
+        style="height: 7rem; width: 7rem; border-radius: 22%;"
         src="@/assets/icon-app-bitcoin.svg"
       />
     </p>
     <p class="mb-4 w-75">
-      Your Lightning node will be ready to use once Bitcoin Core has finished
+      Your Lightning node will be ready to use once your Bitcoin node has finished
       syncing. Please check back later.
     </p>
   </div>
