@@ -37,7 +37,7 @@ export default {
   methods: {
     async acknowledgeTerms() {
       this.sendingRequest = true;
-      await this.$store.dispatch("system/setTermsAcknowledgeStatus");
+      await this.$store.dispatch("system/onboardingComplete");
       this.sendingRequest = false;
       this.afterRequest();
     }

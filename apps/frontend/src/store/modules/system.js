@@ -7,7 +7,7 @@ const state = () => ({
     status: "", //success, failed
     timestamp: null
   },
-  acknowledged: true, // assume true to prevent modal flickering
+  onboarding: false, // assume false to prevent modal flickering
   loading: true,
   unit: "sats", //sats or btc
   api: {
@@ -38,8 +38,8 @@ const mutations = {
   setBackupStatus(state, status) {
     state.backupStatus = status;
   },
-  setTermsAcknowledgeStatus(state, status) {
-    state.acknowledged = status;
+  setOnboarding(state, status) {
+    state.onboarding = status;
   },
   setSeedExists(state, seedExists) {
     state.seedExists = seedExists;
@@ -86,17 +86,17 @@ const actions = {
       commit("setBackupStatus", status);
     }
   },
-  async getTermsAcknowledgeStatus({ commit }) {
-    const acknowledged = await API.get(
-      `${process.env.VUE_APP_API_BASE_URL}/v1/system/terms-acknowledge`
+  async getOnboardingStatus({ commit }) {
+    const onboarding = await API.get(
+      `${process.env.VUE_APP_API_BASE_URL}/v1/system/onboarding`
     );
 
-    commit("setTermsAcknowledgeStatus", acknowledged);
+    commit("setOnboarding", onboarding);
   },
-  async setTermsAcknowledgeStatus({ commit }) {
-    commit("setTermsAcknowledgeStatus", true); // update state to immediately hide modal
+  async onboardingComplete({ commit }) {
+    commit("setOnboarding", false); // update state to immediately hide modal
     await API.post(
-      `${process.env.VUE_APP_API_BASE_URL}/v1/system/terms-acknowledge`
+      `${process.env.VUE_APP_API_BASE_URL}/v1/system/onboarding`
     );
   },
   async getSeedExists({ commit }) {

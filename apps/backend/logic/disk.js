@@ -58,7 +58,7 @@ function readLndAdminMacaroon() {
 
 async function getJsonStore() {
   const defaultProperties = {
-    acceptedTerms: false,
+    onboarding: true,
     seed: [],
   };
   try {

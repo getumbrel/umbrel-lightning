@@ -25,20 +25,20 @@ router.get(
 );
 
 router.get(
-  "/terms-acknowledge",
+  "/onboarding",
   safeHandler(async (req, res) => {
-    const {acceptedTerms} = await diskLogic.getJsonStore();;
+    const {onboarding} = await diskLogic.getJsonStore();;
 
-    return res.json(acceptedTerms);
+    return res.json(onboarding);
   })
 );
 
 router.post(
-  "/terms-acknowledge",
+  "/onboarding",
   safeHandler(async (req, res) => {
-    await diskLogic.updateJsonStore({acceptedTerms: true});
+    await diskLogic.updateJsonStore({onboarding: false});
 
-    return res.json(true);
+    return res.json(false);
   })
 );
 

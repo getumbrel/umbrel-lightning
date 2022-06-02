@@ -65,7 +65,7 @@ export default {
         this.loadingProgress = 40;
         await Promise.all([
           this.$store.dispatch("system/getApi"),
-          this.$store.dispatch("system/getTermsAcknowledgeStatus"),
+          this.$store.dispatch("system/getOnboardingStatus"),
           this.$store.dispatch("lightning/getLndConnectUrls")
         ]);
         if (!this.isApiOperational) {

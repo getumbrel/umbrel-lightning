@@ -265,10 +265,12 @@
         </card-widget>
       </b-col>
     </b-row>
+
+    <!-- Modals  -->
+    <onboarding-modal />
     <lightning-address-modal />
     <secret-words-modal />
     <connect-wallet-modal />
-    <initial-setup-modal />
   </div>
 </template>
 
@@ -291,7 +293,7 @@ import SatsBtcSwitch from "@/components/Utility/SatsBtcSwitch.vue";
 import LightningAddressModal from "./LightningAddressModal.vue";
 import SecretWordsModal from "./SecretWordsModal.vue";
 import ConnectWalletModal from "./ConnectWalletModal";
-import InitialSetupModal from "./InitialSetupModal.vue";
+import OnboardingModal from "./OnboardingModal.vue";
 
 export default {
   data() {
@@ -393,7 +395,7 @@ export default {
     LightningAddressModal,
     SecretWordsModal,
     ConnectWalletModal,
-    InitialSetupModal
+    OnboardingModal
   }
 };
 </script>
