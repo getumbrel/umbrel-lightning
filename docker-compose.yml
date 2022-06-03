@@ -28,6 +28,7 @@ services:
       JSON_STORE_FILE: /data/state.json
       TOR_PROXY_IP: tor
       TOR_PROXY_PORT: 9050
+      DEVICE_HOSTNAME: test.local
     ports:
       - "3006:3006"
 
