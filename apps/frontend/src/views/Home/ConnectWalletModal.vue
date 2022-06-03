@@ -30,54 +30,49 @@
           <div class="col-12 col-lg-4 px-0 mt-4 mt-lg-0">
             <!-- QR Code -->
             <qr-code
-              :value="
-                currentMode === 'rest'
-                  ? restTor.lndconnectUrl
-                  : grpcTor.lndconnectUrl
-              "
+              v-if="lndconnectUrl"
+              :value="lndconnectUrl"
               :size="240"
               class="qr-image mx-auto"
               showLogo
             ></qr-code>
           </div>
           <div class="col-12 col-lg-8 align-items-center">
-            <!-- BUTTONS -->
-            <div
-              class="d-flex d-lg-inline-block w-100"
-              role="group"
-              aria-label="Basic example"
+            <label class="mb-1 d-block"
+              ><small class="font-weight-bold">Choose mode and network</small></label
             >
-              <div
-                class="col-12 col-lg-8 px-0 btn-group border border-primary rounded mb-2"
-              >
-                <b-button
-                  v-for="mode in modes"
-                  :key="mode"
-                  class="btn btn-block mt-0"
-                  :class="{
-                    [`bg-primary text-white`]: currentMode === mode,
-                    [`btn-light text-primary`]: currentMode !== mode
-                  }"
-                  @click="currentMode = mode"
-                >
-                  {{ mode }}
-                </b-button>
-              </div>
-            </div>
-            <!-- REST Section -->
-            <div v-if="currentMode === 'rest'">
+            <b-form-select class="mb-2" v-model="chosenMode" :options="modes"></b-form-select>
+
+            <div>
               <div class="row">
+
                 <div class="col-12 col-sm-6">
                   <label class="mb-1 d-block"
-                    ><small class="ml-1 font-weight-bold">Host</small></label
+                    ><small class="font-weight-bold">Host</small></label
                   >
-                  <div v-if="restTor.host">
+                  <div v-if="host">
                     <input-copy
                       class="mb-2"
                       size="sm"
-                      :value="
-                        restTor.host.substring(0, restTor.host.indexOf(':'))
-                      "
+                      :value="host"
+                    ></input-copy>
+                  </div>
+                  <span
+                    class="loading-placeholder loading-placeholder-lg mt-1"
+                    style="width: 100%;"
+                    v-else
+                  ></span>
+                </div>
+
+                <div class="col-12 col-sm-6">
+                  <label class="mb-1 d-block"
+                    ><small class="font-weight-bold">Port</small></label
+                  >
+                  <div v-if="port">
+                    <input-copy
+                      class="mb-2"
+                      size="sm"
+                      :value="port"
                     ></input-copy>
                   </div>
                   <span
@@ -88,34 +83,15 @@
                 </div>
                 <div class="col-12 col-sm-6">
                   <label class="mb-1 d-block"
-                    ><small class="ml-1 font-weight-bold">Port</small></label
-                  >
-                  <div v-if="restTor.host">
-                    <input-copy
-                      class="mb-2"
-                      size="sm"
-                      :value="
-                        restTor.host.substring(restTor.host.indexOf(':') + 1)
-                      "
-                    ></input-copy>
-                  </div>
-                  <span
-                    class="loading-placeholder loading-placeholder-lg mt-1"
-                    style="width: 100%;"
-                    v-else
-                  ></span>
-                </div>
-                <div class="col-12 col-sm-6">
-                  <label class="mb-1 d-block"
-                    ><small class="ml-1 font-weight-bold"
+                    ><small class="font-weight-bold"
                       >Macaroon</small
                     ></label
                   >
-                  <div v-if="restTor.macaroon">
+                  <div v-if="macaroon">
                     <input-copy
                       class="mb-2"
                       size="sm"
-                      :value="restTor.macaroon"
+                      :value="macaroon"
                     ></input-copy>
                   </div>
                   <span
@@ -126,96 +102,15 @@
                 </div>
                 <div class="col-12 col-sm-6">
                   <label class="mb-1 d-block"
-                    ><small class="ml-1 font-weight-bold"
+                    ><small class="font-weight-bold"
                       >lndconnect URL</small
                     ></label
                   >
-                  <div v-if="restTor">
+                  <div v-if="lndconnectUrl">
                     <input-copy
                       class="mb-2"
                       size="sm"
-                      :value="restTor.lndconnectUrl"
-                    ></input-copy>
-                  </div>
-                  <span
-                    class="loading-placeholder loading-placeholder-lg mt-1"
-                    style="width: 100%;"
-                    v-else
-                  ></span>
-                </div>
-              </div>
-            </div>
-            <!-- GRPC Section -->
-            <div v-if="currentMode === 'grpc'">
-              <div class="row">
-                <div class="col-12 col-sm-6">
-                  <label class="mb-1 d-block"
-                    ><small class="ml-1 font-weight-bold">Host</small></label
-                  >
-                  <div v-if="grpcTor.host">
-                    <input-copy
-                      class="mb-2"
-                      size="sm"
-                      :value="
-                        grpcTor.host.substring(0, grpcTor.host.indexOf(':'))
-                      "
-                    ></input-copy>
-                  </div>
-                  <span
-                    class="loading-placeholder loading-placeholder-lg mt-1"
-                    style="width: 100%;"
-                    v-else
-                  ></span>
-                </div>
-                <div class="col-12 col-sm-6">
-                  <label class="mb-1 d-block"
-                    ><small class="ml-1 font-weight-bold">Port</small></label
-                  >
-                  <div v-if="grpcTor.host">
-                    <input-copy
-                      class="mb-2"
-                      size="sm"
-                      :value="
-                        grpcTor.host.substring(grpcTor.host.indexOf(':') + 1)
-                      "
-                    ></input-copy>
-                  </div>
-                  <span
-                    class="loading-placeholder loading-placeholder-lg mt-1"
-                    style="width: 100%;"
-                    v-else
-                  ></span>
-                </div>
-                <div class="col-12 col-sm-6">
-                  <label class="mb-1 d-block"
-                    ><small class="ml-1 font-weight-bold"
-                      >Macaroon</small
-                    ></label
-                  >
-                  <div v-if="grpcTor.macaroon">
-                    <input-copy
-                      class="mb-2"
-                      size="sm"
-                      :value="grpcTor.macaroon"
-                    ></input-copy>
-                  </div>
-                  <span
-                    class="loading-placeholder loading-placeholder-lg mt-1"
-                    style="width: 100%;"
-                    v-else
-                  ></span>
-                </div>
-                <div class="col-12 col-sm-6">
-                  <label class="mb-1 d-block"
-                    ><small class="ml-1 font-weight-bold"
-                      >lndconnect URL</small
-                    ></label
-                  >
-                  <div v-if="grpcTor">
-                    <input-copy
-                      class="mb-2"
-                      size="sm"
-                      :value="grpcTor.lndconnectUrl"
+                      :value="lndconnectUrl"
                     ></input-copy>
                   </div>
                   <span
@@ -247,45 +142,31 @@ import { decode } from "lndconnect";
 export default {
   data() {
     return {
-      currentMode: "rest",
-      modes: ["rest", "grpc"]
+      chosenMode: "restTor",
+      modes: [
+        { value: "restTor", text: "REST (Tor)" },
+        { value: "restLocal", text: "REST (Local Network)"},
+        { value: "grpcTor", text: "gRPC (Tor)" },
+        { value: "grpcLocal", text: "gRPC (Local Network)" }
+      ],
     };
   },
   computed: {
     ...mapState({
-      grpcLocal: state => {
-        if (state.lightning.lndConnectUrls.grpcLocal) {
-          return {
-            ...decode(state.lightning.lndConnectUrls.grpcLocal),
-            lndconnectUrl: state.lightning.lndConnectUrls.grpcLocal
-          };
-        }
-      },
-      grpcTor: state => {
-        if (state.lightning.lndConnectUrls.grpcTor) {
-          return {
-            ...decode(state.lightning.lndConnectUrls.grpcTor),
-            lndconnectUrl: state.lightning.lndConnectUrls.grpcTor
-          };
-        }
-      },
-      restLocal: state => {
-        if (state.lightning.lndConnectUrls.restLocal) {
-          return {
-            ...decode(state.lightning.lndConnectUrls.restLocal),
-            lndconnectUrl: state.lightning.lndConnectUrls.restLocal
-          };
-        }
-      },
-      restTor: state => {
-        if (state.lightning.lndConnectUrls.restTor) {
-          return {
-            ...decode(state.lightning.lndConnectUrls.restTor),
-            lndconnectUrl: state.lightning.lndConnectUrls.restTor
-          };
-        }
-      }
-    })
+      lndConnectUrls: state => state.lightning.lndConnectUrls
+    }),
+    lndconnectUrl() {
+      return this.lndConnectUrls[this.chosenMode];
+    },
+    host() {
+      return decode(this.lndConnectUrls[this.chosenMode]).host.split(":")[0];
+    },
+    port() {
+      return decode(this.lndConnectUrls[this.chosenMode]).host.split(":")[1];
+    },
+    macaroon() {
+      return decode(this.lndConnectUrls[this.chosenMode]).macaroon;
+    },
   },
   components: {
     QrCode,
