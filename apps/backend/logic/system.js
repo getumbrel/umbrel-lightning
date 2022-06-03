@@ -84,14 +84,14 @@ async function getLndConnectUrls() {
     macaroon
   });
 
-  let restLocalHost = `${constants.DEVICE_HOSTNAME}:${constants.LND_REST_PORT}}`;
+  let restLocalHost = `${constants.DEVICE_DOMAIN_NAME}:${constants.LND_REST_PORT}}`;
   const restLocal = encode({
     host: restLocalHost,
     cert,
     macaroon
   });
 
-  let grpcLocalHost = `${constants.DEVICE_HOSTNAME}:${constants.LND_GRPC_PORT}`;
+  let grpcLocalHost = `${constants.DEVICE_DOMAIN_NAME}:${constants.LND_GRPC_PORT}`;
   const grpcLocal = encode({
     host: grpcLocalHost,
     cert,

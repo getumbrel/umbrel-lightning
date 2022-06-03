@@ -5,6 +5,7 @@ module.exports = {
     UNAVAILABLE: 14,
     UNKNOWN: 2
   },
+  DEVICE_DOMAIN_NAME: process.env.DEVICE_DOMAIN_NAME,
   USER_FILE: process.env.USER_FILE || "/db/user.json",
   JSON_STORE_FILE: process.env.JSON_STORE_FILE || "/data/state.json",
   MANAGED_CHANNELS_FILE: "/channel-data/managedChannels.json",
