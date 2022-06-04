@@ -130,7 +130,7 @@
           </div>
         </div>
 
-        <div class="d-flex justify-end" v-if="canCloseChannel">
+        <div class="d-flex justify-content-end" v-if="canCloseChannel">
           <b-button class="mt-2" variant="danger" @click="reviewChannelClose"
             >Close Channel</b-button
           >
@@ -144,14 +144,11 @@
           <b>{{ parseInt(channel.localBalance).toLocaleString() }} Sats</b>
           (excluding transaction fee) will be returned to your Bitcoin wallet.
         </p>
-        <b-alert variant="warning" show>
-          It may take upto 24 hours to close this channel if the remote peer is
-          not online. During this time, the peer can dispute the record sent to
-          the blockchain and seize the channel funds if this claim is
-          fraudulent.
+        <b-alert v-if="channel.status === 'Offline'" variant="warning" show>
+          This channel is not online. It may take up to 24 hours to close it.
         </b-alert>
 
-        <div class="d-flex justify-end">
+        <div class="d-flex justify-content-end">
           <b-button
             class="mt-2"
             variant="danger"
