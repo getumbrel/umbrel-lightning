@@ -124,7 +124,7 @@
             <p class="mt-2 mb-4">
               Looking for step-by-step instructions to connect your Lightning
               wallet to your node?
-              <a target="_blank" href="#">Click here</a>
+              <a href="https://link.umbrel.com/connect-lightning" target="_blank">Click here</a>
             </p>
           </div>
         </div>
