@@ -10,7 +10,6 @@
   },
   "keywords": [],
   "author": "",
-  "license": "ISC",
   "dependencies": {
     "autoprefixer": "^9.8.8",
     "axios": "^0.19.2",

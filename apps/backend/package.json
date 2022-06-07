@@ -13,7 +13,6 @@
   },
   "keywords": [],
   "author": "",
-  "license": "ISC",
   "dependencies": {
     "aezeed": "^0.0.5",
     "axios": "^0.26.1",
