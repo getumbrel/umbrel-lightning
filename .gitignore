@@ -1,12 +1,4 @@
-node_modules/
-npm-debug.log
-/.idea/
-/tls.cert
-*.log
-*.env
-logs/
-*.bak
-lb_settings.json
-.nyc_output
-coverage
-.todo
+node_modules
+data
+.DS_Store
+apps/backend/logs
