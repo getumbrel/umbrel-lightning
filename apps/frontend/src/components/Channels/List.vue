@@ -7,7 +7,7 @@
         v-if="channels.length === 0"
       >
         <p class="text-muted w-75 text-center">
-          Fund your Bitcoin wallet and open payment channels with other Lightning Network nodes to start using your Lightning Wallet.
+          Fund your Bitcoin wallet and open payment channels with other Lightning Network nodes to start using your Lightning wallet.
         </p>
       </div>
 

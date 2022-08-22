@@ -34,7 +34,6 @@
         </div>
 
         <div class="d-flex justify-content-between justify-content-sm-start w-xs-100">
-          <sats-btc-switch></sats-btc-switch>
           <b-dropdown
             class="ml-3"
             variant="link"
@@ -140,13 +139,56 @@
     </div>
 
     <b-row class="row-eq-height">
-      <b-col col cols="12" md="6" xl="4">
-        <bitcoin-wallet></bitcoin-wallet>
+      <b-col col cols="12" sm="6" lg="4">
+        <bitcoin-wallet />
       </b-col>
-      <b-col col cols="12" md="6" xl="4">
-        <lightning-wallet></lightning-wallet>
+      <b-col col cols="12" sm="6" lg="4">
+        <lightning-wallet />
       </b-col>
-      <b-col col cols="12" md="12" xl="4">
+      <b-col col cols="12" sm="5" lg="4">
+        <total-balance />
+        <card-widget header="Summary">
+          <div class="px-3 px-lg-4 pb-2">
+            <b-row>
+              <b-col col cols="6">
+                <stat
+                  title="Connections"
+                  :value="numPeers"
+                  suffix="Peers"
+                  showNumericChange
+                ></stat>
+              </b-col>
+              <b-col col cols="6">
+                <stat
+                  title="Channels"
+                  :value="numActiveChannels"
+                  suffix="Channels"
+                  showNumericChange
+                ></stat>
+              </b-col>
+              <b-col col cols="6">
+                <stat
+                  title="Max Send"
+                  :value="maxSend | unit"
+                  :suffix="unit | formatUnit"
+                  :hasDecimals="unit === 'btc'"
+                  abbreviateValue
+                ></stat>
+              </b-col>
+              <b-col col cols="6">
+                <stat
+                  title="Max Receive"
+                  :value="maxReceive | unit"
+                  :suffix="unit | formatUnit"
+                  :hasDecimals="unit === 'btc'"
+                  abbreviateValue
+                ></stat>
+              </b-col>
+            </b-row>
+          </div>
+        </card-widget>
+      </b-col>
+      <b-col col cols="12" sm="7" lg="12">
         <card-widget header="Payment Channels">
           <template v-slot:header-right>
             <b-button
@@ -157,45 +199,6 @@
             >
           </template>
           <div class>
-            <div class="px-3 px-lg-4">
-              <b-row>
-                <b-col col cols="6">
-                  <stat
-                    title="Connections"
-                    :value="numPeers"
-                    suffix="Peers"
-                    showNumericChange
-                  ></stat>
-                </b-col>
-                <b-col col cols="6">
-                  <stat
-                    title="Active Channels"
-                    :value="numActiveChannels"
-                    suffix="Channels"
-                    showNumericChange
-                  ></stat>
-                </b-col>
-                <b-col col cols="6">
-                  <stat
-                    title="Max Send"
-                    :value="maxSend | unit"
-                    :suffix="unit | formatUnit"
-                    :hasDecimals="unit === 'btc'"
-                    abbreviateValue
-                  ></stat>
-                </b-col>
-                <b-col col cols="6">
-                  <stat
-                    title="Max Receive"
-                    :value="maxReceive | unit"
-                    :suffix="unit | formatUnit"
-                    :hasDecimals="unit === 'btc'"
-                    abbreviateValue
-                  ></stat>
-                </b-col>
-              </b-row>
-            </div>
-
             <b-modal
               id="open-channel-modal"
               ref="open-channel-modal"
@@ -318,11 +321,11 @@ import CardWidget from "@/components/CardWidget";
 import Stat from "@/components/Utility/Stat";
 import LightningWallet from "@/components/LightningWallet";
 import BitcoinWallet from "@/components/BitcoinWallet";
+import TotalBalance from "@/components/TotalBalance";
 import ToggleSwitch from "@/components/ToggleSwitch";
 import ChannelList from "@/components/Channels/List";
 import ChannelOpen from "@/components/Channels/Open";
 import ChannelManage from "@/components/Channels/Manage";
-import SatsBtcSwitch from "@/components/Utility/SatsBtcSwitch.vue";
 
 import LightningAddressModal from "./LightningAddressModal.vue";
 import SecretWordsModal from "./SecretWordsModal.vue";
@@ -442,13 +445,13 @@ export default {
   components: {
     BitcoinWallet,
     LightningWallet,
+    TotalBalance,
     CardWidget,
     Stat,
     ToggleSwitch,
     ChannelList,
     ChannelOpen,
     ChannelManage,
-    SatsBtcSwitch,
     LightningAddressModal,
     SecretWordsModal,
     ConnectWalletModal,

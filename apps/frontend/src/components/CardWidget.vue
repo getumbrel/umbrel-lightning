@@ -31,7 +31,7 @@
       </div>
       <div class="card-custom-body">
         <div class="card-app-info px-3 px-lg-4" v-if="title || subTitle">
-          <div class="d-flex w-100 justify-content-between mb-4">
+          <div class="d-flex w-100 justify-content-between align-items-center mb-4">
             <div>
               <div>
                 <h3 v-if="title" class="mb-1">{{ title }}</h3>
@@ -42,6 +42,7 @@
               </div>
             </div>
             <img :alt="header" :src="require(`@/assets/${icon}`)" v-if="icon" />
+            <slot name="icon-replacement"></slot>
           </div>
         </div>
         <slot></slot>
