@@ -300,6 +300,12 @@ function getInfo() {
   );
 }
 
+function getRecoveryInfo() {
+  return initializeRPCClient().then(({ lightning }) =>
+    promiseify(lightning, lightning.GetRecoveryInfo, {}, "get lnd recovery information")
+  );
+}
+
 function getState() {
   return initializeRPCClient().then(({ lightning }) =>
     promiseify(lightning, lightning.GetState, {}, "get lnd state")
@@ -582,6 +588,7 @@ module.exports = {
   getFeeReport,
   getForwardingEvents,
   getInfo,
+  getRecoveryInfo,
   getState,
   getNodeInfo,
   getInvoices,

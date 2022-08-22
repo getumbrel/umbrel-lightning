@@ -23,6 +23,13 @@ router.get(
 );
 
 router.get(
+  "/recovery",
+  safeHandler((req, res) =>
+    lightning.getRecoveryInfo().then(info => res.json(info))
+  )
+);
+
+router.get(
   "/sync",
   safeHandler((req, res) =>
     lightning.getSyncStatus().then(status => res.json(status))

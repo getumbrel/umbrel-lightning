@@ -25,9 +25,11 @@
 </template>
 
 <script>
+import delay from "@/helpers/delay";
+
 export default {
   props: {
-    afterRequest: Function
+    onAgree: Function
   },
   data() {
     return {
@@ -36,10 +38,13 @@ export default {
   },
   methods: {
     async acknowledgeTerms() {
+      this.onAgree();
       this.sendingRequest = true;
+      // add delay so we can close the modal first
+      // and then send the request once it's closed
+      await delay(1000);
       await this.$store.dispatch("system/onboardingComplete");
       this.sendingRequest = false;
-      this.afterRequest();
     }
   }
 };

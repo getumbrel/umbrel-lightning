@@ -1,5 +1,6 @@
 import API from "@/helpers/api";
 import { toPrecision } from "@/helpers/units";
+
 // import Events from '~/helpers/events';
 // import { sleep } from '@/helpers/utils';
 
@@ -59,7 +60,13 @@ const state = () => ({
   ],
   confirmedTransactions: [],
   pendingTransactions: [],
-  pendingChannelEdit: {}
+  pendingChannelEdit: {},
+  backups: [],
+  recoveryInfo: {
+    recoveryMode: false,
+    recoveryFinished: false,
+    progress: 0
+  }
 });
 
 // Functions to update the state directly
@@ -152,6 +159,14 @@ const mutations = {
 
   setLndConnectUrls(state, urls) {
     state.lndConnectUrls = urls;
+  },
+
+  setBackups(state, backups) {
+    state.backups = backups;
+  },
+
+  setRecoveryInfo(state, info) {
+    state.recoveryInfo = info;
   }
 };
 
@@ -184,6 +199,22 @@ const actions = {
     if (sync && sync.percent) {
       commit("setSync", sync);
     }
+  },
+
+  async getRecoveryInfo ({ commit }) {
+    const recoveryInfo = await API.get(
+      `${process.env.VUE_APP_API_BASE_URL}/v1/lnd/info/recovery`
+    );
+    if (recoveryInfo && recoveryInfo.progress && Number(recoveryInfo.progress) >= 0) {
+      commit("setRecoveryInfo", recoveryInfo);
+    }
+  },
+
+  async getBackups({ commit }) {
+    const { timestamps } = await API.get(
+      `${process.env.VUE_APP_API_BASE_URL}/v1/lnd/backups`
+    );
+    commit("setBackups", timestamps);
   },
 
   //basically fetches everything

@@ -34,91 +34,111 @@
         </div>
 
         <div class="d-flex justify-content-between justify-content-sm-start w-xs-100">
-        <sats-btc-switch></sats-btc-switch>
-        <b-dropdown
-          class="ml-3"
-          variant="link"
-          toggle-class="text-decoration-none p-0"
-          no-caret
-          right
-        >
-          <template v-slot:button-content>
-            <svg
-              width="18"
-              height="4"
-              viewBox="0 0 18 4"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                fill-rule="evenodd"
-                clip-rule="evenodd"
-                d="M2 4C3.10457 4 4 3.10457 4 2C4 0.89543 3.10457 0 2 0C0.89543 0 0 0.89543 0 2C0 3.10457 0.89543 4 2 4Z"
-                fill="#6c757d"
-              />
-              <path
-                fill-rule="evenodd"
-                clip-rule="evenodd"
-                d="M9 4C10.1046 4 11 3.10457 11 2C11 0.89543 10.1046 0 9 0C7.89543 0 7 0.89543 7 2C7 3.10457 7.89543 4 9 4Z"
-                fill="#6c757d"
-              />
-              <path
-                fill-rule="evenodd"
-                clip-rule="evenodd"
-                d="M16 4C17.1046 4 18 3.10457 18 2C18 0.89543 17.1046 0 16 0C14.8954 0 14 0.89543 14 2C14 3.10457 14.8954 4 16 4Z"
-                fill="#6c757d"
-              />
-            </svg>
-          </template>
-          <b-dropdown-item href="#" v-b-modal.lightning-address-modal
-            >Lightning address</b-dropdown-item
+          <sats-btc-switch></sats-btc-switch>
+          <b-dropdown
+            class="ml-3"
+            variant="link"
+            toggle-class="text-decoration-none p-0"
+            no-caret
+            right
           >
-          <b-dropdown-item href="#" v-b-modal.connect-wallet-modal
-            >Connect wallet</b-dropdown-item
-          >
-          <b-dropdown-item href="#" v-b-modal.secret-words-modal
-            >View secret words</b-dropdown-item
-          >
-          <b-dropdown-divider></b-dropdown-divider>
-          <b-dropdown-item href="#" @click.stop.prevent="downloadChannelBackup"
-            >Download channel backup file</b-dropdown-item
-          >
-          <b-dropdown-group>
-            <div class="dropdown-group">
-              <div class="d-flex w-100 justify-content-between">
-                <div>
-                  <span class="d-block">Automatic backups</span>
-                  <small class="d-block">
-                    <a
-                      href="https://github.com/getumbrel/umbrel/blob/master/scripts/backup/README.md"
-                      target="blank"
-                      >Learn more</a
-                    >
-                  </small>
-                </div>
-                <toggle-switch
-                  class="align-self-center"
-                  disabled
-                  tooltip="Sorry, automatic backups cannot be disabled for now"
-                ></toggle-switch>
-              </div>
-              <small
-                v-if="backupStatus.status"
-                class="d-block mt-2"
-                style="opacity: 0.4"
+            <template v-slot:button-content>
+              <svg
+                width="18"
+                height="4"
+                viewBox="0 0 18 4"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
               >
-                Last backup
-                <span v-if="backupStatus.status === 'failed'">failed</span>
-                at {{ getReadableTime(backupStatus.timestamp) }}
-              </small>
-            </div>
-          </b-dropdown-group>
-          <!-- <b-dropdown-divider /> -->
-          <!-- <b-dropdown-item variant="danger" href="#" disabled>Stop LND</b-dropdown-item> -->
-        </b-dropdown>
+                <path
+                  fill-rule="evenodd"
+                  clip-rule="evenodd"
+                  d="M2 4C3.10457 4 4 3.10457 4 2C4 0.89543 3.10457 0 2 0C0.89543 0 0 0.89543 0 2C0 3.10457 0.89543 4 2 4Z"
+                  fill="#6c757d"
+                />
+                <path
+                  fill-rule="evenodd"
+                  clip-rule="evenodd"
+                  d="M9 4C10.1046 4 11 3.10457 11 2C11 0.89543 10.1046 0 9 0C7.89543 0 7 0.89543 7 2C7 3.10457 7.89543 4 9 4Z"
+                  fill="#6c757d"
+                />
+                <path
+                  fill-rule="evenodd"
+                  clip-rule="evenodd"
+                  d="M16 4C17.1046 4 18 3.10457 18 2C18 0.89543 17.1046 0 16 0C14.8954 0 14 0.89543 14 2C14 3.10457 14.8954 4 16 4Z"
+                  fill="#6c757d"
+                />
+              </svg>
+            </template>
+            <b-dropdown-item href="#" v-b-modal.lightning-address-modal
+              >Lightning address</b-dropdown-item
+            >
+            <b-dropdown-item href="#" v-b-modal.connect-wallet-modal @click="getLndConnectUrls"
+              >Connect wallet</b-dropdown-item
+            >
+            <b-dropdown-item href="#" v-b-modal.secret-words-modal
+              >View secret words</b-dropdown-item
+            >
+            <b-dropdown-divider></b-dropdown-divider>
+            <b-dropdown-item href="#" @click.stop.prevent="recoverChannels"
+              >Recover channels</b-dropdown-item
+            >
+            <b-dropdown-item href="#" @click.stop.prevent="downloadChannelBackup"
+              >Download channel backup file</b-dropdown-item
+            >
+            <b-dropdown-group>
+              <div class="dropdown-group">
+                <div class="d-flex w-100 justify-content-between">
+                  <div>
+                    <span class="d-block">Automatic backups</span>
+                    <small class="d-block">
+                      <a
+                        href="https://github.com/getumbrel/umbrel/blob/master/scripts/backup/README.md"
+                        target="blank"
+                        >Learn more</a
+                      >
+                    </small>
+                  </div>
+                  <toggle-switch
+                    class="align-self-center"
+                    disabled
+                    tooltip="Sorry, automatic backups cannot be disabled for now"
+                  ></toggle-switch>
+                </div>
+                <small
+                  v-if="backupStatus.status"
+                  class="d-block mt-2"
+                  style="opacity: 0.4"
+                >
+                  Last backup
+                  <span v-if="backupStatus.status === 'failed'">failed</span>
+                  at {{ getReadableTime(backupStatus.timestamp) }}
+                </small>
+              </div>
+            </b-dropdown-group>
+            <!-- <b-dropdown-divider /> -->
+            <!-- <b-dropdown-item variant="danger" href="#" disabled>Stop LND</b-dropdown-item> -->
+          </b-dropdown>
         </div>
       </div>
+
+      <!-- Recovery progress  -->
+      <div
+        v-if="recoveryInfo.recoveryMode && recoveryInfo.progress < 1"
+        class="mb-4 py-1"
+        variant=""
+      >
+        Scanning all transactions for recovery. This may take a while...
+        <b-progress
+          :value="recoveryInfo.progress * 100"
+          class="my-2 w-100"
+          variant="purple"
+          :style="{ height: '4px' }"
+        ></b-progress>
+      </div>
+
     </div>
+
     <b-row class="row-eq-height">
       <b-col col cols="12" md="6" xl="4">
         <bitcoin-wallet></bitcoin-wallet>
@@ -268,6 +288,19 @@
 
     <!-- Modals  -->
     <onboarding-modal />
+    <b-modal
+      v-if="showRecoverChannelsModal"
+      id="recover-channels-modal"
+      size="lg"
+      centered
+      hide-header
+      hide-footer
+    >
+      <recovery-channels
+        :onComplete="channelRecoveryInitiated"
+        :onBack="() => this.$bvModal.hide('recover-channels-modal')"
+      />
+    </b-modal>
     <lightning-address-modal />
     <secret-words-modal />
     <connect-wallet-modal />
@@ -279,6 +312,7 @@ import { mapState } from "vuex";
 import moment from "moment";
 
 import API from "@/helpers/api";
+import delay from "@/helpers/delay";
 
 import CardWidget from "@/components/CardWidget";
 import Stat from "@/components/Utility/Stat";
@@ -293,18 +327,21 @@ import SatsBtcSwitch from "@/components/Utility/SatsBtcSwitch.vue";
 import LightningAddressModal from "./LightningAddressModal.vue";
 import SecretWordsModal from "./SecretWordsModal.vue";
 import ConnectWalletModal from "./ConnectWalletModal";
-import OnboardingModal from "./OnboardingModal.vue";
+import OnboardingModal from "./OnboardingModal/OnboardingModal.vue";
+import RecoveryChannels from '@/views/Home/OnboardingModal/RecoveryChannels.vue';
 
 export default {
   data() {
     return {
       status: "Running",
-      selectedChannel: {}
+      selectedChannel: {},
+      showRecoverChannelsModal: false
     };
   },
   computed: {
     ...mapState({
       lndVersion: state => state.lightning.version,
+      recoveryInfo: state => state.lightning.recoveryInfo,
       numActiveChannels: state => state.lightning.numActiveChannels,
       maxReceive: state => state.lightning.maxReceive,
       maxSend: state => state.lightning.maxSend,
@@ -314,7 +351,7 @@ export default {
       lndConnectUrls: state => state.lightning.lndConnectUrls,
       channels: state => state.lightning.channels,
       unit: state => state.system.unit,
-      backupStatus: state => state.system.backupStatus
+      backupStatus: state => state.system.backupStatus,
     })
   },
   methods: {
@@ -328,6 +365,26 @@ export default {
         true,
         "my-umbrel-channels.backup"
       );
+    },
+    async recoverChannels() {
+      this.showRecoverChannelsModal = true;
+      // add delay to make sure that
+      // the modal component is mounted
+      await delay(300);
+      this.$bvModal.show("recover-channels-modal");
+    },
+    channelRecoveryInitiated() {
+      this.$bvToast.toast("Once your channels start closing, it may take upto 2 days for the funds to arrive in your Bitcoin (on-chain) wallet.", {
+        title: "Channel recovery initiated",
+        autoHideDelay: 6000,
+        variant: "success",
+        solid: true,
+        toaster: "b-toaster-bottom-right",
+      });
+      return this.$bvModal.hide('recover-channels-modal');
+    },
+    getLndConnectUrls() {
+      this.$store.dispatch("lightning/getLndConnectUrls");
     },
     manageChannel(channel) {
       if (channel) {
@@ -359,14 +416,15 @@ export default {
       this.$store.dispatch("bitcoin/getBalance");
       this.$store.dispatch("bitcoin/getTransactions");
       this.$store.dispatch("lightning/getSync");
+      this.$store.dispatch("lightning/getRecoveryInfo");
       this.$store.dispatch("lightning/getTransactions");
       this.$store.dispatch("lightning/getChannels");
       this.$store.dispatch("lightning/getLndPageData");
+      this.$store.dispatch("system/getBackupStatus");
     }
   },
   created() {
     this.fetchData();
-    this.$store.dispatch("system/getBackupStatus");
 
     //refresh this data every 20s:
     this.dataInterval = window.setInterval(this.fetchData, 10000);
@@ -394,7 +452,8 @@ export default {
     LightningAddressModal,
     SecretWordsModal,
     ConnectWalletModal,
-    OnboardingModal
+    OnboardingModal,
+    RecoveryChannels
   }
 };
 </script>

@@ -156,16 +156,16 @@ export default {
       lndConnectUrls: state => state.lightning.lndConnectUrls
     }),
     lndconnectUrl() {
-      return this.lndConnectUrls[this.chosenMode];
+      return this.lndConnectUrls.restLocal ? this.lndConnectUrls[this.chosenMode] : "";
     },
     host() {
-      return decode(this.lndConnectUrls[this.chosenMode]).host.split(":")[0];
+      return this.lndConnectUrls.restLocal ? decode(this.lndConnectUrls[this.chosenMode]).host.split(":")[0] : "";
     },
     port() {
-      return decode(this.lndConnectUrls[this.chosenMode]).host.split(":")[1];
+      return this.lndConnectUrls.restLocal ? decode(this.lndConnectUrls[this.chosenMode]).host.split(":")[1] : "";
     },
     macaroon() {
-      return decode(this.lndConnectUrls[this.chosenMode]).macaroon;
+      return this.lndConnectUrls.restLocal ? decode(this.lndConnectUrls[this.chosenMode]).macaroon : "";
     },
   },
   components: {

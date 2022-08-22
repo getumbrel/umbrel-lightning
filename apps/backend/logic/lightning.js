@@ -687,6 +687,10 @@ function getGeneralInfo() {
   return lndService.getInfo();
 }
 
+function getRecoveryInfo() {
+  return lndService.getRecoveryInfo();
+}
+
 // Returns the status on lnd syncing to the current chain.
 // LND info returns "best_header_timestamp" from getInfo which is the timestamp of the latest Bitcoin block processed
 // by LND. Using known date of the genesis block to roughly calculate a percent processed.
@@ -988,6 +992,7 @@ module.exports = {
   sendCoins,
   unlockWallet,
   getGeneralInfo,
+  getRecoveryInfo,
   getVersion,
   updateChannelPolicy
 };

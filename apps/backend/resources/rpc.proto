@@ -361,8 +361,19 @@ service Lightning {
     concerning the number of open+pending channels.
     */
     rpc GetInfo (GetInfoRequest) returns (GetInfoResponse) {
-        option (google.api.http) = {
+         option (google.api.http) = {
             get: "/v1/getinfo"
+        };
+    }
+
+    /** lncli: `getrecoveryinfo`
+    GetRecoveryInfo returns information concerning the recovery mode including
+    whether it's in a recovery mode, whether the recovery is finished, and the
+    progress made so far.
+    */
+    rpc GetRecoveryInfo (GetRecoveryInfoRequest) returns (GetRecoveryInfoResponse) {
+         option (google.api.http) = {
+            get: "/v1/getrecoveryinfo"
         };
     }
 
@@ -1423,6 +1434,19 @@ message GetInfoResponse {
 
     // Whether we consider ourselves synced with the public channel graph.
     bool synced_to_graph = 18 [json_name = "synced_to_graph"];
+}
+
+message GetRecoveryInfoRequest {
+}
+message GetRecoveryInfoResponse {
+    // Whether the wallet is in recovery mode
+    bool recovery_mode = 1;
+
+    // Whether the wallet recovery progress is finished
+    bool recovery_finished = 2;
+
+    // The recovery progress, ranging from 0 to 1.
+    double progress = 3;
 }
 
 message Chain {
