@@ -561,6 +561,15 @@ function updateChannelPolicy(
   );
 }
 
+function recoverBackup(multi_chan_backup) {
+  return initializeRPCClient().then(async ({ lightning }) => promiseify(
+    lightning,
+    lightning.RestoreChannelBackups,
+    {multi_chan_backup},
+    "recover channel backup"
+  ));
+}
+
 module.exports = {
   addInvoice,
   changePassword,
@@ -591,4 +600,5 @@ module.exports = {
   sendPaymentSync,
   unlockWallet,
   updateChannelPolicy,
+  recoverBackup,
 };

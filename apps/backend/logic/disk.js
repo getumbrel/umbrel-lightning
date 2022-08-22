@@ -5,6 +5,10 @@ function readBackupStatusFile() {
   return diskService.readJsonFile(constants.BACKUP_STATUS_FILE);
 }
 
+function readBackupFile() {
+  return diskService.readFile(constants.CHANNEL_BACKUP_FILE);
+}
+
 function readTermsAcknowledgeFile() {
   return diskService.readJsonFile(constants.TERMS_ACKNOWLEDGE_FILE);
 }
@@ -91,5 +95,6 @@ module.exports = {
   readLndRestHiddenService,
   readLndGrpcHiddenService,
   readLndCert,
-  readLndAdminMacaroon
+  readLndAdminMacaroon,
+  readBackupFile,
 };

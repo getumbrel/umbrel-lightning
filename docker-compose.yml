@@ -16,7 +16,7 @@ services:
       BITCOIN_HOST: "bitcoind"
       RPC_PORT: "18443"
       RPC_USER: "umbrel"
-      RPC_PASSWORD: "2hmQlIgYfjFoMGAwBQPdvpJ6vDuQbOoBfG_LxznanAk="
+      RPC_PASSWORD: "moneyprintergobrrr"
       LND_NETWORK: "regtest"
       LND_HOST: "lnd"
       TLS_FILE: "/lnd/.lnd/tls.cert"
@@ -26,8 +26,8 @@ services:
       LND_REST_HIDDEN_SERVICE: rest.onion
       LND_GRPC_HIDDEN_SERVICE: grpc.onion
       JSON_STORE_FILE: /data/state.json
-      TOR_PROXY_IP: tor
-      TOR_PROXY_PORT: 9050
+      # TOR_PROXY_IP: tor
+      # TOR_PROXY_PORT: 9050
       DEVICE_HOSTNAME: test.local
     ports:
       - "3006:3006"
@@ -35,20 +35,18 @@ services:
   lnd:
     image: lightninglabs/lnd:v0.14.1-beta@sha256:810f290f4da51adaf57d53bc1f1e65b52b03c543f322da0b98fb8c47be94a27a
     user: 1000:1000
+    hostname: lnd
+    command: --listen=0.0.0.0:9735 --rpclisten=0.0.0.0:10009 --restlisten=0.0.0.0:8080 --bitcoin.active --bitcoin.regtest --bitcoin.node=bitcoind --bitcoind.rpchost=bitcoind --bitcoind.rpcuser=umbrel --bitcoind.rpcpass=moneyprintergobrrr --bitcoind.zmqpubrawblock=tcp://bitcoind:28332 --bitcoind.zmqpubrawtx=tcp://bitcoind:28333
     volumes:
       - ${PWD}/data/lnd:/data/.lnd
     environment:
       HOME: /data
-    restart: on-failure
-    ports:
-      - "10009:10009"
+
   bitcoind:
     image: lncm/bitcoind:v22.0@sha256:37a1adb29b3abc9f972f0d981f45e41e5fca2e22816a023faa9fdc0084aa4507
+    command: -regtest -rpcbind=0.0.0.0 -rpcallowip=0.0.0.0/0 -rpcauth=umbrel:5071d8b3ba93e53e414446ff9f1b7d7b$$375e9731abd2cd2c2c44d2327ec19f4f2644256fdeaf4fc5229bf98b778aafec -zmqpubrawblock=tcp://0.0.0.0:28332 -zmqpubrawtx=tcp://0.0.0.0:28333
     volumes:
       - ${PWD}/data/bitcoin:/data/.bitcoin
-    restart: on-failure
-    ports:
-      - "18443:18443"
 
   tor:
     image: lncm/tor:0.4.5.7@sha256:a83e0d9fd1a35adf025f2f34237ec1810e2a59765988dce1dfb222ca8ef6583c

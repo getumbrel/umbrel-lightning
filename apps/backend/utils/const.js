@@ -17,6 +17,7 @@ module.exports = {
     FORBIDDEN: 403,
     OK: 200
   },
+  CHANNEL_BACKUP_FILE: process.env.CHANNEL_BACKUP_FILE,
   LND_REST_HIDDEN_SERVICE:
     process.env.LND_REST_HIDDEN_SERVICE || "unset.onion",
   LND_GRPC_HIDDEN_SERVICE:
@@ -28,8 +29,8 @@ module.exports = {
     process.env.MACAROON_FILE || process.env.MACAROON_DIR
       ? `${process.env.MACAROON_DIR}admin.macaroon`
       : "/lnd/data/chain/bitcoin/mainnet/admin.macaroon",
-  TOR_PROXY_IP: process.env.TOR_PROXY_IP || "192.168.0.1",
-  TOR_PROXY_PORT: process.env.TOR_PROXY_PORT || 9050,
+  TOR_PROXY_IP: process.env.TOR_PROXY_IP,
+  TOR_PROXY_PORT: process.env.TOR_PROXY_PORT,
 
   BACKUP_STATUS_FILE:
     process.env.BACKUP_STATUS_FILE || "/data/backup-status.json",

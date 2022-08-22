@@ -11,6 +11,7 @@ const lightningLogic = require("logic/lightning");
 const diskLogic = require("logic/disk");
 
 const constants = require("utils/const.js");
+const startChannelBackupMonitor = require("utils/channel-backup-monitor");
 
 // Keep requestCorrelationId middleware as the first middleware. Otherwise we risk losing logs.
 const requestCorrelationMiddleware = require("middlewares/requestCorrelationId.js"); // eslint-disable-line id-length
@@ -29,6 +30,7 @@ const lightning = require("routes/v1/lnd/lightning.js");
 const bitcoin = require("routes/v1/bitcoind/info.js");
 const transaction = require("routes/v1/lnd/transaction.js");
 const util = require("routes/v1/lnd/util.js");
+const backups = require("routes/v1/lnd/backups.js");
 const wallet = require("routes/v1/lnd/wallet.js");
 const pages = require("routes/v1/pages.js");
 const system = require("routes/v1/system/index.js");
@@ -55,6 +57,7 @@ app.use("/v1/bitcoin", bitcoin);
 app.use("/v1/lnd/transaction", transaction);
 app.use("/v1/lnd/wallet", wallet);
 app.use("/v1/lnd/util", util);
+app.use("/v1/lnd/backups", backups);
 app.use("/v1/pages", pages);
 app.use("/v1/system", system);
 app.use("/v1/external", external);
@@ -100,18 +103,6 @@ const initLnd = async () => {
     console.log(`Unlocking wallet failed: "${reason}"`);
   }
 
-  // Attempt to create a new wallet
-  try {
-    console.log('Attempting to create new wallet...')
-    const {seed} = await lightningLogic.generateSeed();
-    await lightningLogic.initializeWallet(constants.LND_WALLET_PASSWORD, seed);
-    await diskLogic.updateJsonStore({seed})
-    console.log('Wallet created!');
-  } catch (error) {
-    const reason = error.error && error.error.details || error.message;
-    console.log(`Error: "${reason}"`);
-  }
-
 };
 
 // Retry init every minute incase LND crashes
@@ -121,3 +112,6 @@ const initLnd = async () => {
     await delay(1 * MINUTE_IN_MS);
   }
 })();
+
+// Monitor channel backups for changes and backup
+startChannelBackupMonitor();
