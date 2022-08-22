@@ -26,6 +26,8 @@ services:
       LND_REST_HIDDEN_SERVICE: rest.onion
       LND_GRPC_HIDDEN_SERVICE: grpc.onion
       JSON_STORE_FILE: /data/state.json
+      EXPLORER_PORT: 1234
+      EXPLORER_HIDDEN_SERVICE: 'mempool.onion'
       # TOR_PROXY_IP: tor
       # TOR_PROXY_PORT: 9050
       DEVICE_HOSTNAME: test.local

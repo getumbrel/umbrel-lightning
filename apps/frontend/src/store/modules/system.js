@@ -15,7 +15,8 @@ const state = () => ({
     version: ""
   },
   onionAddress: "",
-  seedExists: false
+  seedExists: false,
+  localExplorerUrl: false,
 });
 
 // Functions to update the state directly
@@ -44,6 +45,9 @@ const mutations = {
   setSeedExists(state, seedExists) {
     state.seedExists = seedExists;
   },
+  setLocalExplorerUrl(state, localExplorerUrl) {
+    state.localExplorerUrl = localExplorerUrl;
+  }
 };
 
 // Functions to get data from the API
@@ -104,6 +108,20 @@ const actions = {
       `${process.env.VUE_APP_API_BASE_URL}/v1/system/seed-exists`
     );
     commit("setSeedExists", seedExists);
+  },
+  async getLocalExplorerUrl({ commit }) {
+    const {port, hiddenService} = await API.get(
+      `${process.env.VUE_APP_API_BASE_URL}/v1/system/explorer`
+    );
+
+    let localExplorerUrl = false;
+
+    if (window.location.origin.endsWith(".onion") && hiddenService) {
+      localExplorerUrl = `http://${hiddenService}`;
+    } else if (port) {
+      localExplorerUrl = `${window.location.protocol}//${window.location.hostname}:${port}`;
+    }
+    commit("setLocalExplorerUrl", localExplorerUrl);
   },
 };
 

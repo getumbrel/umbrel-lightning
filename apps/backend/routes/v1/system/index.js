@@ -62,4 +62,9 @@ router.get(
   })
 );
 
+router.get("/explorer", safeHandler(async (req, res) => res.json({
+  port: constants.EXPLORER_PORT,
+  hiddenService: constants.EXPLORER_HIDDEN_SERVICE,
+})));
+
 module.exports = router;

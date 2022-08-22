@@ -666,28 +666,7 @@ export default {
       fees: (state) => state.bitcoin.fees,
       unit: (state) => state.system.unit,
       chain: (state) => state.bitcoin.chain,
-      localExplorerTxUrl: () => {
-        // Check for mempool app
-        // const mempool = state.apps.installed.find(({ id }) => id === "mempool");
-        // if (mempool) {
-        //   return window.location.origin.indexOf(".onion") > 0
-        //     ? `http://${mempool.hiddenService}${mempool.path}/tx/`
-        //     : `http://${window.location.hostname}:${mempool.port}${mempool.path}/tx/`;
-        // }
-
-        // // Check for btc-rpc-explorer app
-        // const btcRpcExplorer = state.apps.installed.find(
-        //   ({ id }) => id === "btc-rpc-explorer"
-        // );
-        // if (btcRpcExplorer) {
-        //   return window.location.origin.indexOf(".onion") > 0
-        //     ? `http://${btcRpcExplorer.hiddenService}${btcRpcExplorer.path}/tx/`
-        //     : `http://${window.location.hostname}:${btcRpcExplorer.port}${btcRpcExplorer.path}/tx/`;
-        // }
-
-        // Else return empty string
-        return "";
-      },
+      localExplorerTxUrl: (state) => state.system.localExplorerUrl,
     }),
     ...mapGetters({
       transactions: "bitcoin/transactions",
@@ -723,7 +702,7 @@ export default {
     },
     getTxExplorerUrl(txHash) {
       if (this.localExplorerTxUrl) {
-        return `${this.localExplorerTxUrl}${txHash}`;
+        return `${this.localExplorerTxUrl}/tx/${txHash}`;
       } else {
         if (window.location.origin.indexOf(".onion") > 0) {
           return this.chain === "test"
@@ -892,6 +871,7 @@ export default {
     this.$store.dispatch("bitcoin/getBalance");
     this.$store.dispatch("bitcoin/getTransactions");
     this.$store.dispatch("bitcoin/getPrice");
+    this.$store.dispatch("system/getLocalExplorerUrl");
   },
   components: {
     CardWidget,

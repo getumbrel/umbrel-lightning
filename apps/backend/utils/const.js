@@ -36,5 +36,7 @@ module.exports = {
     process.env.BACKUP_STATUS_FILE || "/data/backup-status.json",
 
   TERMS_ACKNOWLEDGE_FILE:
-    process.env.TERMS_ACKNOWLEDGE_FILE || "/statuses/terms-acknowledge.json"
+    process.env.TERMS_ACKNOWLEDGE_FILE || "/statuses/terms-acknowledge.json",
+  EXPLORER_PORT: process.env.EXPLORER_PORT,
+  EXPLORER_HIDDEN_SERVICE: process.env.EXPLORER_HIDDEN_SERVICE
 };
