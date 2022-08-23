@@ -1,8 +1,8 @@
 <template>
-  <b-modal id="lightning-address-modal" size="lg" centered hide-footer>
+  <b-modal id="node-id-modal" size="lg" centered hide-footer>
     <template v-slot:modal-header="{ close }">
       <div class="px-2 px-sm-3 pt-2 d-flex justify-content-between w-100">
-        <h3 class="text-lowercase">Lightning address</h3>
+        <h3>Node ID</h3>
         <!-- Emulate built in modal header close button action -->
         <a href="#" class="align-self-center" v-on:click.stop.prevent="close">
           <svg
@@ -33,8 +33,8 @@
         ></qr-code>
         <div class="w-100 align-self-center ml-0 ml-md-4">
           <p>
-            Other Lightning nodes can open payment channels to your node on the
-            following address
+            Other Lightning nodes can open payment channels to your node using the
+            following Node ID
           </p>
           <div v-if="uris.length">
             <input-copy

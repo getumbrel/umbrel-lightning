@@ -69,8 +69,8 @@
                 />
               </svg>
             </template>
-            <b-dropdown-item href="#" v-b-modal.lightning-address-modal
-              >Lightning address</b-dropdown-item
+            <b-dropdown-item href="#" v-b-modal.node-id-modal
+              >Node ID</b-dropdown-item
             >
             <b-dropdown-item href="#" v-b-modal.connect-wallet-modal @click="getLndConnectUrls"
               >Connect wallet</b-dropdown-item
@@ -304,7 +304,7 @@
         :onBack="() => this.$bvModal.hide('recover-channels-modal')"
       />
     </b-modal>
-    <lightning-address-modal />
+    <node-id-modal />
     <secret-words-modal />
     <connect-wallet-modal />
   </div>
@@ -327,7 +327,7 @@ import ChannelList from "@/components/Channels/List";
 import ChannelOpen from "@/components/Channels/Open";
 import ChannelManage from "@/components/Channels/Manage";
 
-import LightningAddressModal from "./LightningAddressModal.vue";
+import NodeIdModal from "./NodeIdModal.vue";
 import SecretWordsModal from "./SecretWordsModal.vue";
 import ConnectWalletModal from "./ConnectWalletModal";
 import OnboardingModal from "./OnboardingModal/OnboardingModal.vue";
@@ -452,7 +452,7 @@ export default {
     ChannelList,
     ChannelOpen,
     ChannelManage,
-    LightningAddressModal,
+    NodeIdModal,
     SecretWordsModal,
     ConnectWalletModal,
     OnboardingModal,

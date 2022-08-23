@@ -2,7 +2,7 @@
   <form @submit.prevent="openChannel">
     <b-row>
       <b-col col cols="12" sm="6">
-        <label class="sr-onlsy" for="peer-connection">Lightning address</label>
+        <label class="sr-onlsy" for="peer-connection">Node ID</label>
         <b-input
           id="peer-connection"
           class="mb-3 neu-input"
@@ -187,7 +187,7 @@ export default {
       } else {
         this.isOpening = false;
         this.error =
-          "Please check the lightning address (also known as peer address)";
+          "Please check the Node ID (also known as peer address)";
         return;
       }
 
