@@ -1,8 +1,14 @@
 <template>
   <div>
+    
+    <!-- Disable channel backup recovery if LND is not ready -->
+    <recovery-lightning-is-syncing
+      v-if="isLightningSyncing"
+      :onConfirm="onClose"
+    />
 
     <!-- Default loading state  -->
-    <div v-if="step === 'loading'">
+    <div v-else-if="step === 'loading'">
       <div class="d-flex align-items-center w-100 flex flex-column text-center p-3 pb-4">
         <h2 class="text-lowercase">Recover your channels</h2>
         <div class="py-3 my-3 d-flex">
@@ -38,6 +44,7 @@ import { mapState } from "vuex";
 
 import API from "@/helpers/api";
 
+import RecoveryLightningIsSyncing from '@/views/Home/OnboardingModal/RecoveryLightningIsSyncing.vue';
 import RecoverySelectBackupFile from '@/views/Home/OnboardingModal/RecoverySelectBackupFile.vue';
 import RecoveryUploadBackupFile from '@/views/Home/OnboardingModal/RecoveryUploadBackupFile.vue';
 
@@ -53,6 +60,7 @@ export default {
   props: {
     onComplete: Function,
     onBack: Function,
+    onClose: Function,
   },
   data() {
     return {
@@ -64,6 +72,7 @@ export default {
   computed: {
     ...mapState({
       backups: state => state.lightning.backups,
+      isLightningSyncing: state => !state.lightning.syncedToChain,
     }),
   },
   methods: {
@@ -118,6 +127,7 @@ export default {
     this.getBackups();
   },
   components: {
+    RecoveryLightningIsSyncing,
     RecoverySelectBackupFile,
     RecoveryUploadBackupFile,
   }

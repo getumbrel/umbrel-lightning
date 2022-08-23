@@ -1,7 +1,7 @@
 <template>
   <b-modal
     id="onboarding-modal"
-    :size="onboarding && (step === 'recovery-enter-words' || step === 'recovery-select-backup' || step === 'recovery-upload-backup' || step === 'show-secret-words' || step === 'verify-secret-words') ? 'lg' : 'md'"
+    :size="onboarding && (step === 'recovery-enter-words' || step === 'recovery-channels' || step === 'show-secret-words' || step === 'verify-secret-words') ? 'lg' : 'md'"
     centered
     hide-footer
     hide-header
@@ -35,7 +35,7 @@
       <recovery-confirm-open-channels
         v-else-if="step === 'recovery-confirm-open-channels'"
         :onNo="() => changeStep('terms')"
-        :onYes="() => changeStep('recovery-channels')"
+        :onYes="confirmOpenChannels"
       />
 
       <!-- Recovery: Select or upload channel backup file -->
@@ -43,6 +43,7 @@
         v-else-if="step === 'recovery-channels'"
         :onComplete="channelRecoveryInitiated"
         :onBack="() => changeStep('recovery-confirm-open-channels')"
+        :onClose="() => changeStep('terms')"
       />
 
       <secret-words-display
@@ -141,6 +142,11 @@ export default {
       }
 
       return this.changeStep('show-secret-words');
+    },
+
+    async confirmOpenChannels() {
+      await this.$store.dispatch("lightning/getLndPageData");
+      return this.changeStep('recovery-channels');
     },
 
     channelRecoveryInitiated() {

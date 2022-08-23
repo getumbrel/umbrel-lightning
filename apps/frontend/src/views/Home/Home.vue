@@ -300,6 +300,7 @@
       <recovery-channels
         :onComplete="channelRecoveryInitiated"
         :onBack="() => this.$bvModal.hide('recover-channels-modal')"
+        :onClose="() => this.$bvModal.hide('recover-channels-modal')"
       />
     </b-modal>
     <node-id-modal />
