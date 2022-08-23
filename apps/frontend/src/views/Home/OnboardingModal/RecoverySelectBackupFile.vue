@@ -12,7 +12,7 @@
         v-for="timestamp in timestamps"
         :key="timestamp"
         class="backup-file mx-1"
-        @click="onSelect(timestamp)"
+        @click="selectBackup(timestamp)"
       >
       <img
         class="icon-backup-file mx-3"
@@ -64,6 +64,13 @@ export default {
     getDate(timestamp) {
       return moment(timestamp).format("MMM D, YYYY"); // eg. "3:03 pm March 08, 2020"
     },
+
+    selectBackup(timestamp) {
+      if (!window.confirm(`Are you sure you want to recover your Lightning channels from the backup made on ${this.getDate(timestamp)} at ${this.getTime(timestamp)}?`)) {
+        return;
+      }
+      return this.onSelect(timestamp);
+    }
   }
 };
 </script>
