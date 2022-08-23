@@ -105,13 +105,11 @@
                   ></toggle-switch>
                 </div>
                 <small
-                  v-if="backupStatus.status"
+                  v-if="lastBackupDate"
                   class="d-block mt-2"
                   style="opacity: 0.4"
                 >
-                  Last backup
-                  <span v-if="backupStatus.status === 'failed'">failed</span>
-                  at {{ getReadableTime(backupStatus.timestamp) }}
+                  Last backup at {{ getReadableTime(lastBackupDate) }}
                 </small>
               </div>
             </b-dropdown-group>
@@ -355,6 +353,7 @@ export default {
       channels: state => state.lightning.channels,
       unit: state => state.system.unit,
       backupStatus: state => state.system.backupStatus,
+      lastBackupDate: state => state.lightning.lastBackupDate,
     })
   },
   methods: {
@@ -423,7 +422,7 @@ export default {
       this.$store.dispatch("lightning/getTransactions");
       this.$store.dispatch("lightning/getChannels");
       this.$store.dispatch("lightning/getLndPageData");
-      this.$store.dispatch("system/getBackupStatus");
+      this.$store.dispatch("lightning/getLastBackupDate");
     }
   },
   created() {

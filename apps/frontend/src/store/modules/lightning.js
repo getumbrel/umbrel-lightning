@@ -62,6 +62,7 @@ const state = () => ({
   pendingTransactions: [],
   pendingChannelEdit: {},
   backups: [],
+  lastBackupDate: false,
   recoveryInfo: {
     recoveryMode: false,
     recoveryFinished: false,
@@ -167,6 +168,10 @@ const mutations = {
 
   setRecoveryInfo(state, info) {
     state.recoveryInfo = info;
+  },
+
+  setLastBackupDate(state, timestamp) {
+    state.lastBackupDate = timestamp;
   }
 };
 
@@ -215,6 +220,13 @@ const actions = {
       `${process.env.VUE_APP_API_BASE_URL}/v1/lnd/backups`
     );
     commit("setBackups", timestamps);
+  },
+
+  async getLastBackupDate({ commit }) {
+    const { timestamp } = await API.get(
+      `${process.env.VUE_APP_API_BASE_URL}/v1/lnd/backups/latest`
+    );
+    commit("setLastBackupDate", timestamp);
   },
 
   //basically fetches everything
