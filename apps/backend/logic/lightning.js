@@ -543,6 +543,8 @@ const getChannels = async () => {
     // Combine open channels
     const openChannels = await openChannelsCall;
   
+    const offlineChannels = [];
+  
     for (const channel of openChannels) {
       channel.type = "OPEN";
   
@@ -556,7 +558,15 @@ const getChannels = async () => {
           parseInt(channel.remoteBalance, 10) + parseInt(channel.commitFee, 10)
         );
       }
+      
+      if(channel.active) {
+        allChannels.push(channel);
+      } else {
+        offlineChannels.push(channel);
+      }
+    }
   
+    for (const channel of offlineChannels) {
       allChannels.push(channel);
     }
   
