@@ -84,7 +84,7 @@ async function getLndConnectUrls() {
     macaroon
   });
 
-  let restLocalHost = `${constants.DEVICE_DOMAIN_NAME}:${constants.LND_REST_PORT}}`;
+  let restLocalHost = `${constants.DEVICE_DOMAIN_NAME}:${constants.LND_REST_PORT}`;
   const restLocal = encode({
     host: restLocalHost,
     cert,
