@@ -8,6 +8,9 @@ module.exports = {
   DEVICE_DOMAIN_NAME: process.env.DEVICE_DOMAIN_NAME,
   USER_FILE: process.env.USER_FILE || "/db/user.json",
   JSON_STORE_FILE: process.env.JSON_STORE_FILE || "/data/state.json",
+  JSON_SETTINGS_FILE: process.env.JSON_SETTINGS_FILE || "/data/settings.json",
+  UMBREL_LND_CONF_FILEPATH: process.env.UMBREL_LND_CONF_FILEPATH || "/lnd/.lnd/umbrel-lnd.conf",
+  LND_CONF_FILEPATH: process.env.LND_CONF_FILEPATH || "/lnd/.lnd/lnd.conf",
   MANAGED_CHANNELS_FILE: "/channel-data/managedChannels.json",
   LND_WALLET_PASSWORD: process.env.LND_WALLET_PASSWORD || "moneyprintergobrrr",
   REQUEST_CORRELATION_NAMESPACE_KEY: "umbrel-middleware-request",
@@ -31,6 +34,8 @@ module.exports = {
       : "/lnd/data/chain/bitcoin/mainnet/admin.macaroon",
   TOR_PROXY_IP: process.env.TOR_PROXY_IP,
   TOR_PROXY_PORT: process.env.TOR_PROXY_PORT,
+  TOR_PROXY_CONTROL_PORT: process.env.TOR_PROXY_CONTROL_PORT,
+  TOR_PROXY_CONTROL_PASSWORD: process.env.TOR_PROXY_CONTROL_PASSWORD,
 
   BACKUP_STATUS_FILE:
     process.env.BACKUP_STATUS_FILE || "/data/backup-status.json",

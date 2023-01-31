@@ -71,7 +71,7 @@ winston.loggers.add(LOCAL, {
 const morganConfiguration = {
   stream: {
     write: function (message) {
-      info(message, 'umbrel-middleware');
+      info(message, 'umbrel-lightning');
     }
   }
 };

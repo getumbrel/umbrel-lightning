@@ -26,21 +26,31 @@ services:
       LND_REST_HIDDEN_SERVICE: rest.onion
       LND_GRPC_HIDDEN_SERVICE: grpc.onion
       JSON_STORE_FILE: /data/state.json
+      JSON_SETTINGS_FILE: /data/settings.json
+      UMBREL_LND_CONF_FILEPATH: /lnd/.lnd/umbrel-lnd.conf
+      LND_CONF_FILEPATH: /lnd/.lnd/lnd.conf
       EXPLORER_PORT: 1234
       EXPLORER_HIDDEN_SERVICE: 'mempool.onion'
-      # TOR_PROXY_IP: tor
-      # TOR_PROXY_PORT: 9050
       DEVICE_HOSTNAME: test.local
     ports:
       - "3006:3006"
 
   lnd:
-    image: lightninglabs/lnd:v0.14.1-beta@sha256:810f290f4da51adaf57d53bc1f1e65b52b03c543f322da0b98fb8c47be94a27a
+    image: lightninglabs/lnd:v0.15.5-beta@sha256:ce94136ccfc48d36f058ae48fdeb53d84dbbb8f972bbae3af98e4fdfb98d641b
     user: 1000:1000
     hostname: lnd
-    command: --listen=0.0.0.0:9735 --rpclisten=0.0.0.0:10009 --restlisten=0.0.0.0:8080 --bitcoin.active --bitcoin.regtest --bitcoin.node=bitcoind --bitcoind.rpchost=bitcoind --bitcoind.rpcuser=umbrel --bitcoind.rpcpass=moneyprintergobrrr --bitcoind.zmqpubrawblock=tcp://bitcoind:28332 --bitcoind.zmqpubrawtx=tcp://bitcoind:28333
+    command: --listen=0.0.0.0:9735 --rpclisten=0.0.0.0:10009 --restlisten=0.0.0.0:8080 --bitcoin.active --bitcoin.regtest --bitcoin.node=bitcoind --bitcoind.rpchost=bitcoind --bitcoind.rpcuser=umbrel --bitcoind.rpcpass=moneyprintergobrrr --bitcoind.zmqpubrawblock=tcp://bitcoind:28332 --bitcoind.zmqpubrawtx=tcp://bitcoind:28333 --configfile=/data/.lnd/umbrel-lnd.conf
+    # entrypoint: 
+    #   - sh
+    #   - -c
+    #   - |
+    #     if [ ! -f "/data/.lnd/umbrel-lnd.conf" ]; then
+    #       touch "/data/.lnd/umbrel-lnd.conf"
+    #     fi
+    #     lnd --listen=0.0.0.0:9735 --rpclisten=0.0.0.0:10009 --restlisten=0.0.0.0:8080 --bitcoin.active --bitcoin.regtest --bitcoin.node=bitcoind --bitcoind.rpchost=bitcoind --bitcoind.rpcuser=umbrel --bitcoind.rpcpass=moneyprintergobrrr --bitcoind.zmqpubrawblock=tcp://bitcoind:28332 --bitcoind.zmqpubrawtx=tcp://bitcoind:28333 --configfile=/data/.lnd/umbrel-lnd.conf
     volumes:
       - ${PWD}/data/lnd:/data/.lnd
+    restart: unless-stopped
     environment:
       HOME: /data
 
@@ -51,7 +61,11 @@ services:
       - ${PWD}/data/bitcoin:/data/.bitcoin
 
   tor:
-    image: lncm/tor:0.4.5.7@sha256:a83e0d9fd1a35adf025f2f34237ec1810e2a59765988dce1dfb222ca8ef6583c
-    command: -f /data/torrc
+    image: getumbrel/tor:0.4.7.8@sha256:2ace83f22501f58857fa9b403009f595137fa2e7986c4fda79d82a8119072b6a
+    user: "1000:1000"
+    restart: on-failure
     volumes:
-      -  ${PWD}/data/tor:/data
+      - ${PWD}/data/tor/torrc:/etc/tor/torrc:ro
+      - ${PWD}/data/tor:/data
+    environment:
+      HOME: "/tmp"

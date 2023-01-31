@@ -1,70 +1,75 @@
 <template>
-  <div
-    @click="toggle"
-    class="toggle"
-    :class="{
-      'toggle-off': !on,
-      'toggle-on': on,
-      'toggle-disabled': disabled,
-      'toggle-loading': loading,
-    }"
-    v-b-tooltip.hover.left
-    :title="tooltip"
-  >
+  <!-- div wrapper with v-b-tooltip to allow tooltip to show when toggle is disabled -->
+  <div v-b-tooltip.hover.left :title="tooltip">
     <div
-      class="toggle-switch justify-items-center"
+      class="toggle"
       :class="{
-        'toggle-switch-off': !on,
-        'toggle-switch-on': on,
+        'toggle-off': !on,
+        'toggle-on': on,
+        'toggle-disabled': disabled,
+        'toggle-loading': loading
       }"
-    ></div>
+      :disabled="disabled"
+      @click="toggle"
+    >
+      <div
+        class="toggle-switch justify-items-center"
+        :class="{
+          'toggle-switch-off': !on,
+          'toggle-switch-on': on
+        }"
+      ></div>
+    </div>
   </div>
 </template>
 
 <script>
 export default {
-  computed: {},
   methods: {
     toggle() {
       if (this.disabled) {
         return;
       }
-      const emitEvent = !this.on ? "turnOn" : "turnOff";
-      return this.$emit(emitEvent, !this.on);
-    },
+      return this.$emit("toggle", !this.on);
+    }
   },
   props: {
     disabled: {
       type: Boolean,
-      default: false,
+      default: false
     },
     loading: {
       type: Boolean,
-      default: false,
+      default: false
     },
     tooltip: {
       type: String,
-      default: "",
+      default: ""
     },
     on: {
       type: Boolean,
-      default: true,
-    },
+      default: false
+    }
   },
+  emits: ["toggle"]
 };
 </script>
 
 <style scoped lang="scss">
+$toggle-width: 50px;
+
 .toggle {
-  border-radius: 30px;
-  width: 60px;
-  height: 36px;
+  border-radius: calc($toggle-width * 0.5);
+  width: $toggle-width;
+  height: calc($toggle-width * 0.6);
   box-sizing: border-box;
   display: flex;
+  align-items: center;
   cursor: pointer;
   transition: 0.8s cubic-bezier(0.2, 0.8, 0.2, 1);
   background: linear-gradient(346.78deg, #f7fcfc 0%, #fafcfa 100%);
   border: 1px solid rgba(0, 0, 0, 0.04);
+  // TODO - may want to calc box-shadow px values to scale correctly with $toggle-width
   box-shadow: inset 0px 5px 10px rgba(0, 0, 0, 0.1);
   &.toggle-on {
     background: var(--success);
@@ -78,19 +83,19 @@ export default {
   }
 }
 .toggle-switch {
-  margin: 2px;
-  height: 30px;
-  width: 30px;
-  border-radius: 30px;
+  margin: 0;
+  height: calc($toggle-width * 0.5);
+  width: calc($toggle-width * 0.5);
+  border-radius: 50%;
   background: #ffffff;
   transition: 0.8s cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 .toggle-switch-off {
-  transform: translateX(0);
+  transform: translateX(10%);
   box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
 }
 .toggle-switch-on {
-  transform: translateX(24px);
+  transform: translateX(90%);
   box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
 }
 </style>

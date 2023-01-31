@@ -7,6 +7,26 @@ const fs = require("fs");
 const crypto = require("crypto");
 const uint32Bytes = 4;
 
+// Asynchronously checks if a file exists
+async function fileExists(filePath) {
+  try {
+    await fs.promises.access(filePath);
+    return true;
+  } catch (err) {
+    return false;
+  }
+}
+
+// Copies a file from one location to another
+async function copyFile(filePath, newFilePath) {
+  try {
+    await fs.promises.copyFile(filePath, newFilePath);
+    return true;
+  } catch (err) {
+    return false;
+  }
+}
+
 // Deletes a file from the filesystem
 function deleteFile(filePath) {
   return new Promise((resolve, reject) =>
@@ -172,7 +192,38 @@ function writeKeyFile(filePath, obj) {
     });
 }
 
+function writePlainTextFile(filePath, string) {
+  const tempFileName = `${filePath}.${crypto
+    .randomBytes(uint32Bytes)
+    .readUInt32LE(0)}`;
+
+  return writeFile(tempFileName, string, "utf8")
+    .then(
+      () =>
+        new Promise((resolve, reject) =>
+          fs.rename(tempFileName, filePath, (err) => {
+            if (err) {
+              reject(err);
+            } else {
+              resolve();
+            }
+          })
+        )
+    ).catch((err) => {
+      if (err) {
+        fs.unlink(tempFileName, (err) => {
+          logger.warn("Error removing temporary file after error", "disk", {
+            err,
+            tempFileName,
+          });
+        });
+      }
+    })
+}
+
 module.exports = {
+  fileExists,
+  copyFile,
   deleteItemsInDir,
   deleteFile,
   deleteFoldersInDir,
@@ -183,4 +234,5 @@ module.exports = {
   writeJsonFile,
   writeKeyFile,
   writeFile,
+  writePlainTextFile
 };

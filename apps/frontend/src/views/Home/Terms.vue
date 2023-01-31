@@ -2,7 +2,7 @@
   <div
     class="py-3 px-2 d-flex align-items-center w-100 flex flex-column text-center"
   >
-    <h2 class="text-lowercase">Before we begin...</h2>
+    <h3>Before we begin...</h3>
     <p>A word of caution.</p>
     <p class="h1">
       <b-icon icon="exclamation-circle" variant="warning"></b-icon>
@@ -49,4 +49,3 @@ export default {
   }
 };
 </script>
-

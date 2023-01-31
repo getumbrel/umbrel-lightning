@@ -5,12 +5,16 @@ const emptySeedArray = ["", "", "", "", "", "", "", "", "", "", "", "", "", "", 
 // Initial state
 const state = () => ({
   seed: emptySeedArray,
+  lndConfig: {}
 });
 
 // Functions to update the state directly
 const mutations = {
   setSeed(state, seed) {
     state.seed = seed;
+  },
+  setLndConfig(state, lndConfig) {
+    state.lndConfig = lndConfig;
   }
 };
 
@@ -28,6 +32,17 @@ const actions = {
   },
   async clearSeed({ commit }) {
     commit("setSeed", emptySeedArray);
+  },
+  async getLndConfig({ commit }) {
+    const existingLndConfig = await API.get(
+      `${process.env.VUE_APP_API_BASE_URL}/v1/lnd/conf/lnd-config`
+    );
+    if (existingLndConfig) {
+      commit("setLndConfig", existingLndConfig);
+    }
+  },
+  async updateLndConfig({ commit }, lndConfig) {
+    commit("setLndConfig", lndConfig);
   }
 };
 

@@ -648,3 +648,52 @@ body {
     }
   }
 }
+
+
+// to override lightvue color-picker input styles
+// used in advanced settins to select node color
+.lv-colorpicker-wrapper {
+  margin-top: -1.5rem;
+  display: block !important;
+}
+
+.lv-input__field {
+  // match bootstrap-vue input styles
+  background-color: #ffffff !important;
+  border: 1px solid #ced4da !important;
+  font-size: 0.85rem !important;
+  input {
+    color: #495057;
+    width: 62px;
+    padding: 6px 0 !important;
+  }
+  .lv-input__append {
+    margin-left: -8px;
+    margin-right: 0;
+    padding: 0;
+    .lv-colorpicker__colorblock-wrap {
+      height: 28px;
+      top: calc(50% - 14px);
+    }
+  }
+}
+
+// to override lightvue color-picker popup styles
+.lv-component {
+  // appear above bootstrap-vue modal
+  z-index: 2000 !important;
+
+  .vc-chrome-controls {
+    display: flex;
+    align-items: center;
+  }
+  .vc-chrome-hue-wrap {
+    margin: 0 !important;
+  }
+  .vc-chrome-toggle-btn {
+    display: none;
+  }
+  .vc-chrome-alpha-wrap {
+    display: none;
+  }
+}

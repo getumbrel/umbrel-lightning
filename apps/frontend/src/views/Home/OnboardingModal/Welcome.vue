@@ -1,6 +1,6 @@
 <template>
   <div class="d-flex align-items-center w-100 flex flex-column text-center p-3 pb-4">
-    <h2 class="text-lowercase">Welcome to the <br/> lightning network</h2>
+    <h3>Welcome to the <br/> Lightning Network</h3>
     <img
       class="app-icon mt-3"
       src="@/assets/icon.svg"

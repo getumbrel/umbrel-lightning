@@ -8,6 +8,24 @@ var app = require("../app");
 var debug = require("debug")("nodejs-regular-webapp2:server");
 var http = require("http");
 
+const configLogic = require("logic/config");
+const lndLogic = require('logic/lightning');
+
+/**
+ * Update umbrel-lnd.conf if it is out-of-date.
+ */
+
+(async () => {
+  const config = await configLogic.getConfig();
+
+  if(! await configLogic.isUmbrelLndConfUpToDate(config)) {
+    console.log('lnd config is not up to date, generating new config...');
+
+    await configLogic.writeLndConfig(config);
+    await lndLogic.restartLndWithRetries();
+  }
+})();
+
 /**
  * Get port from environment and store in Express.
  */

@@ -9,7 +9,6 @@ const NodeError = require("models/errors.js").NodeError;
 
 const lndService = require("services/lnd.js");
 const bitcoindLogic = require("logic/bitcoind.js");
-const diskLogic = require("logic/disk.js");
 
 const constants = require("utils/const.js");
 const convert = require("utils/convert.js");
@@ -963,6 +962,64 @@ function updateChannelPolicy(
   );
 }
 
+async function getWatchtowerServiceInfo() {
+  const info = await lndService.getWatchtowerServiceInfo();
+  return {
+    listeners: info.listeners,
+    pubkey: toHexString(info.pubkey),
+    uris: info.uris
+  };
+}
+
+async function addWatchtower(uri) {
+  const response = await lndService.addWatchtower(uri);
+  return response;
+}
+
+async function removeWatchtower(pubkey) {
+  const response = await lndService.removeWatchtower(pubkey);
+  return response;
+}
+
+async function removeWatchtowerAddress(pubkey, address) {
+  const response = await lndService.removeWatchtowerAddress(pubkey, address);
+  return response;
+}
+
+async function listWatchtowers() {
+  const { towers } = await lndService.listWatchtowers();
+  // translate pubkey of each tower to hex string
+  towers.forEach(tower => {
+    tower.pubkey = toHexString(tower.pubkey);
+  });
+
+  return towers.sort((a, b) => a.pubkey.localeCompare(b.pubkey));
+}
+
+async function stopDaemon() {
+  const response = await lndService.stopDaemon();
+  return response;
+}
+
+async function restartLndWithRetries(MAX_TRIES = 60) {
+  let tries = 0;
+
+  while (tries < MAX_TRIES) {
+    try {
+      await stopDaemon();
+      break;
+    } catch (error) {
+      if (error.error?.details === "wallet not created, create one to enable full RPC access") {
+        console.log("wallet not created. no longer attempting to stop LND daemon");
+        break;
+      }
+      console.error('Failed to stop LND daemon', error);
+      tries++;
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+    }
+  }
+}
+
 module.exports = {
   addInvoice,
   changePassword,
@@ -994,5 +1051,12 @@ module.exports = {
   getGeneralInfo,
   getRecoveryInfo,
   getVersion,
-  updateChannelPolicy
+  updateChannelPolicy,
+  getWatchtowerServiceInfo,
+  addWatchtower,
+  removeWatchtower,
+  removeWatchtowerAddress,
+  listWatchtowers,
+  stopDaemon,
+  restartLndWithRetries
 };

@@ -1,6 +1,5 @@
 /* eslint-disable camelcase, max-lines */
 const grpc = require("grpc");
-const path = require("path");
 const camelizeKeys = require("camelize-keys");
 
 const diskService = require("services/disk");
@@ -9,6 +8,8 @@ const LndError = require("models/errors.js").LndError;
 const LND_HOST = process.env.LND_HOST || "127.0.0.1";
 const TLS_FILE = process.env.TLS_FILE || "/lnd/tls.cert";
 const PROTO_FILE = process.env.PROTO_FILE || "./resources/rpc.proto";
+const WATCHTOWERRPC_PROTO_FILE = process.env.WATCHTOWERRPC_PROTO_FILE || "./resources/watchtowerrpc.proto";
+const WTCLIENTRPC_PROTO_FILE = process.env.WTCLIENTRPC_PROTO_FILE || "./resources/wtclientrpc.proto";
 const LND_PORT = process.env.LND_PORT || 10009; // eslint-disable-line no-magic-numbers
 const LND_NETWORK = process.env.LND_NETWORK || "mainnet";
 
@@ -27,6 +28,12 @@ if (process.env.MACAROON_DIR) {
 // TODO move this to volume
 const lnrpcDescriptor = grpc.load(PROTO_FILE);
 const lnrpc = lnrpcDescriptor.lnrpc;
+
+const lnrpcWatchtowerDescriptor = grpc.load(WATCHTOWERRPC_PROTO_FILE);
+const lnrpcWatchtower = lnrpcWatchtowerDescriptor.watchtowerrpc;
+
+const lnrpcWtclientDescriptor = grpc.load(WTCLIENTRPC_PROTO_FILE);
+const lnrpcWtclient = lnrpcWtclientDescriptor.wtclientrpc;
 
 const DEFAULT_RECOVERY_WINDOW = 250;
 const GRPC_PARAMS = {
@@ -78,6 +85,14 @@ async function initializeRPCClient() {
           GRPC_PARAMS
         ),
         walletUnlocker: new lnrpc.WalletUnlocker(
+          LND_HOST + ":" + LND_PORT,
+          credentials
+        ),
+        watchtower: new lnrpcWatchtower.Watchtower(
+          LND_HOST + ":" + LND_PORT,
+          credentials
+        ),
+        watchtowerclient: new lnrpcWtclient.WatchtowerClient(
           LND_HOST + ":" + LND_PORT,
           credentials
         ),
@@ -576,6 +591,69 @@ function recoverBackup(multi_chan_backup) {
   ));
 }
 
+function getWatchtowerServiceInfo() {
+  return initializeRPCClient().then(async ({ watchtower }) => promiseify(
+    watchtower,
+    watchtower.GetInfo,
+    {},
+    "get watchtower service info"
+  ));
+}
+
+function addWatchtower(uri) {
+  const [pubkeyString, address] = uri.split(/@(.*)/);
+  const pubkey = Buffer.from(pubkeyString, 'hex');
+
+  return initializeRPCClient().then(async ({ watchtowerclient }) => promiseify(
+    watchtowerclient,
+    watchtowerclient.AddTower,
+    {pubkey, address},
+    "add watchtower"
+  ));
+}
+
+// removes the entire watchtower when only pubkey is passed to watchtowerclient.RemoveTower
+function removeWatchtower(pubkeyString) {
+  const pubkey = Buffer.from(pubkeyString, 'hex');
+  
+  return initializeRPCClient().then(async ({ watchtowerclient }) => promiseify(
+    watchtowerclient,
+    watchtowerclient.RemoveTower,
+    {pubkey},
+    "remove watchtower"
+  ));
+}
+
+// removes an address associated with a watchtower when both pubkey and address are passed to watchtowerclientRemoveTower
+function removeWatchtowerAddress(pubkeyString, address) {
+  const pubkey = Buffer.from(pubkeyString, 'hex');
+  
+  return initializeRPCClient().then(async ({ watchtowerclient }) => promiseify(
+    watchtowerclient,
+    watchtowerclient.RemoveTower,
+    {pubkey, address},
+    "remove watchtower"
+  ));
+}
+
+function listWatchtowers() {
+  return initializeRPCClient().then(async ({ watchtowerclient }) => promiseify(
+    watchtowerclient,
+    watchtowerclient.ListTowers,
+    {include_sessions: false},
+    "list watchtowers"
+  ));
+}
+
+function stopDaemon() {
+  return initializeRPCClient().then(({ lightning }) => promiseify(
+    lightning,
+    lightning.stopDaemon,
+    {},
+    "stop daemon"
+  ));
+}
+
 module.exports = {
   addInvoice,
   changePassword,
@@ -608,4 +686,10 @@ module.exports = {
   unlockWallet,
   updateChannelPolicy,
   recoverBackup,
+  getWatchtowerServiceInfo,
+  addWatchtower,
+  removeWatchtower,
+  removeWatchtowerAddress,
+  listWatchtowers,
+  stopDaemon
 };

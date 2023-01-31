@@ -3,7 +3,7 @@
     :class="{'pt-4': !disableVerify}"
   >
     <div class="d-flex align-items-center w-100 flex flex-column text-center">
-      <h2 class="text-lowercase">Note down your secret words</h2>
+      <h3>Note down your secret words</h3>
       <p class="mb-3 w-75">
         Keep these words at a secure place. You’ll need these to recover your
         funds if something goes wrong with your node.

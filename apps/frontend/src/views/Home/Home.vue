@@ -4,7 +4,7 @@
       <div
         class="d-flex flex-wrap justify-content-between align-items-center mb-2"
       >
-        <div class="d-flex flex-grow-1 justify-content-start align-items-center mb-4">
+        <div class="d-flex justify-content-start align-items-start mb-2 mb-sm-4">
           <img
             class="app-icon mr-2 mr-sm-3"
             src="@/assets/icon.svg"
@@ -18,14 +18,15 @@
                 fill="none"
                 xmlns="http://www.w3.org/2000/svg"
               >
-                <circle cx="4" cy="4" r="4" fill="#00CD98" />
+                <circle cx="4" cy="4" r="4" :fill="`${isLndOperational ? '#00CD98' : '#F6B900'}`" />
               </svg>
-              <small class="ml-1 text-success">{{ status }}</small>
+              <small v-if="isLndOperational" class="ml-1 text-success">Running</small>
+              <small v-else class="ml-1 text-warning">Starting</small>
             </div>
-            <h3 class="font-weight-bold mb-1">
+            <h3 class="font-weight-bold mb-0 mb-sm-1 app-title">
               Lightning Node
             </h3>
-            <span class="text-sm text-muted font-medium">
+            <span class="text-muted text-xs-small">
               {{
                 this.lndVersion ? `LND ${this.lndVersion.split(" commit")[0]}` : "..."
               }}
@@ -33,9 +34,9 @@
           </div>
         </div>
 
-        <div class="d-flex justify-content-between justify-content-sm-start w-xs-100">
+        <div class="d-flex justify-content-between justify-content-sm-start">
           <b-dropdown
-            class="ml-3"
+            class="ml-1"
             variant="link"
             toggle-class="text-decoration-none p-0"
             no-caret
@@ -78,6 +79,9 @@
             <b-dropdown-item href="#" v-b-modal.secret-words-modal
               >View secret words</b-dropdown-item
             >
+            <b-dropdown-item href="#" @click.stop.prevent="openAdvancedSettingsModal"
+              >Advanced Settings&nbsp;&nbsp;<b-badge pill variant="primary" class="mr-1">New</b-badge></b-dropdown-item
+            >
             <b-dropdown-divider></b-dropdown-divider>
             <b-dropdown-item href="#" @click.stop.prevent="recoverChannels"
               >Recover channels</b-dropdown-item
@@ -100,8 +104,9 @@
                   </div>
                   <toggle-switch
                     class="align-self-center"
-                    disabled
                     tooltip="Sorry, automatic backups cannot be disabled for now"
+                    on
+                    disabled
                   ></toggle-switch>
                 </div>
                 <small
@@ -208,7 +213,7 @@
                 <div
                   class="px-2 px-sm-3 pt-2 d-flex justify-content-between w-100"
                 >
-                  <h2>open channel</h2>
+                  <h3>Open channel</h3>
                   <!-- Emulate built in modal header close button action -->
                   <a
                     href="#"
@@ -249,7 +254,7 @@
                 <div
                   class="px-2 px-sm-3 pt-2 d-flex justify-content-between w-100"
                 >
-                  <h2>channel details</h2>
+                  <h3>Channel details</h3>
                   <!-- Emulate built in modal header close button action -->
                   <a
                     href="#"
@@ -303,6 +308,7 @@
         :onClose="() => this.$bvModal.hide('recover-channels-modal')"
       />
     </b-modal>
+    <advanced-settings-modal v-if="showAdvancedSettingsModal" />
     <node-id-modal />
     <secret-words-modal />
     <connect-wallet-modal />
@@ -321,11 +327,12 @@ import Stat from "@/components/Utility/Stat";
 import LightningWallet from "@/components/LightningWallet";
 import BitcoinWallet from "@/components/BitcoinWallet";
 import TotalBalance from "@/components/TotalBalance";
-import ToggleSwitch from "@/components/ToggleSwitch";
+import ToggleSwitch from "@/components/Utility/ToggleSwitch";
 import ChannelList from "@/components/Channels/List";
 import ChannelOpen from "@/components/Channels/Open";
 import ChannelManage from "@/components/Channels/Manage";
 
+import AdvancedSettingsModal from "./AdvancedSettingsModal.vue";
 import NodeIdModal from "./NodeIdModal.vue";
 import SecretWordsModal from "./SecretWordsModal.vue";
 import ConnectWalletModal from "./ConnectWalletModal";
@@ -335,13 +342,14 @@ import RecoveryChannels from '@/views/Home/OnboardingModal/RecoveryChannels.vue'
 export default {
   data() {
     return {
-      status: "Running",
       selectedChannel: {},
-      showRecoverChannelsModal: false
+      showRecoverChannelsModal: false,
+      showAdvancedSettingsModal: false
     };
   },
   computed: {
     ...mapState({
+      isLndOperational: state => state.lightning.operational,
       lndVersion: state => state.lightning.version,
       recoveryInfo: state => state.lightning.recoveryInfo,
       numActiveChannels: state => state.lightning.numActiveChannels,
@@ -354,7 +362,7 @@ export default {
       channels: state => state.lightning.channels,
       unit: state => state.system.unit,
       backupStatus: state => state.system.backupStatus,
-      lastBackupDate: state => state.lightning.lastBackupDate,
+      lastBackupDate: state => state.lightning.lastBackupDate
     })
   },
   methods: {
@@ -368,6 +376,12 @@ export default {
         true,
         "my-umbrel-channels.backup"
       );
+    },
+    openAdvancedSettingsModal() {
+      this.showAdvancedSettingsModal = true;
+      this.$nextTick(() => {
+        this.$bvModal.show("advanced-settings-modal");
+      });
     },
     async recoverChannels() {
       this.showRecoverChannelsModal = true;
@@ -428,8 +442,9 @@ export default {
   },
   created() {
     this.fetchData();
+    this.$store.dispatch("user/getLndConfig");
 
-    //refresh this data every 20s:
+    //refresh this data every 10s:
     this.dataInterval = window.setInterval(this.fetchData, 10000);
     // show terms initially, then have modal take over logic
     this.$bvModal.show("onboarding-modal");
@@ -452,6 +467,7 @@ export default {
     ChannelList,
     ChannelOpen,
     ChannelManage,
+    AdvancedSettingsModal,
     NodeIdModal,
     SecretWordsModal,
     ConnectWalletModal,

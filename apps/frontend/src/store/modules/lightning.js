@@ -67,7 +67,9 @@ const state = () => ({
     recoveryMode: false,
     recoveryFinished: false,
     progress: 0
-  }
+  },
+  watchtowerServiceUri: "",
+  watchtowers: []
 });
 
 // Functions to update the state directly
@@ -172,6 +174,14 @@ const mutations = {
 
   setLastBackupDate(state, timestamp) {
     state.lastBackupDate = timestamp;
+  },
+
+  setWatchtowerServiceUri(state, uri) {
+    state.watchtowerServiceUri = uri;
+  },
+
+  setWatchtowers(state, towers) {
+    state.watchtowers = towers;
   }
 };
 
@@ -486,6 +496,24 @@ const actions = {
     );
     if (urls) {
       commit("setLndConnectUrls", urls);
+    }
+  },
+
+  async getWatchtowerServiceUri({ commit }) {
+    const info = await API.get(
+      `${process.env.VUE_APP_API_BASE_URL}/v1/lnd/watchtower/watchtower-info`
+    );
+    if (info && info.uris) {
+      commit("setWatchtowerServiceUri", info.uris[0]);
+    }
+  },
+
+  async listWatchtowers({ commit }) {
+    const towers = await API.get(
+      `${process.env.VUE_APP_API_BASE_URL}/v1/lnd/watchtower/list-watchtowers`
+    );
+    if (towers) {
+      commit("setWatchtowers", towers);
     }
   }
 };

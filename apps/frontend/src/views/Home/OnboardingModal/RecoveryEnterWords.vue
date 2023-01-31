@@ -1,6 +1,6 @@
 <template>
   <div class="d-flex align-items-center w-100 flex flex-column text-center p-3 pb-4">
-    <h2 class="text-lowercase">Enter your secret words</h2>
+    <h3>Enter your secret words</h3>
     <p>
       Enter your 24 secret words in the exact order to start the recovery process
     </p>

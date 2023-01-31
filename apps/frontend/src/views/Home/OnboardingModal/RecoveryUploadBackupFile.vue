@@ -1,6 +1,6 @@
 <template>
   <div class="d-flex align-items-center w-100 flex flex-column text-center p-3 pb-4">
-    <h2 class="text-lowercase">Recover your channels</h2>
+    <h3>Recover your channels</h3>
     <p>
       Upload your payments channel backup file.
     </p>

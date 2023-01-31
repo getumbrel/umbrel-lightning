@@ -1,0 +1,53 @@
+module.exports = {
+// Application Options
+    tlsautorefresh: 'tlsautorefresh',
+    syncFreelist: 'sync-freelist',
+    paymentsExpirationGracePeriod: 'payments-expiration-grace-period',
+    maxpendingchannels: 'maxpendingchannels',
+    minchansize: 'minchansize',
+    maxchansize: 'maxchansize',
+    coopCloseTargetConfs: 'coop-close-target-confs',
+    staggerInitialReconnect: 'stagger-initial-reconnect',
+    maxCltvExpiry: 'max-cltv-expiry',
+    maxCommitFeeRateAnchors: 'max-commit-fee-rate-anchors',
+    acceptAmp: 'accept-amp',
+    gcCanceledInvoicesOnStartup: 'gc-canceled-invoices-on-startup',
+    gcCanceledInvoicesOnTheFly: 'gc-canceled-invoices-on-the-fly',
+    allowCircularRoute: 'allow-circular-route',
+    alias: 'alias',
+    color: 'color',
+// Bitcoin
+    bitcoinDefaultchanconfs: 'bitcoin.defaultchanconfs',
+    bitcoinBasefee: 'bitcoin.basefee',
+    bitcoinFeerate: 'bitcoin.feerate',
+    bitcoinTimelockdelta: 'bitcoin.timelockdelta',
+// watchtower
+    watchtowerActive: 'watchtower.active',
+// wtclient
+    wtclientActive: 'wtclient.active',
+    wtclientSweepFeeRate: 'wtclient.sweep-fee-rate',
+// routerrpc
+    routerrpcMinrtprob: 'routerrpc.minrtprob',
+    routerrpcApriorihopprob: 'routerrpc.apriorihopprob',
+    routerrpcAprioriweight: 'routerrpc.aprioriweight',
+    routerrpcPenaltyhalflife: 'routerrpc.penaltyhalflife',
+    routerrpcAttemptcost: 'routerrpc.attemptcost',
+    routerrpcAttemptcostppm: 'routerrpc.attemptcostppm',
+    routerrpcMaxmchistory: 'routerrpc.maxmchistory',
+// caches
+    cachesChannelCacheSize: 'caches.channel-cache-size',
+// protocol
+    protocolWumboChannels: 'protocol.wumbo-channels',
+// bolt
+    dbBoltAutoCompact: 'db.bolt.auto-compact',
+    dbBoltAutoCompactMinAge: 'db.bolt.auto-compact-min-age',
+    dbBoltPageSize: 'db.bolt.page-size',
+    dbBoltFreelistType: 'db.bolt.freelist-type',
+    dbBoltNoFreelistSync: 'db.bolt.no-freelist-sync',
+    dbBoltNoSync: 'db.bolt.no-sync',
+    dbBoltTimeout: 'db.bolt.timeout',
+// rpcmiddleware
+    rpcmiddlewareEnable: 'rpcmiddleware.enable',
+// routing
+    routingStrictgraphpruning: 'routing.strictgraphpruning',
+}

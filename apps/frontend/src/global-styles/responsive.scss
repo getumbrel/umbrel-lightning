@@ -123,3 +123,39 @@
     border-radius: 24px;
   }
 }
+
+// Shrink Lightning Node's header to make sure
+// the ... menu is available on the right
+@include media-breakpoint-only(xs) {
+  .app-title {
+    font-size: 1.8rem !important;
+  }
+  .text-xs-small {
+    font-size: 0.8rem !important;
+  }
+}
+
+// classes used in the advanced settings modal
+@include media-breakpoint-up(lg) {
+  .w-lg-75 { 
+    width: 75% !important;
+  }
+}
+
+@include media-breakpoint-up(sm) {
+  .setting-group-container {
+    .setting-group-body {
+      .subsetting-body {
+        .input-container {
+          max-width: 150px !important;
+        }
+      }
+    }
+  }
+
+  .lv-input__field {
+    input {
+      width: 82px;
+    }
+  }
+}

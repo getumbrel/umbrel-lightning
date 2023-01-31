@@ -2,7 +2,7 @@
   <b-modal id="connect-wallet-modal" size="lg" centered hide-footer>
     <template v-slot:modal-header="{ close }">
       <div class="px-2 px-sm-3 pt-2 d-flex justify-content-between w-100">
-        <h3 class="text-lowercase">Connect your Lightning wallet to your node</h3>
+        <h3>Connect a wallet to your node</h3>
         <!-- Emulate built in modal header close button action -->
         <a href="#" class="align-self-center" v-on:click.stop.prevent="close">
           <svg

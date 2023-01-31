@@ -1,4 +1,4 @@
-const constants = require("utils/const.js");
+const constants = require("utils/const");
 const diskService = require("services/disk");
 
 function readBackupStatusFile() {
@@ -96,5 +96,5 @@ module.exports = {
   readLndGrpcHiddenService,
   readLndCert,
   readLndAdminMacaroon,
-  readBackupFile,
+  readBackupFile
 };

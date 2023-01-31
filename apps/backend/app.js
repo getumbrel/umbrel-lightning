@@ -8,7 +8,6 @@ const morgan = require("morgan");
 const bodyParser = require("body-parser");
 
 const lightningLogic = require("logic/lightning");
-const diskLogic = require("logic/disk");
 
 const constants = require("utils/const.js");
 const startChannelBackupMonitor = require("utils/channel-backup-monitor");
@@ -17,7 +16,6 @@ const startChannelBackupMonitor = require("utils/channel-backup-monitor");
 const requestCorrelationMiddleware = require("middlewares/requestCorrelationId.js"); // eslint-disable-line id-length
 const camelCaseReqMiddleware = require("middlewares/camelCaseRequest.js")
   .camelCaseRequest;
-const corsOptions = require("middlewares/cors.js").corsOptions;
 const errorHandleMiddleware = require("middlewares/errorHandling.js");
 const LndError = require("models/errors.js").LndError;
 
@@ -25,6 +23,7 @@ const logger = require("utils/logger.js");
 
 const address = require("routes/v1/lnd/address.js");
 const channel = require("routes/v1/lnd/channel.js");
+const conf = require("routes/v1/lnd/conf.js");
 const info = require("routes/v1/lnd/info.js");
 const lightning = require("routes/v1/lnd/lightning.js");
 const bitcoin = require("routes/v1/bitcoind/info.js");
@@ -32,6 +31,7 @@ const transaction = require("routes/v1/lnd/transaction.js");
 const util = require("routes/v1/lnd/util.js");
 const backups = require("routes/v1/lnd/backups.js");
 const wallet = require("routes/v1/lnd/wallet.js");
+const watchtower = require("routes/v1/lnd/watchtower.js");
 const pages = require("routes/v1/pages.js");
 const system = require("routes/v1/system/index.js");
 const external = require("routes/v1/external.js");
@@ -51,11 +51,13 @@ app.use("/", express.static("../frontend/dist"));
 
 app.use("/v1/lnd/address", address);
 app.use("/v1/lnd/channel", channel);
+app.use("/v1/lnd/conf", conf);
 app.use("/v1/lnd/info", info);
 app.use("/v1/lnd/lightning", lightning);
 app.use("/v1/bitcoin", bitcoin);
 app.use("/v1/lnd/transaction", transaction);
 app.use("/v1/lnd/wallet", wallet);
+app.use("/v1/lnd/watchtower", watchtower);
 app.use("/v1/lnd/util", util);
 app.use("/v1/lnd/backups", backups);
 app.use("/v1/pages", pages);
@@ -105,11 +107,11 @@ const initLnd = async () => {
 
 };
 
-// Retry init every minute incase LND crashes
+// Retry init every 10 seconds in case of LND restart or crash
 (async () => {
   while (true) {
     await initLnd();
-    await delay(1 * MINUTE_IN_MS);
+    await delay(10 * SECOND_IN_MS);
   }
 })();
 
