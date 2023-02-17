@@ -1,5 +1,6 @@
 import API from "@/helpers/api";
 import { toPrecision } from "@/helpers/units";
+import bytesToHexString from "@/helpers/bytes-to-hex";
 
 // import Events from '~/helpers/events';
 // import { sleep } from '@/helpers/utils';
@@ -410,7 +411,9 @@ const actions = {
           expiresOn: new Date(
             (Number(tx.creationDate) + Number(tx.expiry)) * 1000
           ),
-          paymentRequest: tx.paymentRequest
+          paymentRequest: tx.paymentRequest,
+          // r_preimage is the hex-encoded preimage (32 byte) which will allow settling an incoming HTLC payable to this preimage.
+          hexPreImage: bytesToHexString(tx.rPreimage)
         };
       });
       transactions = [...transactions, ...incomingTransactions];
