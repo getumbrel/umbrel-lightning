@@ -22,7 +22,7 @@ module.exports = {
   'bitcoin.defaultchanconfs': 2,
   'bitcoin.basefee': 1000,
   'bitcoin.feerate': 1,
-  'bitcoin.timelockdelta': 40,
+  'bitcoin.timelockdelta': 80,
 // watchtower
   'watchtower.active': false,
 // wtclient
