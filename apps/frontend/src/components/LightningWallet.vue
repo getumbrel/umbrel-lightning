@@ -336,7 +336,8 @@
           <p class="text-center mb-4 pb-1">
             Paid
             <b>{{ send.amount | unit | localize }}</b>
-            {{ unit | formatUnit }}
+            <!-- display "Sat" for a value of 1, otherwise display "Sats" -->
+            {{ unit | formatUnit(send.amount) }}
             <span v-if="send.description">
               for
               <b>{{ send.description }}</b>
@@ -454,7 +455,8 @@
               <!-- {{ receive.amount | unit | localize}} -->
               <b>
                 {{ receive.amount | unit | localize }}
-                {{ unit | formatUnit }}
+                <!-- display "Sat" for a value of 1, otherwise display "Sats" -->
+                {{ unit | formatUnit(receive.amount) }}
               </b>
               {{ receive.description ? "for" : null }}
               <b>{{ receive.description }}</b>
@@ -520,7 +522,7 @@
           <p class="text-center mb-4 pb-1">
             Received
             <b
-              >{{ receive.amount | unit | localize }} {{ unit | formatUnit }}</b
+              >{{ receive.amount | unit | localize }} {{ unit | formatUnit(receive.amount) }}</b
             >
             <span v-if="receive.description">
               for
@@ -569,7 +571,7 @@
             Paid
             <b>
               {{ paymentInfo.amount | unit | localize }}
-              {{ unit | formatUnit }}
+              {{ unit | formatUnit(paymentInfo.amount) }}
             </b>
             <span v-if="paymentInfo.description">
               for

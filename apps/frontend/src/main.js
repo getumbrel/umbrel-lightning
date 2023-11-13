@@ -30,9 +30,10 @@ Vue.filter("sats", (value) => Number(value));
 Vue.filter("btc", (value) => satsToBtc(value));
 
 //formats the unit
-Vue.filter("formatUnit", (unit) => {
+Vue.filter("formatUnit", (unit, value) => {
   if (unit === "sats") {
-    return "Sats";
+    return value === 1 ? "Sat" : "Sats";
+    // return "Sats";
   } else if (unit === "btc") {
     return "BTC";
   }
