@@ -10,6 +10,7 @@ module.exports = {
     staggerInitialReconnect: 'stagger-initial-reconnect',
     maxCltvExpiry: 'max-cltv-expiry',
     maxCommitFeeRateAnchors: 'max-commit-fee-rate-anchors',
+    acceptKeysend: 'accept-keysend',
     acceptAmp: 'accept-amp',
     gcCanceledInvoicesOnStartup: 'gc-canceled-invoices-on-startup',
     gcCanceledInvoicesOnTheFly: 'gc-canceled-invoices-on-the-fly',

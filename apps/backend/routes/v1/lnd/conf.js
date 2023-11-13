@@ -111,6 +111,11 @@ function validateSettings(settings) {
     if (typeof maxCommitFeeRateAnchors !== "number" || maxCommitFeeRateAnchors < 1) {
         errors.push(numberError("Maximum Anchor Channel Commit Fee Rate", "1 sat/vByte"));
     }
+    // accept-keysend (receive keysend payments)
+    const acceptKeysend = settings["accept-keysend"];
+    if (typeof acceptKeysend !== "boolean") {
+        errors.push(booleanError("Receive Keysend Payments"));
+    }
     //  accept-amp (automatic multipath payments)
     const acceptAmp = settings["accept-amp"];
     if (typeof acceptAmp !== "boolean") {

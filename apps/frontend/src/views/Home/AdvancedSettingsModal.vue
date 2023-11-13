@@ -485,6 +485,36 @@
                 </div>
               </b-card-body>
 
+              <!-- KEYSEND -->
+              <b-card-body class="subsetting-body px-2 px-sm-3">
+                <div>
+                  <div class="d-flex justify-content-between align-items-center">
+                    <div class="flex-sm-grow-1">
+                      <label class="mb-0" for="accept-keysend">
+                        <p class="subsetting-title font-weight-bold mb-0 mr-1">
+                          Receive Keysend Payments
+                          <span class="subsetting-setting-lnd-name text-monospace font-weight-normal d-block">
+                            accept-keysend
+                          </span>
+                        </p>
+                      </label>
+                    </div>
+                    <div>
+                      <toggle-switch
+                      id="accept-keysend"
+                      class="align-self-center"
+                      :on="settings['accept-keysend']"
+                      @toggle="status => (settings['accept-keysend'] = status)"
+                      ></toggle-switch>
+                    </div>
+                  </div>
+                  <small class="w-lg-75 d-block text-muted mt-1">
+                    Allow your node to receive payments sent spontaneously via keysend, meaning that others can send payments directly to your node without an invoice.
+                    You will only receive payments if you have at least one public channel open.
+                  </small>
+                </div>
+              </b-card-body>
+
               <!-- AMP -->
               <b-card-body class="subsetting-body px-2 px-sm-3">
                 <div>

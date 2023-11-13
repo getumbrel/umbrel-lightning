@@ -12,6 +12,7 @@ module.exports = {
   'stagger-initial-reconnect': false,
   'max-cltv-expiry': 2016,
   'max-commit-fee-rate-anchors': 10,
+  'accept-keysend': false,
   'accept-amp': true,
   'gc-canceled-invoices-on-startup': false,
   'gc-canceled-invoices-on-the-fly': false,
