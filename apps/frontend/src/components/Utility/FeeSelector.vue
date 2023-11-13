@@ -37,7 +37,7 @@
             <span class="vue-slider-dot-tooltip-text block"
               >{{ value }} sat/vB
             </span>
-            <small class="text-muted"
+            <small class="text-muted d-sm-inline d-block"
               >≈
               {{
                 ((parseInt(fee.fast.total, 10) /
@@ -82,7 +82,7 @@
             <span class="vue-slider-dot-tooltip-text block mb-0"
               >{{ fee[value].perByte }} sat/vB
             </span>
-            <small class="text-muted"
+            <small class="text-muted d-sm-inline d-block"
               >≈ {{ fee[value].total | satsToUSD }}</small
             >
           </div>
