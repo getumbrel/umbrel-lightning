@@ -22,6 +22,9 @@ module.exports = {
     bitcoinBasefee: 'bitcoin.basefee',
     bitcoinFeerate: 'bitcoin.feerate',
     bitcoinTimelockdelta: 'bitcoin.timelockdelta',
+// tor
+    torSkipProxyForClearnetTargets: 'tor.skip-proxy-for-clearnet-targets',
+    torStreamisolation: 'tor.streamisolation',
 // watchtower
     watchtowerActive: 'watchtower.active',
 // wtclient

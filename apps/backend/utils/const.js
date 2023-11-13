@@ -11,6 +11,7 @@ module.exports = {
   JSON_SETTINGS_FILE: process.env.JSON_SETTINGS_FILE || "/data/settings.json",
   UMBREL_LND_CONF_FILEPATH: process.env.UMBREL_LND_CONF_FILEPATH || "/lnd/.lnd/umbrel-lnd.conf",
   LND_CONF_FILEPATH: process.env.LND_CONF_FILEPATH || "/lnd/.lnd/lnd.conf",
+  LND_INITIALIZE_WITH_TOR_ONLY: process.env.LND_INITIALIZE_WITH_TOR_ONLY === 'true',
   MANAGED_CHANNELS_FILE: "/channel-data/managedChannels.json",
   LND_WALLET_PASSWORD: process.env.LND_WALLET_PASSWORD || "moneyprintergobrrr",
   REQUEST_CORRELATION_NAMESPACE_KEY: "umbrel-middleware-request",

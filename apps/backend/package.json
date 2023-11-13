@@ -30,6 +30,8 @@
     "lndconnect": "^0.2.10",
     "lodash.clonedeep": "^4.5.0",
     "lodash.merge": "^4.6.2",
+    "lodash.mergewith": "^4.6.2",
+    "lodash.union": "^4.6.0",
     "module-alias": "^2.2.2",
     "morgan": "^1.10.0",
     "openpgp": "^5.4.0",

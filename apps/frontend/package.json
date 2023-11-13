@@ -20,6 +20,7 @@
     "lightvue": "^0.5.1",
     "lndconnect": "^0.2.10",
     "lodash.clonedeep": "^4.5.0",
+    "lodash.isequal": "^4.5.0",
     "moment": "^2.29.1",
     "npm": "^8.5.4",
     "qrcode.vue": "^1.7.0",

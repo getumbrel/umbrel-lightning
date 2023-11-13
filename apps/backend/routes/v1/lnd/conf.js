@@ -172,6 +172,24 @@ function validateSettings(settings) {
         errors.push(numberError("Timelock Delta", 18));
     }
 
+    // TOR
+
+    // tor.skip-proxy-for-clearnet-targets
+    const skipProxyForClearnetTargets = settings["tor.skip-proxy-for-clearnet-targets"];
+    if (typeof skipProxyForClearnetTargets !== "boolean") {
+        errors.push(booleanError("Hybrid Mode"));
+    }
+
+    // tor.streamisolation
+    const streamIsolation = settings["tor.streamisolation"];
+    if (typeof streamIsolation !== "boolean") {
+        errors.push(booleanError("Separate Tor Connections"));
+    }
+    // while stream isolation is enabled, the TOR proxy may not be skipped for clearnet targets
+    if (skipProxyForClearnetTargets && streamIsolation) {
+        errors.push("Hybrid Mode and Separate Tor Connections cannot be enabled at the same time");
+    }
+
     // WATCHTOWER
 
     // watchtower.active (watchtower service)

@@ -34,6 +34,8 @@ const generate = (configObject) => {
 
     // alias guard clause here is to allow lnd to generate default alias if user doesn't set one
     if (formattedKey === "alias" && value === "") continue;
+    // externalip guard clause here is to not write an empty externalip line to the umbrel-lnd.conf (which will cause lnd to fail to start)
+    if (formattedKey === "externalip" && value.length === 0) continue;
     if (Array.isArray(value)) {
       for (const item of value) {
         lndConfigString += `\n${formattedKey}=${item}`;
@@ -48,8 +50,6 @@ const generate = (configObject) => {
 
 // extracts the umbrel-managed settings from the config
 // and applies the correct data types to the values
-// There are currently no multi-line settings (e.g., tlsextraip) that are managed by the app.
-// If/when multi-line keys are added, this function should we modified to handle merging multi-line settings into umbrel-lnd.conf
 const getManagedConfig = (config, allowedConfig) => {
   let managedConfig = {};
 

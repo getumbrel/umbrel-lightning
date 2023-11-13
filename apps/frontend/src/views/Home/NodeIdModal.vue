@@ -2,7 +2,7 @@
   <b-modal id="node-id-modal" size="lg" centered hide-footer>
     <template v-slot:modal-header="{ close }">
       <div class="px-2 px-sm-3 pt-2 d-flex justify-content-between w-100">
-        <h3>Node ID</h3>
+        <h3 class="m-0">Node ID</h3>
         <!-- Emulate built in modal header close button action -->
         <a href="#" class="align-self-center" v-on:click.stop.prevent="close">
           <svg
@@ -23,26 +23,36 @@
       </div>
     </template>
     <div class="px-2 px-sm-3 pb-2 pb-sm-3">
+      <p>
+        Other Lightning nodes can open payment channels to your node using the
+        following Node ID
+      </p>
       <div class="d-flex flex-column flex-md-row align-items-center">
         <!-- Pubkey QR Code -->
         <qr-code
-          :value="uris.length ? uris[0] : pubkey"
+          :value="chosenUri || pubkey"
           :size="180"
           class="qr-image mx-auto mb-4 mb-md-0"
           showLogo
         ></qr-code>
         <div class="w-100 align-self-center ml-0 ml-md-4">
-          <p>
-            Other Lightning nodes can open payment channels to your node using the
-            following Node ID
-          </p>
+          <label class="mb-1 d-block"
+            ><small class="font-weight-bold">Network</small></label
+          >
+          <b-form-select v-if="uris.length" class="mb-2" v-model="chosenUri" :options="uriOptions"></b-form-select>
+          <span
+            class="loading-placeholder loading-placeholder-lg mt-1"
+            style="width: 100%;"
+            v-else
+          ></span>
+          <label class="mb-1 d-block"
+            ><small class="font-weight-bold">Node ID</small></label
+          >
           <div v-if="uris.length">
             <input-copy
               class="mb-2"
               size="sm"
-              v-for="uri in uris"
-              :value="uri"
-              :key="uri"
+              :value="chosenUri"
             ></input-copy>
           </div>
           <span
@@ -62,11 +72,45 @@ import InputCopy from "@/components/Utility/InputCopy";
 import QrCode from "@/components/Utility/QrCode";
 
 export default {
+  data() {
+    return {
+      chosenUri: "",
+      uriOptions: [],
+      urisInitialized: false
+    };
+  },
   computed: {
     ...mapState({
       uris: state => state.lightning.uris,
       pubkey: state => state.lightning.pubkey
     })
+  },
+  watch: {
+    // uris may not be initialized when the component is created, so we watch for the first change where uris is not empty
+    uris: {
+      handler(newUriArray) {
+        if (!this.urisInitialized && newUriArray && newUriArray.length > 0) {
+          this.uriOptions = newUriArray.map(uri => {
+            if (uri.includes("onion")) {
+              return { value: uri, text: "Tor" };
+            } else {
+              const atIndex = uri.indexOf("@");
+              const colonIndex = uri.indexOf(":9735");
+              let ipAddress = uri; // Default to the entire uri if we can't parse it
+
+              if (atIndex !== -1 && colonIndex !== -1) {
+                ipAddress = uri.substring(atIndex + 1, colonIndex);
+              }
+
+              return { value: uri, text: `Clearnet (${ipAddress})` };
+            }
+          });
+          this.chosenUri = this.uriOptions[0].value;
+          this.urisInitialized = true;
+        }
+      },
+      deep: true
+    }
   },
   components: {
     InputCopy,

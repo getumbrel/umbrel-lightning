@@ -1,4 +1,5 @@
-const merge = require('lodash.merge');
+const mergeWith = require('lodash.mergewith');
+const union = require('lodash.union');
 
 const lndConfig = require('utils/lnd-config');
 const diskService = require('services/disk');
@@ -6,9 +7,18 @@ const constants = require("utils/const");
 
 const DEFAULT_CONFIG = require('utils/defaultConfig');
 
+// lodash mergeWith customizer function to merge arrays and remove duplicates for multi-line config options like externalip
+const mergeArraysAndRemoveDuplicates = (objValue, srcValue) => {
+  if (Array.isArray(objValue)) {
+    return union(objValue, srcValue);
+  }
+};
+
 // merge config objects into single object with specific order of precedence
+// Note for arrays: we currently do not have any config options that are arrays in the DEFAULT_CONFIG (e.g., like externalip).
+// When we do, we will need to revisit the mergeArraysAndRemoveDuplicates customizer function and make sure a users config can override defaults if it makes sense.
 const deriveConfigObject = (userLndConfigObject, configObject) => {
-  return merge({}, DEFAULT_CONFIG, userLndConfigObject, configObject);
+  return mergeWith({}, DEFAULT_CONFIG, userLndConfigObject, configObject, mergeArraysAndRemoveDuplicates);
 }
 
 // take in a config object and return and lnd.conf string

@@ -10,6 +10,7 @@
     :no-close-on-backdrop="disableModalClose"
     @show="resetModal"
     @hidden="clearWatchTowerIntervals"
+    @hide="checkForUnsavedChanges"
   >
     <template v-slot:modal-header="{ close }">
       <div class="px-sm-3 pt-2 d-flex justify-content-between w-100">
@@ -116,6 +117,95 @@
                   </small>
                 </div>
               </b-card-body>
+            </b-collapse>
+          </b-card>
+
+          <!-- TOR & CLEARNET SETTINGS -->
+          <b-card no-body class="setting-group-container mb-2">
+            <b-card-header v-b-toggle.tor-clearnet-settings header-tag="header" class="setting-group-header px-2 px-sm-3 d-flex justify-content-between align-items-center" role="tab">
+              <div :class="{'fade-in-out': !hasLoadedSettings}">
+                <p class="setting-group-title mb-1 font-weight-bold">Tor & Clearnet</p>
+                <small class="d-block text-muted">
+                  Configure your node to be Tor-only or hybrid.
+                </small>
+              </div>
+              <b-icon class="when-closed ml-2 text-muted" icon="plus" variant="secondary"></b-icon><b-icon class="when-open ml-2 text-muted" icon="dash" variant="secondary"></b-icon>
+            </b-card-header>
+            <b-collapse v-if="hasLoadedSettings" class="setting-group-body bg-light" id="tor-clearnet-settings" accordion="tor-clearnet-settings" role="tabpanel">
+
+              <!-- tor.skip-proxy-for-clearnet-targets -->
+              <b-card-body class="subsetting-body px-2 px-sm-3">
+                <div>
+                  <div class="d-flex justify-content-between align-items-center">
+                    <div class="flex-sm-grow-1">
+                      <label class="mb-0" for="tor-skip-proxy">
+                        <p class="subsetting-title font-weight-bold mb-0 mr-1">
+                          Hybrid Mode
+                          <span class="subsetting-setting-lnd-name text-monospace font-weight-normal d-block">
+                            tor.skip-proxy-for-clearnet-targets
+                          </span>
+                        </p>
+                      </label>
+                    </div>
+                    <div>
+                      <toggle-switch
+                        id="tor-skip-proxy"
+                        class="align-self-center"
+                        :on="settings['tor.skip-proxy-for-clearnet-targets']"
+                        @toggle="status => (settings['tor.skip-proxy-for-clearnet-targets'] = status)"
+                      ></toggle-switch>
+                    </div>
+                  </div>
+                  <small class="w-lg-75 d-block text-muted mt-1">
+                    <p>
+                      Hybrid Mode enables your node to connect with clearnet peers through clearnet and peers running behind Tor (that are not broadcasting their clearnet IP address) via Tor,
+                      enhancing both latency and connection stability.
+                    </p>
+                    <p class="mb-0">
+                      Note: To enable incoming clearnet connections, you may need to forward port 9735 on your router. For greater privacy, you can disable Hybrid Mode;
+                      however, this may decrease reliability.
+                    </p>
+                  </small>
+                </div>
+              </b-card-body>
+
+              <!-- TOR STREAM ISOLATION -->
+              <b-card-body class="subsetting-body px-2 px-sm-3">
+                <div>
+                  <div class="d-flex justify-content-between align-items-center">
+                    <div class="flex-sm-grow-1">
+                      <label class="mb-0" for="stream-isolation">
+                        <p class="subsetting-title font-weight-bold mb-0 mr-1">
+                          Separate Tor Connections
+                          <span class="subsetting-setting-lnd-name text-monospace font-weight-normal d-block">
+                            tor.streamisolation
+                          </span>
+                        </p>
+                      </label>
+                    </div>
+                    <div>
+                      <toggle-switch
+                      id="stream-isolation"
+                      class="align-self-center"
+                      :on="settings['tor.streamisolation']"
+                      @toggle="status => (settings['tor.streamisolation'] = status)"
+                      :disabled="isTorStreamIsolationDisabled"
+                      :tooltip="torStreamIsolationTooltip"
+                      ></toggle-switch>
+                    </div>
+                  </div>
+                  <small class="w-lg-75 d-block text-muted mt-1">
+                    <p>
+                      Increase privacy by requiring Tor to use a new circuit for each connection. This can make it more difficult to correlate connections but may impact performance,
+                      particularly if you have a large number of payment channels.
+                    </p>
+                    <p class="mb-0">
+                      Note: This feature cannot be used if 'Hybrid Mode' is also enabled, as direct clearnet connections need to share public IP addresses.
+                    </p>
+                  </small>
+                </div>
+              </b-card-body>
+
             </b-collapse>
           </b-card>
 
@@ -974,7 +1064,7 @@
                     <b-input-group v-b-tooltip.hover.bottom :title="!lndConfig['wtclient.active'] ? 'Save and restart your node to add a watchtower' : ''" class="">
                       <b-form-input class="advanced-settings-input" v-model="addWatchtowerInput" autocomplete="off" placeholder="Enter a watchtower URI as pubkey@host:port" :disabled="!lndConfig['wtclient.active']"></b-form-input>
                       <b-input-group-append>
-                        <b-button class="watchtower-add-btn" variant="success" @click.prevent="addWatchtower(addWatchtowerInput)" :disabled="!lndConfig['wtclient.active']">Add</b-button>
+                        <b-button class="add-btn" variant="success" @click.prevent="addWatchtower(addWatchtowerInput)" :disabled="!lndConfig['wtclient.active']">Add</b-button>
                       </b-input-group-append>
                     </b-input-group>
 
@@ -1441,6 +1531,7 @@
 <script>
 import API from "@/helpers/api";
 import cloneDeep from "lodash.clonedeep";
+import isEqual from "lodash.isequal";
 
 import InputCopy from "@/components/Utility/InputCopy";
 import LvColorpicker from 'lightvue/color-picker';
@@ -1499,6 +1590,22 @@ export default {
     }),
     hasLoadedSettings() {
       return Object.keys(this.settings).length > 0;
+    },
+    isTorStreamIsolationDisabled() {
+      return this.settings['tor.skip-proxy-for-clearnet-targets'];
+    },
+    torStreamIsolationTooltip() {
+      if (this.settings['tor.skip-proxy-for-clearnet-targets']) {
+        return "This setting is automatically disabled when Hybrid Mode is enabled.";
+      } else {
+        return "";
+      }
+    }
+  },
+  watch: {
+    isTorStreamIsolationDisabled(value) {
+      if (!value) return;
+      this.settings['tor.streamisolation'] = false;
     }
   },
   async created() {
@@ -1545,9 +1652,30 @@ export default {
       this.disableModalClose = false;
 
     },
+    async checkForUnsavedChanges(event) {
+      this.setSpecialCaseSettings();
+      if (!isEqual(this.settings, this.lndConfig)) {
+        if (!window.confirm("You have unsaved settings. Do you want to continue without saving them and restarting your node?")) {
+          event.preventDefault();
+        }
+      }
+    },
     clearWatchTowerIntervals() {
       window.clearInterval(this.watchtowerServiceInterval);
       window.clearInterval(this.listWatchtowersInterval);
+    },
+    setSpecialCaseSettings() {
+      // avoid setting alias in the JSON store to the default alias generated by LND. 
+      // this prevents hardcoding the LND default alias.
+      if (this.lndConfig['alias'] === "" && this.aliasInput === this.aliasOnModalLoad) {
+       this.settings['alias'] = "";
+      } else {
+        this.settings['alias'] = this.aliasInput;
+      }
+
+      this.settings['payments-expiration-grace-period'] = `${this.paymentsExpirationGracePeriod.value}${this.paymentsExpirationGracePeriod.unit}`;
+      this.settings['routerrpc.penaltyhalflife'] = `${this.penaltyHalflife.value}${this.penaltyHalflife.unit}`;
+      this.settings['db.bolt.auto-compact-min-age'] = `${this.autoCompactMinAge.value}${this.autoCompactMinAge.unit}`;
     },
     async saveAndRestartLnd(shouldRestoreDefaults) {
       if (shouldRestoreDefaults) {
@@ -1560,18 +1688,7 @@ export default {
       this.showValidationErrors = false;
       this.showServerError = false;
 
-      // avoid setting alias in the JSON store to the default alias generated by LND. 
-      // this prevents hardcoding the LND default alias.
-      if (this.lndConfig['alias'] === "" && this.aliasInput === this.aliasOnModalLoad) {
-       this.settings['alias'] = "";
-      } else {
-        this.settings['alias'] = this.aliasInput;
-      }
-
-      // this.settings['alias'] = this.aliasInput;
-      this.settings['payments-expiration-grace-period'] = `${this.paymentsExpirationGracePeriod.value}${this.paymentsExpirationGracePeriod.unit}`;
-      this.settings['routerrpc.penaltyhalflife'] = `${this.penaltyHalflife.value}${this.penaltyHalflife.unit}`;
-      this.settings['db.bolt.auto-compact-min-age'] = `${this.autoCompactMinAge.value}${this.autoCompactMinAge.unit}`;
+      this.setSpecialCaseSettings();
 
       try {
         const response = await API.post(
@@ -1797,8 +1914,16 @@ export default {
         -moz-appearance: textfield;
       }
 
-      .watchtower-add-btn {
+      .add-btn {
+        &:hover {
+          background: #6c757d;
+          border: 1px solid #6c757d !important;
+          color: #ffffff !important;
+        }
         font-size: 0.85rem;
+        border: 1px solid #ced4da !important;
+        color: #495057 !important;
+        background: #ffffff;
       }
 
       .watchtower-list-container {

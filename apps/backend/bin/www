@@ -10,6 +10,7 @@ var http = require("http");
 
 const configLogic = require("logic/config");
 const lndLogic = require('logic/lightning');
+const constants = require("utils/const");
 
 /**
  * Update umbrel-lnd.conf if it is out-of-date.
@@ -20,6 +21,9 @@ const lndLogic = require('logic/lightning');
 
   if(! await configLogic.isUmbrelLndConfUpToDate(config)) {
     console.log('lnd config is not up to date, generating new config...');
+
+    // set tor.skip-proxy-for-clearnet-targets to false for existing installs that are just now getting hybrid mode support
+    if (constants.LND_INITIALIZE_WITH_TOR_ONLY) config['tor.skip-proxy-for-clearnet-targets'] = false;
 
     await configLogic.writeLndConfig(config);
     await lndLogic.restartLndWithRetries();
