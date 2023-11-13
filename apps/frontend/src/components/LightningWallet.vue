@@ -1104,6 +1104,9 @@ export default {
       }
     },
     unit: function(val) {
+      // this watcher is used to update the receive.amount shown when creating an invoice and toggling between sats/btc
+      // we only run this if receive.amountInput is not empty, otherwise paid and pending invoices will not show the correct amount when toggling between sats/btc
+      if (this.receive.amountInput === "") return;
       if (val === "sats") {
         this.receive.amount = Number(this.receive.amountInput);
       } else if (val === "btc") {
