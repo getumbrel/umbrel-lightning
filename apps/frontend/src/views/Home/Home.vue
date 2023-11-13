@@ -96,7 +96,7 @@
                     <span class="d-block">Automatic backups</span>
                     <small class="d-block">
                       <a
-                        href="https://github.com/getumbrel/umbrel/blob/master/scripts/backup/README.md"
+                        href="https://github.com/getumbrel/umbrel/blob/2b266036f62a1594aa60a8a3be30cfb8656e755f/scripts/backup/README.md"
                         target="blank"
                         >Learn more</a
                       >
@@ -107,6 +107,22 @@
                     tooltip="Sorry, automatic backups cannot be disabled for now"
                     on
                     disabled
+                  ></toggle-switch>
+                </div>
+              </div>
+            </b-dropdown-group>
+
+            <b-dropdown-group>
+              <div class="dropdown-group">
+                <div class="d-flex w-100 justify-content-between">
+                  <div>
+                    <span class="d-block">Backup over Tor</span>
+                  </div>
+                  <toggle-switch
+                    class="align-self-center"
+                    tooltip="If disabled, your backup and recovery requests will be sent over the clearnet"
+                    :on="backupOverTor"
+                    @toggle="toggleBackupOverTor"
                   ></toggle-switch>
                 </div>
                 <small
@@ -312,6 +328,7 @@
     <node-id-modal />
     <secret-words-modal />
     <connect-wallet-modal />
+    <tor-backup-failed-modal />
   </div>
 </template>
 
@@ -338,6 +355,7 @@ import SecretWordsModal from "./SecretWordsModal.vue";
 import ConnectWalletModal from "./ConnectWalletModal";
 import OnboardingModal from "./OnboardingModal/OnboardingModal.vue";
 import RecoveryChannels from '@/views/Home/OnboardingModal/RecoveryChannels.vue';
+import TorBackupFailedModal from '@/views/Home/TorBackupFailedModal.vue';
 
 export default {
   data() {
@@ -362,12 +380,18 @@ export default {
       channels: state => state.lightning.channels,
       unit: state => state.system.unit,
       backupStatus: state => state.system.backupStatus,
-      lastBackupDate: state => state.lightning.lastBackupDate
+      lastBackupDate: state => state.lightning.lastBackupDate,
+      backupOverTor: state => state.system.backupOverTor,
+      mostRecentBackupSuccess: state => state.system.mostRecentBackupSuccess,
+      onboarding: state => state.system.onboarding
     })
   },
   methods: {
     getReadableTime(timestamp) {
       return moment(timestamp).format("MMM D, h:mm:ss a");
+    },
+    toggleBackupOverTor() {
+      this.$store.dispatch('system/toggleBackupOverTor');
     },
     async downloadChannelBackup() {
       await API.download(
@@ -440,14 +464,21 @@ export default {
       this.$store.dispatch("lightning/getLastBackupDate");
     }
   },
-  created() {
-    this.fetchData();
-    this.$store.dispatch("user/getLndConfig");
+  async created() {
+    await Promise.all([
+      this.fetchData(),
+      this.$store.dispatch("user/getLndConfig"),
+      this.$store.dispatch("system/getBackupOverTor"),
+      this.$store.dispatch("system/getMostRecentBackupSuccess")
+    ]);
 
-    //refresh this data every 10s:
-    this.dataInterval = window.setInterval(this.fetchData, 10000);
-    // show terms initially, then have modal take over logic
-    this.$bvModal.show("onboarding-modal");
+    if (this.onboarding) {
+      this.$bvModal.show("onboarding-modal");
+    }
+
+    if (!this.mostRecentBackupSuccess && this.backupOverTor && !this.onboarding) {
+      this.$bvModal.show("tor-backup-failed-modal");
+    }
   },
   beforeDestroy() {
     window.clearInterval(this.dataInterval);
@@ -472,7 +503,8 @@ export default {
     SecretWordsModal,
     ConnectWalletModal,
     OnboardingModal,
-    RecoveryChannels
+    RecoveryChannels,
+    TorBackupFailedModal
   }
 };
 </script>

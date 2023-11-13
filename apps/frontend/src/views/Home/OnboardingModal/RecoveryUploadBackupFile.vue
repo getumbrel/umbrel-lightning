@@ -1,9 +1,29 @@
 <template>
   <div class="d-flex align-items-center w-100 flex flex-column text-center p-3 pb-4">
     <h3>Recover your channels</h3>
+    <b-alert v-if="torError" variant="warning" show class="mb-3 d-flex align-items-center flex-column">
+      <small class="d-block mt-1">
+        <b-icon class="" icon="exclamation-triangle-fill"></b-icon>
+        Error downloading your backup files.
+      </small>
+      <small class="d-block mt-1">
+        We were unable to download your latest backup files. This is likely due to the Tor network being either unreachable or congested.
+        To resolve this, you can disable the 'Backup over Tor' option in settings. This will allow you to backup and recover your channels more reliably without depending on Tor.
+        If you wish, you can also try to retrieve your backup files once without using Tor by clicking the button below.
+      </small>
+      <b-button
+        variant="primary px-4"
+        :disabled="disabled"
+        :class="{'fade-in-out': loading}"
+        class="mt-2"
+        @click="retryWithoutTor"
+      >Retry without Tor</b-button>
+    </b-alert>
+
     <p>
-      Upload your payments channel backup file.
+      {{ torError ? 'Or upload your payments channel backup file.' : 'Or upload your payments channel backup file.' }}
     </p>
+
     <b-form-file
       class="upload-input mt-3 mb-5"
       v-model="uploadedFile"
@@ -43,6 +63,8 @@ export default {
     uploadedBackupFile: File,
     onBack: Function,
     onNext: Function,
+    torError: Boolean,
+    retryWithoutTor: Function
   },
 };
 </script>

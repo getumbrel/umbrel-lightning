@@ -12,6 +12,7 @@ const getStream = require('get-stream');
 const FormData = require('form-data');
 
 const constants = require("utils/const.js");
+const diskLogic = require("logic/disk.js");
 
 const BACKUP_MAX_TIMESTAMPS = 300;
 
@@ -42,15 +43,17 @@ const deriveEntropy = (seed, indentifier, options) => {
 
 const getBackupsFromBackupId = async backupId => {
   try {
+    const shouldUseTor = await checkIfShouldUseTor();
+
     const response = await axios({
       url: `https://api.umbrel.com/lightning-backups/${backupId}`,
-      httpsAgent: agent,
+      httpsAgent: shouldUseTor ? agent : undefined,
       method: 'GET',
     });
 
     return response.data.timestamps;
-  } catch {
-    return [];
+  } catch (error) {
+    throw error;
   }
 };
 
@@ -58,10 +61,16 @@ const listBackups = async mnemonic => {
   const backupId = deriveEntropy(mnemonic, 'umbrel_backup_id', {legacy: false});
   const legacyBackupId = deriveEntropy(mnemonic, 'umbrel_backup_id', {legacy: true});
 
-  const timeStamps = (await Promise.all([
-    getBackupsFromBackupId(backupId),
-    getBackupsFromBackupId(legacyBackupId),
-  ])).flat();
+  let timeStamps;
+  try {
+    timeStamps = (await Promise.all([
+      getBackupsFromBackupId(backupId), // we only want to catch and throw the errors from this call with the new backup id.
+      getBackupsFromBackupId(legacyBackupId).catch(() => []), // Catch the error here and return an empty array.
+    ])).flat();
+  } catch (error) {
+    // we throw the error, which will be handled by lightning store module and checked for a proxy timeout error.
+    throw error;
+  }
 
   return timeStamps.sort((a, b) => b - a).slice(0, BACKUP_MAX_TIMESTAMPS);
 };
@@ -97,10 +106,11 @@ const decryptBackup = async (encryptionKey, backup) => {
 }
 
 const getBackup = async (mnemonic, timestamp, options) => {
+  const shouldUseTor = await checkIfShouldUseTor();
   const backupId = deriveEntropy(mnemonic, 'umbrel_backup_id', options);
   const response = await axios({
     url: `https://api.umbrel.com/lightning-backups/${backupId}/${timestamp}`,
-    httpsAgent: agent,
+    httpsAgent: shouldUseTor ? agent : undefined,
     method: 'GET',
     responseType: 'arraybuffer',
   });
@@ -143,11 +153,12 @@ const uploadBackup = async (mnemonic, backup) => {
   });
 
   const backupId = deriveEntropy(mnemonic, 'umbrel_backup_id');
+  const shouldUseTor = await checkIfShouldUseTor();
   const form = new FormData();
   form.append('file', Buffer.from(encryptedTarball));
   const response = await axios({
     url: `https://pvf3ozmmfl.execute-api.us-east-1.amazonaws.com/prod/v1/upload/${backupId}`,
-    httpsAgent: agent,
+    httpsAgent: shouldUseTor ? agent : undefined,
     method: 'POST',
     data: form.getBuffer(),
     headers: form.getHeaders(),
@@ -155,6 +166,11 @@ const uploadBackup = async (mnemonic, backup) => {
 
   return response;
 };
+
+const checkIfShouldUseTor = async () => {
+  const state = await diskLogic.getJsonStore();
+  return state.backupOverTor;
+}
 
 module.exports = {
   listBackups,

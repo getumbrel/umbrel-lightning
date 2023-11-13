@@ -63,6 +63,7 @@ const state = () => ({
   pendingTransactions: [],
   pendingChannelEdit: {},
   backups: [],
+  getBackupsFailedDueToTor: false,
   lastBackupDate: false,
   recoveryInfo: {
     recoveryMode: false,
@@ -169,6 +170,10 @@ const mutations = {
     state.backups = backups;
   },
 
+  setGetBackupsFailedDueToTor(state, status) {
+    state.getBackupsFailedDueToTor = status;
+  },
+
   setRecoveryInfo(state, info) {
     state.recoveryInfo = info;
   },
@@ -227,10 +232,20 @@ const actions = {
   },
 
   async getBackups({ commit }) {
-    const { timestamps } = await API.get(
+    commit("setGetBackupsFailedDueToTor", false);
+    const response = await API.get(
       `${process.env.VUE_APP_API_BASE_URL}/v1/lnd/backups`
     );
-    commit("setBackups", timestamps);
+    
+    if (response.success === false) {
+      // set getBackupsFailedDueToTor to true if the error includes non-case-sensitive "Proxy"
+      // e.g, "SocksClientError: Proxy connection timed out"
+      if (response.error.toLowerCase().includes("proxy")) {
+        commit("setGetBackupsFailedDueToTor", true);
+      }
+    } else {
+      commit("setBackups", response.timestamps);
+    }
   },
 
   async getLastBackupDate({ commit }) {

@@ -33,11 +33,18 @@ module.exports = async () => {
         await diskLogic.updateJsonStore({
           previousBackupChecksum: checksum,
           previousBackupTime: Date.now(),
+          mostRecentBackupSuccess: true,
         });
         log('Backup complete!');
       }
     } catch (e) {
       log(`Error: ${e.message}`);
+      const { onboarding } = await diskLogic.getJsonStore();
+      if (!onboarding) {
+        await diskLogic.updateJsonStore({
+          mostRecentBackupSuccess: false,
+        });
+      }
     }
     log('Sleeping...');
     await delay(ONE_MINUTE_IN_MS);

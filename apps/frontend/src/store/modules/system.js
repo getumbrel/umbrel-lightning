@@ -7,6 +7,8 @@ const state = () => ({
     status: "", //success, failed
     timestamp: null
   },
+  backupOverTor: true, // by default we backup over Tor
+  mostRecentBackupSuccess: false,
   onboarding: false, // assume false to prevent modal flickering
   loading: true,
   unit: "sats", //sats or btc
@@ -38,6 +40,12 @@ const mutations = {
   },
   setBackupStatus(state, status) {
     state.backupStatus = status;
+  },
+  setBackupOverTor(state, backupOverTor) {
+    state.backupOverTor = backupOverTor;
+  },
+  setMostRecentBackupSuccess(state, mostRecentBackupSuccess) {
+    state.mostRecentBackupSuccess = mostRecentBackupSuccess;
   },
   setOnboarding(state, status) {
     state.onboarding = status;
@@ -89,6 +97,29 @@ const actions = {
     if (status && status.timestamp) {
       commit("setBackupStatus", status);
     }
+  },
+  async getBackupOverTor({ commit }) {
+    const backupOverTor = await API.get(
+      `${process.env.VUE_APP_API_BASE_URL}/v1/system/backup-over-tor`
+    );
+    commit("setBackupOverTor", backupOverTor);
+  },
+  async toggleBackupOverTor({ commit, state }) {
+    const newValue = !state.backupOverTor;
+
+    const response = await API.post(`${process.env.VUE_APP_API_BASE_URL}/v1/system/backup-over-tor`, {
+      backupOverTor: newValue
+    });
+
+    if (response.data.success) {
+      commit('setBackupOverTor', newValue);
+    }
+  },
+  async getMostRecentBackupSuccess({ commit }) {
+    const mostRecentBackupSuccess = await API.get(
+      `${process.env.VUE_APP_API_BASE_URL}/v1/system/recent-backup-success`
+    );
+    commit("setMostRecentBackupSuccess", mostRecentBackupSuccess);
   },
   async getOnboardingStatus({ commit }) {
     const onboarding = await API.get(

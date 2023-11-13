@@ -7,9 +7,14 @@ const backups = require("utils/backups");
 const lnd = require("services/lnd");
 
 router.get("/", safeHandler(async (req, res) => {
-  const seed = (await diskLogic.getJsonStore()).seed.join(' ');
-  const timestamps = await backups.listBackups(seed);
-  res.json({timestamps});
+  try {
+    const seed = (await diskLogic.getJsonStore()).seed.join(' ');
+    const timestamps = await backups.listBackups(seed);
+  
+    res.json({timestamps});
+  } catch (error) {
+    res.json({success: false, error: error.message});
+  }
 }));
 
 router.get("/latest", safeHandler(async (req, res) => {

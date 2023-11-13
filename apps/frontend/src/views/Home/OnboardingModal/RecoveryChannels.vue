@@ -1,6 +1,5 @@
 <template>
   <div>
-    
     <!-- Disable channel backup recovery if LND is not ready -->
     <recovery-lightning-is-syncing
       v-if="isLightningSyncing"
@@ -35,7 +34,10 @@
       :loading="isRestoringBackup"
       :onBack="() => backups.length ? changeStep('recovery-select-backup') : onBack()"
       :onNext="(file) => restoreBackup({timestamp: null, backupFile: file})"
+      :torError="getBackupsFailedDueToTor"
+      :retryWithoutTor="retryWithoutTor"
     />
+
   </div>
 </template>
 
@@ -73,6 +75,7 @@ export default {
     ...mapState({
       backups: state => state.lightning.backups,
       isLightningSyncing: state => !state.lightning.syncedToChain,
+      getBackupsFailedDueToTor: state => state.lightning.getBackupsFailedDueToTor
     }),
   },
   methods: {
@@ -98,6 +101,15 @@ export default {
         return this.changeStep('recovery-upload-backup');
       }
       return this.changeStep('recovery-select-backup');
+    },
+
+    async retryWithoutTor() {
+      this.changeStep('loading');
+      await this.$store.dispatch('system/toggleBackupOverTor');
+      await this.getBackups();
+      // turn tor back on after we're done because this is a one-time request the user is making
+      await this.$store.dispatch('system/toggleBackupOverTor');
+
     },
 
     async restoreBackup({ timestamp, backupFile }) {

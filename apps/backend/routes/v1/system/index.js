@@ -5,6 +5,8 @@ const systemLogic = require("logic/system");
 const diskLogic = require('logic/disk');
 const safeHandler = require("utils/safeHandler");
 const constants = require("utils/const.js");
+const validator = require("utils/validator.js");
+
 
 router.get(
   "/lndconnect-urls",
@@ -24,10 +26,47 @@ router.get(
   })
 );
 
+// backupOverTor is a boolean that determines whether channel backup files should be uploaded/downloaded over Tor or clearnet
+router.get(
+  "/backup-over-tor",
+  safeHandler(async (req, res) => {
+    const {backupOverTor} = await diskLogic.getJsonStore();
+
+    return res.json(backupOverTor);
+  })
+);
+
+router.post(
+  "/backup-over-tor",
+  safeHandler(async (req, res) => {
+    const {backupOverTor} = req.body;
+
+    try {
+      validator.isBoolean(backupOverTor);
+    } catch (error) {
+      return next(error);
+    }
+
+    await diskLogic.updateJsonStore({backupOverTor});
+
+    return res.json({success: true});
+  })
+);
+
+// retrieves whether the latest backup attempt was successfully uploaded
+router.get(
+  "/recent-backup-success",
+  safeHandler(async (req, res) => {
+    const {mostRecentBackupSuccess} = await diskLogic.getJsonStore();
+
+    return res.json(mostRecentBackupSuccess);
+  })
+);
+
 router.get(
   "/onboarding",
   safeHandler(async (req, res) => {
-    const {onboarding} = await diskLogic.getJsonStore();;
+    const {onboarding} = await diskLogic.getJsonStore();
 
     return res.json(onboarding);
   })
