@@ -80,7 +80,7 @@
               >View secret words</b-dropdown-item
             >
             <b-dropdown-item href="#" @click.stop.prevent="openAdvancedSettingsModal"
-              >Advanced Settings&nbsp;&nbsp;<b-badge pill variant="primary" class="mr-1">New</b-badge></b-dropdown-item
+              >Advanced Settings</b-dropdown-item
             >
             <b-dropdown-divider></b-dropdown-divider>
             <b-dropdown-item href="#" @click.stop.prevent="recoverChannels"
