@@ -58,23 +58,54 @@
         <fee-selector :fee="fee" class @change="selectFee"></fee-selector>
       </b-col>
       <b-col class="d-flex" col cols="12" sm="6">
-        <div
-          class="mt-4 mt-sm-0 d-flex w-100 justify-content-between align-self-end"
-        >
-          <span>
-            <small class="text-danger align-self-center" v-if="error">{{
-              error
-            }}</small>
-          </span>
-          <b-button
-            type="submit"
-            variant="success"
-            :disabled="isOpening || !!error"
-            >{{ this.isOpening ? "Opening..." : "Open Channel" }}</b-button
+        <div class="w-100 d-flex flex-column justify-content-between">
+          <div class="mt-4 mt-sm-0 d-flex justify-content-between">
+            <div class="d-flex">
+              <label class="sr-onlsy" for="private-channel">Private Channel</label>
+              <div class="ml-1">
+                <b-popover
+                  target="private-channel-popover"
+                  placement="bottom"
+                  triggers="hover focus"
+                >
+                  <p>Private channels provide increased privacy by not broadcasting details to the entire Lightning Network. However, they have limited routing capabilities compared to public channels.</p>
+                </b-popover>
+
+                <b-icon
+                  id="private-channel-popover"
+                  icon="info-circle"
+                  size="lg"
+                  style="cursor: pointer"
+                  class="text-muted"
+                ></b-icon>
+              </div>
+            </div>
+            <toggle-switch
+              id="private-channel"
+              class=""
+              :on="isPrivate"
+              @toggle="status => (isPrivate = status)"
+            ></toggle-switch>
+          </div>
+          <div
+            class="mt-4 mt-sm-0 d-flex w-100 justify-content-end"
           >
+            <b-button
+              type="submit"
+              variant="success"
+              :disabled="isOpening || !!error"
+              >{{ this.isOpening ? "Opening..." : "Open Channel" }}</b-button
+            >
+          </div>
         </div>
       </b-col>
     </b-row>
+    <b-alert v-if="error" show variant="danger" class="mt-2 mb-0 d-flex align-items-center">
+      <b-icon class="d-block mr-2" icon="exclamation-triangle-fill"></b-icon>
+      <small class="align-self-center">
+        {{ error }}
+      </small>
+    </b-alert>
   </form>
 </template>
 
@@ -86,6 +117,7 @@ import { satsToBtc, btcToSats } from "@/helpers/units.js";
 
 import SatsBtcSwitch from "@/components/Utility/SatsBtcSwitch";
 import FeeSelector from "@/components/Utility/FeeSelector";
+import ToggleSwitch from "@/components/Utility/ToggleSwitch";
 
 export default {
   props: {},
@@ -125,6 +157,7 @@ export default {
           sweepAmount: 0,
         },
       },
+      isPrivate: false,
       error: "",
       feeTimeout: null,
       sweep: false,
@@ -169,6 +202,7 @@ export default {
         name: "",
         purpose: "",
         satPerByte: parseInt(this.selectedFee.satPerByte, 10),
+        isPrivate: this.isPrivate
       };
 
       const parsedConnectionCode = this.peerConnectionCode.match(
@@ -302,6 +336,7 @@ export default {
   components: {
     SatsBtcSwitch,
     FeeSelector,
+    ToggleSwitch
   },
 };
 </script>

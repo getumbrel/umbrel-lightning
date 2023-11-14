@@ -119,10 +119,15 @@ async function promiseify(rpcObj, rpcFn, payload, description) {
 
 // an amount, an options memo, and can only be paid to node that created it.
 async function addInvoice(amount, memo) {
+  // we check if all channels are private to determine whether we need to provide routing hints
+  const channels = await getOpenChannels();
+  const privateChannelsOnly = channels.every(channel => channel.private);
+
   const rpcPayload = {
     value: amount,
     memo: memo, // eslint-disable-line object-shorthand
     expiry: 3600, // Should we make this ENV specific for ease of testing?
+    private: privateChannelsOnly, // provide routing hints when user only has private channels
   };
 
   const conn = await initializeRPCClient();
@@ -468,10 +473,11 @@ async function listUnspent() {
   );
 }
 
-function openChannel(pubKey, amt, satPerByte) {
+function openChannel(pubKey, amt, satPerByte, isPrivate) {
   const rpcPayload = {
     node_pubkey_string: pubKey,
     local_funding_amount: amt,
+    private: isPrivate,
   };
 
   if (satPerByte) {

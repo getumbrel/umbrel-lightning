@@ -37,8 +37,8 @@
           <span class="text-muted">Status</span>
           <span class="text-capitalize font-bold">{{ channel.status }}</span>
         </div>
-
-        <div class="d-flex justify-content-between align-items-center mb-3">
+        <!-- we do not render Channel Type when 'private' property does not exist on channel (e.g., from PendingChannels rpc) -->
+        <div v-if="channel.private !== undefined" class="d-flex justify-content-between align-items-center mb-3">
           <span class="text-muted">Channel Type</span>
           <span class="text-capitalize font-bold"
             >{{ channel.private ? "Private" : "Public" }} Channel</span

@@ -4,9 +4,13 @@
       <b-col col cols="12">
         <!-- on large screens -->
         <div class="d-none d-xl-block">
-          <status :variant="statusVariant" size="sm">{{
-            channel.status
-          }}</status>
+          <div class="d-flex">
+            <status :variant="statusVariant" size="sm">{{
+              channel.status
+            }}</status>
+            <!-- we do not render private/public text when 'private' property does not exist on channel (e.g., from PendingChannels rpc) -->
+            <small v-if="channel.private !== undefined" class="ml-1">{{ channel.private ? "Private Channel" : "Public Channel" }}</small>
+          </div>
           <div>
             <span v-if="channel.remoteAlias">{{ channel.remoteAlias }}</span>
             <span
@@ -21,9 +25,13 @@
         <div
           class="d-xl-none d-flex justify-content-between align-items-center mb-1"
         >
-          <status :variant="statusVariant" size="sm">{{
-            channel.status
-          }}</status>
+          <div class="">
+            <status :variant="statusVariant" size="sm">{{
+              channel.status
+            }}</status>
+            <!-- we do not render private/public text when 'private' property does not exist on channel (e.g., from PendingChannels rpc) -->
+            <small v-if="channel.private !== undefined" class="">{{ channel.private ? "Private Channel" : "Public Channel" }}</small>
+          </div>
           <div>
             <small>{{ channel.remoteAlias }}</small>
           </div>

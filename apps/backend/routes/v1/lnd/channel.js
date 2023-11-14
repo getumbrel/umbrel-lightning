@@ -146,6 +146,7 @@ router.post(
     const satPerByte = req.body.satPerByte;
     const name = req.body.name;
     const purpose = req.body.purpose;
+    const isPrivate = req.body.isPrivate;
 
     try {
       // TODO validate ip address as ip4 or ip6 address
@@ -157,12 +158,13 @@ router.post(
       }
       validator.isAlphanumericAndSpaces(name);
       validator.isAlphanumericAndSpaces(purpose);
+      validator.isBoolean(isPrivate);
     } catch (error) {
       return next(error);
     }
 
     return lightningLogic
-      .openChannel(pubKey, ip, port, amt, satPerByte, name, purpose)
+      .openChannel(pubKey, ip, port, amt, satPerByte, name, purpose, isPrivate)
       .then(channel => res.json(channel));
   })
 );

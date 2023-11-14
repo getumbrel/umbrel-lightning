@@ -754,7 +754,7 @@ async function initializeWallet(password, seed) {
 }
 
 // Opens a channel to the node with the given public key with the given amount.
-async function openChannel(pubKey, ip, port, amt, satPerByte, name, purpose) {
+async function openChannel(pubKey, ip, port, amt, satPerByte, name, purpose, isPrivate) {
   // eslint-disable-line max-params
 
   var peers = await lndService.getPeers();
@@ -775,7 +775,7 @@ async function openChannel(pubKey, ip, port, amt, satPerByte, name, purpose) {
   // only returns a transactions id
   // TODO: Can we get the channel index from here? The channel point is transaction id:index. It could save us a call
   // to pendingChannelDetails.
-  const channel = await lndService.openChannel(pubKey, amt, satPerByte);
+  const channel = await lndService.openChannel(pubKey, amt, satPerByte, isPrivate);
 
   // Lnd only allows one channel to be created with a node per block. By searching pending open channels, we can find
   // a unique identifier for the newly created channe. We will use ChannelPoint.
