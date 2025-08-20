@@ -11,7 +11,8 @@ const DEFAULT_CONFIG = require("utils/defaultConfig");
 
 router.get('/lnd-config', safeHandler(async(req, res) => {
     const settings = await diskService.readJsonFile(constants.JSON_SETTINGS_FILE);
-    return res.json(settings.lnd);
+    const mergedConfig = mergeWithDefaults(settings.lnd, DEFAULT_CONFIG);
+    return res.json(mergedConfig);
   }));
 
 // POSTing an empty object {} for lndConfig triggers a reset to DEFAULT_CONFIG
@@ -267,6 +268,18 @@ function validateSettings(settings) {
         errors.push(booleanError("Larger Channels"));
     }
 
+    // protocol.custom-message (custom message handling number)
+    const customMessageError = validateNullableNumber(settings["protocol.custom-message"], 0, 65535, "Custom Message");
+    if (customMessageError) errors.push(customMessageError);
+
+    // protocol.custom-init (custom feature bit to advertise in the init message)
+    const customInitError = validateNullableNumber(settings["protocol.custom-init"], 0, 256, "Custom Init");
+    if (customInitError) errors.push(customInitError);
+
+    // protocol.custom-nodeann (custom feature bit to advertise in the node_announcement message)
+    const customNodeAnnouncementError = validateNullableNumber(settings["protocol.custom-nodeann"], 0, 256, "Custom Node Announcement");
+    if (customNodeAnnouncementError) errors.push(customNodeAnnouncementError);
+
     // BOLT
 
     // db.bolt.auto-compact (automatic database compaction)
@@ -301,6 +314,24 @@ function timeError(settingName) {
 
 function numberError(settingName, min, max) {
     return `${settingName} must be ${max ? `between ${min} and ${max}` : `at least ${min}`}.`;
+}
+
+function validateNullableNumber(value, min, max, settingName) {
+  if (value === null) return null;
+  if (typeof value !== "number" || value < min || value > max) {
+      return numberError(settingName, min, max);
+  }
+  return null;
+}
+
+function mergeWithDefaults(currentConfig, defaultConfig) {
+    const merged = { ...defaultConfig, ...currentConfig };
+    Object.keys(defaultConfig).forEach(key => {
+      if (defaultConfig[key] === null && !(key in currentConfig)) {
+          merged[key] = null;
+      }
+    });
+    return merged;
 }
 
 module.exports = router;
