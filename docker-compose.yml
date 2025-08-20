@@ -36,7 +36,7 @@ services:
       - "3006:3006"
 
   lnd:
-    image: lightninglabs/lnd:v0.16.2-beta@sha256:795d29d94f845bd070832b097ff75cf0f46cf6daf5e55bf62dc1e4e406e0027d
+    image: lightninglabs/lnd:v0.19.2-beta@sha256:dd113dff920c309bf5c4af6a37d912f379dc24c51f266a2c878c12d20501798b
     user: 1000:1000
     hostname: lnd
     command: --listen=0.0.0.0:9735 --rpclisten=0.0.0.0:10009 --restlisten=0.0.0.0:8080 --bitcoin.active --bitcoin.regtest --bitcoin.node=bitcoind --bitcoind.rpchost=bitcoind --bitcoind.rpcuser=umbrel --bitcoind.rpcpass=moneyprintergobrrr --bitcoind.zmqpubrawblock=tcp://bitcoind:28332 --bitcoind.zmqpubrawtx=tcp://bitcoind:28333 --configfile=/data/.lnd/umbrel-lnd.conf
