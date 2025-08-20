@@ -961,6 +961,120 @@
             </b-collapse>
           </b-card>
 
+          <!-- PROTOCOL SETTINGS  -->
+          <b-card no-body class="setting-group-container mb-2">
+            <b-card-header v-b-toggle.protocol-settings header-tag="header" class="setting-group-header px-2 px-sm-3 d-flex justify-content-between align-items-center" role="tab">
+              <div :class="{'fade-in-out': !hasLoadedSettings}">
+                <p class="setting-group-title mb-1 font-weight-bold">Protocol</p>
+                <small class="d-block text-muted">
+                  Set custom protocol messages to be handled by other applications (e.g. LNDK).
+                </small>
+              </div>
+              <b-icon class="when-closed ml-2 text-muted" icon="plus" variant="secondary"></b-icon><b-icon class="when-open ml-2 text-muted" icon="dash" variant="secondary"></b-icon>
+            </b-card-header>
+            <b-collapse v-if="hasLoadedSettings" class="setting-group-body bg-light" id="protocol-settings" accordion="protocol-settings" role="tabpanel">
+
+              <!-- CUSTOM MESSAGE -->
+              <b-card-body class="subsetting-body px-2 px-sm-3">
+                <div>
+                  <div class="d-flex justify-content-between align-items-center">
+                    <div class="flex-sm-grow-1">
+                      <label class="mb-0" for="base-fee">
+                        <p class="subsetting-title font-weight-bold mb-0 mr-1">
+                          Custom message 
+                          <span class="subsetting-setting-lnd-name text-monospace font-weight-normal d-block">
+                            protocol.custom-message
+                          </span>
+                        </p>
+                      </label>
+                    </div>
+                    <div class="input-container ml-1">
+                      <b-input-group append="">
+                        <b-form-input
+                        class="advanced-settings-input"
+                        id="custom-message"
+                        type="number"
+                        v-model="settings['protocol.custom-message']"
+                        number
+                        ></b-form-input>
+                      </b-input-group>
+                    </div>
+                  </div>
+                  <small class="w-lg-75 d-block text-muted mt-1">
+                    Set to handle message of a particular type that fails outside of the custom message number range.
+                    i.e. 513 is onion messages.
+                  </small>
+                </div>
+              </b-card-body>
+
+              <!-- CUSTOM INIT FEATURE BIT -->
+              <b-card-body class="subsetting-body px-2 px-sm-3">
+                <div>
+                  <div class="d-flex justify-content-between align-items-center">
+                    <div class="flex-sm-grow-1">
+                      <label class="mb-0" for="base-fee">
+                        <p class="subsetting-title font-weight-bold mb-0 mr-1">
+                          Custom Init Feature Bit 
+                          <span class="subsetting-setting-lnd-name text-monospace font-weight-normal d-block">
+                            protocol.custom-init
+                          </span>
+                        </p>
+                      </label>
+                    </div>
+                    <div class="input-container ml-1">
+                      <b-input-group append="">
+                        <b-form-input
+                        class="advanced-settings-input"
+                        id="custom-init"
+                        type="number"
+                        v-model="settings['protocol.custom-init']"
+                        number
+                        ></b-form-input>
+                      </b-input-group>
+                    </div>
+                  </div>
+                  <small class="w-lg-75 d-block text-muted mt-1">
+                    Specifies feature bits to advertise in the node's init message.
+                    i.e. 39 is support of onion messages.
+                  </small>
+                </div>
+              </b-card-body>
+
+              <!-- CUSTOM NODE ANNOUNCEMENT FEATURE BIT -->
+              <b-card-body class="subsetting-body px-2 px-sm-3">
+                <div>
+                  <div class="d-flex justify-content-between align-items-center">
+                    <div class="flex-sm-grow-1">
+                      <label class="mb-0" for="base-fee">
+                        <p class="subsetting-title font-weight-bold mb-0 mr-1">
+                          Custom Node Announcement Feature Bit 
+                          <span class="subsetting-setting-lnd-name text-monospace font-weight-normal d-block">
+                            protocol.custom-nodeann
+                          </span>
+                        </p>
+                      </label>
+                    </div>
+                    <div class="input-container ml-1">
+                      <b-input-group append="">
+                        <b-form-input
+                        class="advanced-settings-input"
+                        id="custom-nodeann"
+                        type="number"
+                        v-model="settings['protocol.custom-nodeann']"
+                        number
+                        ></b-form-input>
+                      </b-input-group>
+                    </div>
+                  </div>
+                  <small class="w-lg-75 d-block text-muted mt-1">
+                    Specifies feature bits to advertise in the node's announcement message.
+                    i.e. 39 is support of onion messages.
+                  </small>
+                </div>
+              </b-card-body>
+            </b-collapse>
+          </b-card>
+
           <!-- WATCHTOWER SETTINGS -->
           <b-card no-body class="setting-group-container mb-2">
             <b-card-header v-b-toggle.watchtower-settings header-tag="header" class="setting-group-header px-2 px-sm-3 d-flex justify-content-between align-items-center" role="tab">
@@ -1606,6 +1720,20 @@ export default {
     isTorStreamIsolationDisabled(value) {
       if (!value) return;
       this.settings['tor.streamisolation'] = false;
+    },
+    settings: {
+      handler(newSettings) {
+        if (newSettings['protocol.custom-message'] === '' || newSettings['protocol.custom-message'] === 0) {
+          this.settings['protocol.custom-message'] = null;
+        }
+        if (newSettings['protocol.custom-init'] === '' || newSettings['protocol.custom-init'] === 0) {
+          this.settings['protocol.custom-init'] = null;
+        }
+        if (newSettings['protocol.custom-nodeann'] === '' || newSettings['protocol.custom-nodeann'] === 0) {
+          this.settings['protocol.custom-nodeann'] = null;
+        }
+      },
+      deep: true
     }
   },
   async created() {
