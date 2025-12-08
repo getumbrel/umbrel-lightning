@@ -484,6 +484,13 @@ export default {
     window.clearInterval(this.dataInterval);
   },
   watch: {
+    onboarding: function(newVal, oldVal) {
+      // Refresh data when onboarding completes. The initial fetchData() call
+      // happens before the wallet exists, so the store has stale loading values.
+      if (oldVal === true && newVal === false) {
+        this.fetchData();
+      }
+    },
     password: function() {
       this.isIncorrectPassword = false;
     }
