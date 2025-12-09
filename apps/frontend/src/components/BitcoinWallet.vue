@@ -873,6 +873,17 @@ export default {
     this.$store.dispatch("bitcoin/getPrice");
     this.$store.dispatch("system/getLocalExplorerUrl");
   },
+  mounted() {
+    // open the Bitcoin Wallet card to the deposit view when navigating to ?action=receive-bitcoin
+    if (this.$route.query.action === "receive-bitcoin") {
+      this.changeMode("deposit");
+    }
+
+    // open the Bitcoin Wallet card to the withdraw view when navigating to ?action=send-bitcoin
+    if (this.$route.query.action === "send-bitcoin") {
+      this.changeMode("withdraw");
+    }
+  },
   components: {
     CardWidget,
     QrCode,

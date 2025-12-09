@@ -34,6 +34,7 @@
     "lodash.union": "^4.6.0",
     "module-alias": "^2.2.2",
     "morgan": "^1.10.0",
+    "numeral": "^2.0.6",
     "openpgp": "^5.4.0",
     "socks-proxy-agent": "^5.0.0",
     "tar-stream": "^2.2.0",

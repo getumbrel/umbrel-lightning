@@ -1118,6 +1118,17 @@ export default {
     window.moment = moment;
     await this.$store.dispatch("lightning/getStatus");
   },
+  mounted() {
+    // open the Lightning Wallet card to the receive view when navigating to ?action=receive-lightning
+    if (this.$route.query.action === "receive-lightning") {
+      this.changeMode("receive");
+    }
+
+    // open the Lightning Wallet card to the send view when navigating to ?action=sent-lightning
+    if (this.$route.query.action === "send-lightning") {
+      this.changeMode("send");
+    }
+  },
   beforeDestroy() {
     window.clearInterval(this.QRAnimation);
     window.clearInterval(this.receive.invoiceStatusPoller);

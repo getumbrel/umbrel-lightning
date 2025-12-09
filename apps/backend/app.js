@@ -35,6 +35,7 @@ const watchtower = require("routes/v1/lnd/watchtower.js");
 const pages = require("routes/v1/pages.js");
 const system = require("routes/v1/system/index.js");
 const external = require("routes/v1/external.js");
+const widgets = require("routes/v1/lnd/widgets.js");
 const ping = require("routes/ping.js");
 const app = express();
 
@@ -63,6 +64,7 @@ app.use("/v1/lnd/backups", backups);
 app.use("/v1/pages", pages);
 app.use("/v1/system", system);
 app.use("/v1/external", external);
+app.use("/v1/lnd/widgets", widgets);
 app.use("/ping", ping);
 
 app.use(errorHandleMiddleware);
