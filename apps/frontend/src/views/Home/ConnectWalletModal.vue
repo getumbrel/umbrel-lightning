@@ -27,17 +27,19 @@
     >
       <div class="pb-2 pb-sm-3 mt-3">
         <div class="row flex-column-reverse flex-lg-row">
-          <div class="col-12 col-lg-4 px-0 mt-4 mt-lg-0">
-            <!-- QR Code -->
+          <div class="col-12 col-lg-auto px-0 pr-lg-2 mt-4 mt-lg-0">
+            <!-- Zeus users have reported trouble scanning dense lndconnect QRs.
+                 Keep this QR easier to scan by avoiding the center logo and using lower error correction. -->
             <qr-code
               v-if="lndconnectUrl"
               :value="lndconnectUrl"
-              :size="240"
+              :size="260"
+              level="M"
+              :showLogo="false"
               class="qr-image mx-auto"
-              showLogo
             ></qr-code>
           </div>
-          <div class="col-12 col-lg-8 align-items-center">
+          <div class="col-12 col-lg pl-lg-0 align-items-center">
             <label class="mb-1 d-block"
               ><small class="font-weight-bold">Choose mode and network</small></label
             >
