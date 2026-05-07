@@ -51,5 +51,9 @@ module.exports = {
 // Lightning Terminal (litd) now requires this flag to be set or it will not start up
   'rpcmiddleware.enable': true,
 // routing
-  'routing.strictgraphpruning': false
+  'routing.strictgraphpruning': false,
+// protocol
+  'protocol.custom-message': null,
+  'protocol.custom-init': null,
+  'protocol.custom-nodeann': null
 }
