@@ -617,6 +617,7 @@ import { mapState, mapGetters } from "vuex";
 
 import { satsToBtc, btcToSats } from "@/helpers/units.js";
 import API from "@/helpers/api";
+import getErrorMessage from "@/helpers/error-message";
 
 import CountUp from "@/components/Utility/CountUp";
 import CardWidget from "@/components/CardWidget";
@@ -830,7 +831,10 @@ export default {
         this.$store.dispatch("bitcoin/getBalance");
         this.$store.dispatch("bitcoin/getTransactions");
       } catch (error) {
-        this.error = error.response.data || "Error sending BTC";
+        this.error = getErrorMessage(
+          error,
+          "Unable to send BTC. Please try again."
+        );
       }
       this.loading = false;
       this.withdraw.isWithdrawing = false;

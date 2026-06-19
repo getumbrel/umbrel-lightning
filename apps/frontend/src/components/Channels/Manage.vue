@@ -165,6 +165,7 @@
 <script>
 import Bar from "@/components/Channels/Bar";
 import API from "@/helpers/api";
+import getErrorMessage from "@/helpers/error-message";
 
 export default {
   props: {
@@ -218,7 +219,7 @@ export default {
         }, 200);
       } catch (err) {
         this.$bvToast.toast(
-          err.response && err.response.data ? err.response.data : err,
+          getErrorMessage(err, "Unable to close channel. Please try again."),
           {
             title: "Error",
             autoHideDelay: 3000,

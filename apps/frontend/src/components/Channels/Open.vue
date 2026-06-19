@@ -113,6 +113,7 @@
 import { mapState } from "vuex";
 
 import API from "@/helpers/api";
+import getErrorMessage from "@/helpers/error-message";
 import { satsToBtc, btcToSats } from "@/helpers/units.js";
 
 import SatsBtcSwitch from "@/components/Utility/SatsBtcSwitch";
@@ -248,10 +249,11 @@ export default {
           );
         }, 200);
       } catch (error) {
-        if (error.response && error.response.data) {
-          this.isOpening = false;
-          this.error = error.response.data;
-        }
+        this.isOpening = false;
+        this.error = getErrorMessage(
+          error,
+          "Unable to open channel. Please try again."
+        );
       }
     },
 
@@ -269,9 +271,10 @@ export default {
               `${process.env.VUE_APP_API_BASE_URL}/v1/lnd/channel/estimateFee?confTarget=0&amt=${this.fundingAmount}&sweep=${this.sweep}`
             );
           } catch (error) {
-            if (error.response && error.response.data) {
-              this.error = error.response.data;
-            }
+            this.error = getErrorMessage(
+              error,
+              "Unable to estimate fees. Please try again."
+            );
           }
 
           if (estimates) {

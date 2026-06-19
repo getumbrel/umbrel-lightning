@@ -74,6 +74,7 @@ import { mapState } from "vuex";
 
 import API from "@/helpers/api";
 import delay from "@/helpers/delay";
+import getErrorMessage from "@/helpers/error-message";
 
 import SecretWordsDisplay from "@/views/Home/SecretWordsDisplay.vue";
 import SecretWordsVerify from "@/views/Home/SecretWordsVerify.vue";
@@ -117,13 +118,16 @@ export default {
         }
       } catch (err) {
         this.isCreatingWallet = false;
-        this.$bvToast.toast(err.response && err.response.data ? err.response.data : err, {
-          title: "Error",
-          autoHideDelay: 3000,
-          variant: "danger",
-          solid: true,
-          toaster: "b-toaster-bottom-right",
-        });
+        this.$bvToast.toast(
+          getErrorMessage(err, "Unable to create wallet. Please try again."),
+          {
+            title: "Error",
+            autoHideDelay: 3000,
+            variant: "danger",
+            solid: true,
+            toaster: "b-toaster-bottom-right",
+          }
+        );
         return;
       }
 

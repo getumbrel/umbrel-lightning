@@ -45,6 +45,7 @@
 import { mapState } from "vuex";
 
 import API from "@/helpers/api";
+import getErrorMessage from "@/helpers/error-message";
 
 import RecoveryLightningIsSyncing from '@/views/Home/OnboardingModal/RecoveryLightningIsSyncing.vue';
 import RecoverySelectBackupFile from '@/views/Home/OnboardingModal/RecoverySelectBackupFile.vue';
@@ -88,13 +89,19 @@ export default {
         await this.$store.dispatch("lightning/getBackups");
       } catch (err) {
         this.isGettingBackups = false;
-        this.$bvToast.toast(err.response && err.response.data ? err.response.data : err, {
-          title: "Error",
-          autoHideDelay: 3000,
-          variant: "danger",
-          solid: true,
-          toaster: "b-toaster-bottom-right",
-        });
+        this.$bvToast.toast(
+          getErrorMessage(
+            err,
+            "Unable to get channel backups. Please try again."
+          ),
+          {
+            title: "Error",
+            autoHideDelay: 3000,
+            variant: "danger",
+            solid: true,
+            toaster: "b-toaster-bottom-right",
+          }
+        );
         return this.changeStep('recovery-upload-backup');
       }
       if (this.backups.length === 0) {
@@ -122,13 +129,19 @@ export default {
           await API.post(`${process.env.VUE_APP_API_BASE_URL}/v1/lnd/backups/recover`, { timestamp });
         }
       } catch (err) {
-        this.$bvToast.toast(err.response && err.response.data ? err.response.data : err, {
-          title: "Error",
-          autoHideDelay: 3000,
-          variant: "danger",
-          solid: true,
-          toaster: "b-toaster-bottom-right",
-        });
+        this.$bvToast.toast(
+          getErrorMessage(
+            err,
+            "Unable to recover channel backup. Please try again."
+          ),
+          {
+            title: "Error",
+            autoHideDelay: 3000,
+            variant: "danger",
+            solid: true,
+            toaster: "b-toaster-bottom-right",
+          }
+        );
         return this.isRestoringBackup = false;
       }
       this.isRestoringBackup = false;

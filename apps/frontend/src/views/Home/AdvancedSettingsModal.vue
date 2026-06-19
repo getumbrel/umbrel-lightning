@@ -1530,6 +1530,7 @@
 
 <script>
 import API from "@/helpers/api";
+import getErrorMessage from "@/helpers/error-message";
 import cloneDeep from "lodash.clonedeep";
 import isEqual from "lodash.isequal";
 
@@ -1723,13 +1724,21 @@ export default {
       } catch (error) {
         this.isSettingsDisabled = false;
 
-        if (error.response.status === 400) {
+        if (
+          error.response &&
+          error.response.status === 400 &&
+          error.response.data &&
+          error.response.data.validationErrors
+        ) {
           this.validationErrors = error.response.data.validationErrors;
           this.showValidationErrors = true;
           return;
         }
 
-        this.serverError = error.response.data.message;
+        this.serverError = getErrorMessage(
+          error,
+          "Unable to save settings. Please try again."
+        );
         this.showServerError = true;
       }
     },
@@ -1787,7 +1796,10 @@ export default {
           this.showAddWatchtowerSuccess = true;
         }
       } catch (error) {
-        this.addWatchtowerError = `${error.response.data.error.message} - ${error.response.data.error.error.details}.`
+        this.addWatchtowerError = getErrorMessage(
+          error,
+          "Unable to add watchtower. Please check the URI and try again."
+        );
         this.showAddWatchtowerError = true;
       }
       this.addWatchtowerInput = "";
@@ -1804,7 +1816,10 @@ export default {
         this.removeWatchtowerError = {
           watchtowerPubkey: pubkey,
           status: true,
-          message: `${error.response.data.error.message} - ${error.response.data.error.error.details}.`
+          message: getErrorMessage(
+            error,
+            "Unable to remove watchtower. Please try again."
+          )
         };
       }
       this.$store.dispatch("lightning/listWatchtowers");
@@ -1820,7 +1835,10 @@ export default {
         this.removeWatchtowerError = {
           watchtowerPubkey: pubkey,
           status: true,
-          message: `${error.response.data.error.message} - ${error.response.data.error.error.details}.`
+          message: getErrorMessage(
+            error,
+            "Unable to remove watchtower address. Please try again."
+          )
         };
       }
       this.$store.dispatch("lightning/listWatchtowers");

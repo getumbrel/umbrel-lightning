@@ -768,6 +768,7 @@ import { mapState } from "vuex";
 
 import { satsToBtc, btcToSats } from "@/helpers/units.js";
 import API from "@/helpers/api";
+import getErrorMessage from "@/helpers/error-message";
 
 import CountUp from "@/components/Utility/CountUp";
 import CardWidget from "@/components/CardWidget";
@@ -922,9 +923,10 @@ export default {
         this.$store.dispatch("lightning/getTransactions");
         this.$store.dispatch("lightning/getChannels");
       } catch (error) {
-        this.error = JSON.stringify(error.response)
-          ? error.response.data
-          : "Error sending payment";
+        this.error = getErrorMessage(
+          error,
+          "Unable to send payment. Please try again."
+        );
       }
 
       this.loading = false;
@@ -964,9 +966,10 @@ export default {
           this.$store.dispatch("lightning/getTransactions");
         } catch (error) {
           this.mode = "receive";
-          this.error = JSON.stringify(error.response)
-            ? error.response.data
-            : "Error creating invoice";
+          this.error = getErrorMessage(
+            error,
+            "Unable to create invoice. Please try again."
+          );
         }
         this.loading = false;
         this.receive.isGeneratingInvoice = false;
