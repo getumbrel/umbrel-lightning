@@ -15,8 +15,8 @@
       <!-- Welcome -->
       <welcome
         v-if="step === 'welcome'"
-        :onRecoverNode="() => changeStep('recovery-enter-words')"
-        :onNewNode="createWallet"
+        :onRecoverNode="startRecovery"
+        :onNewNode="createNewWallet"
         :disabled="isCreatingWallet"
         :loading="isCreatingWallet"
       />
@@ -25,8 +25,8 @@
       <recovery-enter-words
         v-else-if="step === 'recovery-enter-words'"
         :recoveryWords="recoveryWords"
-        :onBack="() => changeStep('welcome')"
-        :onNext="createWallet"
+        :onBack="returnToWelcome"
+        :onNext="recoverWallet"
         :disabled="recoveryWords.length !== 24 || isCreatingWallet"
         :loading="isCreatingWallet"
       />
@@ -107,12 +107,33 @@ export default {
     changeStep(step) {
       this.step = step;
     },
-    
-    async createWallet() {
+
+    startRecovery() {
+      this.recoveryWords = [];
+      this.changeStep('recovery-enter-words');
+    },
+
+    returnToWelcome() {
+      this.recoveryWords = [];
+      this.changeStep('welcome');
+    },
+
+    createNewWallet() {
+      this.recoveryWords = [];
+      return this.createWallet();
+    },
+
+    recoverWallet() {
+      return this.createWallet(this.recoveryWords);
+    },
+
+    async createWallet(seedWords) {
+      const isRecovery = Array.isArray(seedWords);
+
       this.isCreatingWallet = true;
       try {
-        if (this.recoveryWords.length) {
-          await API.post(`${process.env.VUE_APP_API_BASE_URL}/v1/lnd/wallet/create`, { seed: this.recoveryWords.join(" ") });
+        if (isRecovery) {
+          await API.post(`${process.env.VUE_APP_API_BASE_URL}/v1/lnd/wallet/create`, { seed: seedWords.join(" ") });
         } else {
           await API.post(`${process.env.VUE_APP_API_BASE_URL}/v1/lnd/wallet/create`);
         }
@@ -132,7 +153,7 @@ export default {
       }
 
       this.isCreatingWallet = false;
-      if (this.recoveryWords.length) {
+      if (isRecovery) {
         return this.changeStep('recovery-confirm-open-channels');
       }
 
