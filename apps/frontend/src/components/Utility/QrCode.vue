@@ -1,26 +1,34 @@
 <template>
   <div
     class="qr-container"
-    :style="{ width: `${size}px`, height: `${size}px` }"
+    :style="{
+      width: `${size + quietZone * 2}px`,
+      height: `${size + quietZone * 2}px`,
+      padding: `${quietZone}px`
+    }"
     @click="$emit('click')"
   >
-    <!-- Popup umbrel logo in the middle of QR code -->
-    <transition name="qr-logo-popup" appear>
-      <img
-        v-show="showLogo"
-        src="@/assets/umbrel-qr-icon.svg"
-        class="qr-logo"
-      />
-    </transition>
+    <div class="qr-frame" :style="{ width: `${size}px`, height: `${size}px` }">
+      <!-- Popup umbrel logo in the middle of QR code -->
+      <transition name="qr-logo-popup" appear>
+        <img
+          v-show="showLogo"
+          src="@/assets/umbrel-qr-icon.svg"
+          class="qr-logo"
+        />
+      </transition>
 
-    <!-- QR Code element -->
-    <qrcode-vue
-      :value="value"
-      :size="size"
-      :level="level"
-      renderAs="svg"
-      class="d-flex justify-items-center qr-image"
-    ></qrcode-vue>
+      <!-- QR Code element -->
+      <qrcode-vue
+        :value="value"
+        :size="size"
+        :level="level"
+        foreground="#000000"
+        background="#ffffff"
+        renderAs="svg"
+        class="d-flex justify-items-center qr-image"
+      ></qrcode-vue>
+    </div>
   </div>
 </template>
 
@@ -31,17 +39,21 @@ export default {
   props: {
     size: {
       type: Number,
-      default: 200,
+      default: 200
     },
     level: {
       type: String,
-      default: "H",
+      default: "H"
+    },
+    quietZone: {
+      type: Number,
+      default: 12
     },
     value: String,
     showLogo: {
       type: Boolean,
-      default: true,
-    },
+      default: true
+    }
   },
   data() {
     return {};
@@ -49,8 +61,8 @@ export default {
   computed: {},
   methods: {},
   components: {
-    QrcodeVue,
-  },
+    QrcodeVue
+  }
 };
 </script>
 
@@ -81,6 +93,17 @@ export default {
 
 .qr-container {
   position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #ffffff;
+  border-radius: 8px;
+  box-sizing: border-box;
+  line-height: 0;
+}
+.qr-frame {
+  position: relative;
+  flex: 0 0 auto;
 }
 .qr-logo {
   position: absolute;
