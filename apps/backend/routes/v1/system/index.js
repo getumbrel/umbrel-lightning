@@ -41,11 +41,7 @@ router.post(
   safeHandler(async (req, res) => {
     const {backupOverTor} = req.body;
 
-    try {
-      validator.isBoolean(backupOverTor);
-    } catch (error) {
-      return next(error);
-    }
+    validator.isBoolean(backupOverTor);
 
     await diskLogic.updateJsonStore({backupOverTor});
 
