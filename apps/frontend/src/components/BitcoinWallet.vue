@@ -870,6 +870,7 @@ export default {
   async created() {
     this.$store.dispatch("bitcoin/getBalance");
     this.$store.dispatch("bitcoin/getTransactions");
+    await this.$store.dispatch("system/getCurrency");
     this.$store.dispatch("bitcoin/getPrice");
     this.$store.dispatch("system/getLocalExplorerUrl");
   },

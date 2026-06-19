@@ -39,17 +39,18 @@ Vue.filter("formatUnit", (unit, value) => {
   }
 });
 
-//transforms sats to usd
+//transforms sats to the selected fiat currency
 Vue.filter("satsToUSD", (value) => {
   if (isNaN(parseInt(value))) {
     return value;
   } else {
-    return (
-      "$" +
-      Number(
-        (satsToBtc(value) * store.state.bitcoin.price).toFixed(2)
-      ).toLocaleString()
-    );
+    const currency = store.state.system.currency;
+    const amount = satsToBtc(value) * store.state.bitcoin.price;
+
+    return new Intl.NumberFormat(undefined, {
+      style: "currency",
+      currency
+    }).format(amount);
   }
 });
 

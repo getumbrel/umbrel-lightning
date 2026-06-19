@@ -1,5 +1,16 @@
 import API from "@/helpers/api";
 
+// Keep this list aligned with the currencies returned by mempool.space /api/v1/prices.
+const SUPPORTED_FIAT_CURRENCIES = [
+  "USD",
+  "EUR",
+  "GBP",
+  "CAD",
+  "CHF",
+  "AUD",
+  "JPY"
+];
+
 // Initial state
 const state = () => ({
   version: "",
@@ -12,6 +23,8 @@ const state = () => ({
   onboarding: false, // assume false to prevent modal flickering
   loading: true,
   unit: "sats", //sats or btc
+  currency: "USD",
+  supportedFiatCurrencies: SUPPORTED_FIAT_CURRENCIES,
   api: {
     operational: false,
     version: ""
@@ -28,6 +41,9 @@ const mutations = {
   },
   setUnit(state, unit) {
     state.unit = unit;
+  },
+  setCurrency(state, currency) {
+    state.currency = currency;
   },
   setApi(state, api) {
     state.api = api;
@@ -81,6 +97,21 @@ const actions = {
     if (unit === "sats" || unit === "btc") {
       window.localStorage.setItem("unit", unit);
       commit("setUnit", unit);
+    }
+  },
+  async getCurrency({ commit }) {
+    if (window.localStorage && window.localStorage.getItem("currency")) {
+      const currency = window.localStorage.getItem("currency").toUpperCase();
+      if (SUPPORTED_FIAT_CURRENCIES.includes(currency)) {
+        commit("setCurrency", currency);
+      }
+    }
+  },
+  changeCurrency({ commit }, currency) {
+    currency = String(currency).toUpperCase();
+    if (SUPPORTED_FIAT_CURRENCIES.includes(currency)) {
+      window.localStorage.setItem("currency", currency);
+      commit("setCurrency", currency);
     }
   },
   async getApi({ commit }) {

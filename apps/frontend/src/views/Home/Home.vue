@@ -90,6 +90,22 @@
               >Download channel backup file</b-dropdown-item
             >
             <b-dropdown-group>
+              <div class="dropdown-group" @click.stop>
+                <div
+                  class="d-flex w-100 justify-content-between align-items-center"
+                >
+                  <span class="d-block mr-3 text-nowrap">Fiat currency</span>
+                  <b-form-select
+                    size="sm"
+                    class="currency-select"
+                    :value="currency"
+                    :options="currencyOptions"
+                    @change="changeCurrency"
+                  ></b-form-select>
+                </div>
+              </div>
+            </b-dropdown-group>
+            <b-dropdown-group>
               <div class="dropdown-group">
                 <div class="d-flex w-100 justify-content-between">
                   <div>
@@ -362,7 +378,8 @@ export default {
     return {
       selectedChannel: {},
       showRecoverChannelsModal: false,
-      showAdvancedSettingsModal: false
+      showAdvancedSettingsModal: false,
+      currencyChangeId: 0
     };
   },
   computed: {
@@ -379,12 +396,20 @@ export default {
       lndConnectUrls: state => state.lightning.lndConnectUrls,
       channels: state => state.lightning.channels,
       unit: state => state.system.unit,
+      currency: state => state.system.currency,
+      supportedFiatCurrencies: state => state.system.supportedFiatCurrencies,
       backupStatus: state => state.system.backupStatus,
       lastBackupDate: state => state.lightning.lastBackupDate,
       backupOverTor: state => state.system.backupOverTor,
       mostRecentBackupSuccess: state => state.system.mostRecentBackupSuccess,
       onboarding: state => state.system.onboarding
-    })
+    }),
+    currencyOptions() {
+      return this.supportedFiatCurrencies.map(currency => ({
+        text: currency,
+        value: currency
+      }));
+    }
   },
   methods: {
     getReadableTime(timestamp) {
@@ -392,6 +417,18 @@ export default {
     },
     toggleBackupOverTor() {
       this.$store.dispatch('system/toggleBackupOverTor');
+    },
+    async changeCurrency(currency) {
+      const currencyChangeId = this.currencyChangeId + 1;
+      this.currencyChangeId = currencyChangeId;
+
+      const didUpdatePrice = await this.$store.dispatch(
+        "bitcoin/getPrice",
+        currency
+      );
+      if (didUpdatePrice && currencyChangeId === this.currencyChangeId) {
+        this.$store.dispatch("system/changeCurrency", currency);
+      }
     },
     async downloadChannelBackup() {
       await API.download(
@@ -453,6 +490,7 @@ export default {
     },
     fetchData() {
       this.$store.dispatch("system/getUnit");
+      this.$store.dispatch("system/getCurrency");
       this.$store.dispatch("bitcoin/getSync");
       this.$store.dispatch("bitcoin/getBalance");
       this.$store.dispatch("bitcoin/getTransactions");
@@ -521,5 +559,9 @@ export default {
   height: 120px;
   width: 120px;
   border-radius: 22%;
+}
+
+.currency-select {
+  max-width: 90px;
 }
 </style>

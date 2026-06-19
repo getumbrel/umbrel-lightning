@@ -144,8 +144,8 @@ const mutations = {
     }
   },
 
-  price(state, usd) {
-    state.price = usd;
+  price(state, price) {
+    state.price = price;
   },
 };
 
@@ -178,14 +178,22 @@ const actions = {
     commit("transactions", transactions);
   },
 
-  async getPrice({ commit }) {
+  async getPrice({ commit, rootState }, requestedCurrency) {
+    const currency = requestedCurrency
+      ? String(requestedCurrency).toUpperCase()
+      : rootState.system.currency;
     const price = await API.get(
-      `${process.env.VUE_APP_API_BASE_URL}/v1/external/price`
+      `${process.env.VUE_APP_API_BASE_URL}/v1/external/price?currency=${encodeURIComponent(
+        currency
+      )}`
     );
 
-    if (price) {
-      commit("price", price.USD);
+    if (price && price[currency] !== undefined) {
+      commit("price", price[currency]);
+      return true;
     }
+
+    return false;
   },
 
   async getDepositAddress({ commit }) {
