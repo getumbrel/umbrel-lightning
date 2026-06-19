@@ -30,16 +30,30 @@
       <div class="d-flex flex-column flex-md-row align-items-center">
         <!-- Pubkey QR Code -->
         <qr-code
-          :value="chosenUri || pubkey"
+          v-if="nodeIdValue"
+          :value="nodeIdValue"
           :size="180"
           class="qr-image mx-auto mb-4 mb-md-0"
           showLogo
         ></qr-code>
+        <span
+          v-else
+          class="loading-placeholder mx-auto mb-4 mb-md-0"
+          style="width: 180px; height: 180px;"
+        ></span>
         <div class="w-100 align-self-center ml-0 ml-md-4">
           <label class="mb-1 d-block"
             ><small class="font-weight-bold">Network</small></label
           >
-          <b-form-select v-if="uris.length" class="mb-2" v-model="chosenUri" :options="uriOptions"></b-form-select>
+          <b-form-select
+            v-if="uriOptions.length"
+            class="mb-2"
+            v-model="chosenUri"
+            :options="uriOptions"
+          ></b-form-select>
+          <div v-else-if="pubkey" class="text-muted mb-2 py-2">
+            No network address advertised
+          </div>
           <span
             class="loading-placeholder loading-placeholder-lg mt-1"
             style="width: 100%;"
@@ -48,11 +62,11 @@
           <label class="mb-1 d-block"
             ><small class="font-weight-bold">Node ID</small></label
           >
-          <div v-if="uris.length">
+          <div v-if="nodeIdValue">
             <input-copy
               class="mb-2"
               size="sm"
-              :value="chosenUri"
+              :value="nodeIdValue"
             ></input-copy>
           </div>
           <span
@@ -74,42 +88,48 @@ import QrCode from "@/components/Utility/QrCode";
 export default {
   data() {
     return {
-      chosenUri: "",
-      uriOptions: [],
-      urisInitialized: false
+      chosenUri: ""
     };
   },
   computed: {
     ...mapState({
       uris: state => state.lightning.uris,
       pubkey: state => state.lightning.pubkey
-    })
+    }),
+    uriOptions() {
+      return (Array.isArray(this.uris) ? this.uris : []).map(uri =>
+        this.getUriOption(uri)
+      );
+    },
+    nodeIdValue() {
+      return this.chosenUri || this.pubkey;
+    }
   },
   watch: {
-    // uris may not be initialized when the component is created, so we watch for the first change where uris is not empty
-    uris: {
-      handler(newUriArray) {
-        if (!this.urisInitialized && newUriArray && newUriArray.length > 0) {
-          this.uriOptions = newUriArray.map(uri => {
-            if (uri.includes("onion")) {
-              return { value: uri, text: "Tor" };
-            } else {
-              const atIndex = uri.indexOf("@");
-              const colonIndex = uri.indexOf(":9735");
-              let ipAddress = uri; // Default to the entire uri if we can't parse it
+    uriOptions: {
+      handler(options) {
+        if (!options.length) {
+          this.chosenUri = "";
+          return;
+        }
 
-              if (atIndex !== -1 && colonIndex !== -1) {
-                ipAddress = uri.substring(atIndex + 1, colonIndex);
-              }
-
-              return { value: uri, text: `Clearnet (${ipAddress})` };
-            }
-          });
-          this.chosenUri = this.uriOptions[0].value;
-          this.urisInitialized = true;
+        if (!options.some(option => option.value === this.chosenUri)) {
+          this.chosenUri = options[0].value;
         }
       },
+      immediate: true,
       deep: true
+    }
+  },
+  methods: {
+    getUriOption(uri) {
+      if (uri.includes("onion")) {
+        return { value: uri, text: "Tor" };
+      }
+
+      const host = uri.split("@")[1] || uri;
+
+      return { value: uri, text: `Clearnet (${host.replace(/:9735$/, "")})` };
     }
   },
   components: {
