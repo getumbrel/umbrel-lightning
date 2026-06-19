@@ -15,10 +15,18 @@ module.exports = async () => {
   log('Starting...')
   while (true) {
     try {
+      const jsonStore = await diskLogic.getJsonStore();
+      if (!jsonStore.automaticBackups) {
+        log('Automatic backups disabled.');
+        log('Sleeping...');
+        await delay(ONE_MINUTE_IN_MS);
+        continue;
+      }
+
       log('Checking channel backup...');
       const channelBackup = await diskLogic.readBackupFile();
       const checksum = crypto.createHash('sha256').update(channelBackup).digest('hex');
-      const {previousBackupChecksum} = await diskLogic.getJsonStore();
+      const {previousBackupChecksum} = jsonStore;
       const backupHasChanged = checksum !== previousBackupChecksum;
 
       // Random number between 0-65535, running once a minute, should trigger
@@ -28,7 +36,7 @@ module.exports = async () => {
       if (backupHasChanged || doDecoyBackup) {
         if (backupHasChanged) log('Channel backup has changed, backing up!');
         if (doDecoyBackup && !backupHasChanged) log('Doing decoy backup!');
-        const seed = (await diskLogic.getJsonStore()).seed.join(' ');
+        const seed = jsonStore.seed.join(' ');
         await backups.uploadBackup(seed, channelBackup);
         await diskLogic.updateJsonStore({
           previousBackupChecksum: checksum,

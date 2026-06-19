@@ -49,6 +49,29 @@ router.post(
   })
 );
 
+// automaticBackups determines whether channel backup files should be uploaded automatically.
+router.get(
+  "/automatic-backups",
+  safeHandler(async (req, res) => {
+    const {automaticBackups} = await diskLogic.getJsonStore();
+
+    return res.json(automaticBackups);
+  })
+);
+
+router.post(
+  "/automatic-backups",
+  safeHandler(async (req, res) => {
+    const {automaticBackups} = req.body;
+
+    validator.isBoolean(automaticBackups);
+
+    await diskLogic.updateJsonStore({automaticBackups});
+
+    return res.json({success: true});
+  })
+);
+
 // retrieves whether the latest backup attempt was successfully uploaded
 router.get(
   "/recent-backup-success",

@@ -125,17 +125,16 @@
                     <small class="d-block">
                       <a
                         class="backup-learn-more-link"
-                        href="https://github.com/getumbrel/umbrel/blob/2b266036f62a1594aa60a8a3be30cfb8656e755f/scripts/backup/README.md"
-                        target="blank"
+                        href="https://github.com/getumbrel/umbrel-lightning/blob/master/docs/automatic-encrypted-backups.md"
+                        target="_blank"
                         >Learn more</a
                       >
                     </small>
                   </div>
                   <toggle-switch
                     class="align-self-center"
-                    tooltip="Sorry, automatic backups cannot be disabled for now"
-                    on
-                    disabled
+                    :on="automaticBackups"
+                    @toggle="toggleAutomaticBackups"
                   ></toggle-switch>
                 </div>
               </div>
@@ -155,7 +154,14 @@
                   ></toggle-switch>
                 </div>
                 <small
-                  v-if="lastBackupDate"
+                  v-if="!automaticBackups"
+                  class="d-block mt-2"
+                  style="opacity: 0.4"
+                >
+                  Automatic backups are off
+                </small>
+                <small
+                  v-else-if="lastBackupDate"
                   class="d-block mt-2"
                   style="opacity: 0.4"
                 >
@@ -358,6 +364,58 @@
     <node-id-modal />
     <secret-words-modal />
     <connect-wallet-modal />
+    <b-modal
+      id="disable-automatic-backups-modal"
+      size="lg"
+      centered
+      hide-header
+      hide-footer
+    >
+      <div class="px-2 px-sm-3 pt-2 d-flex justify-content-center w-100">
+        <h3 class="text-center">Turn off automatic channel backups?</h3>
+      </div>
+      <div class="px-2 px-sm-3 pb-2 pb-sm-3 d-flex flex-column align-items-center">
+        <p class="h1">
+          <b-icon icon="exclamation-circle" variant="warning"></b-icon>
+        </p>
+        <div class="w-100">
+          <p>
+            This is risky. If your Umbrel's storage fails, is erased, or your
+            Lightning app data becomes corrupted, you may not be able to recover
+            your Lightning channels unless you have a recent channel backup
+            file.
+          </p>
+          <p>
+            Automatic channel backups are encrypted on your Umbrel before they
+            leave your node. When Backup over Tor is enabled, uploads and
+            recovery requests are sent over Tor. Umbrel also uses decoy backups
+            and random padding to make it harder for the backup server to learn
+            anything useful about your node or channel activity.
+          </p>
+          <p>
+            If you turn this off, download and safely store a fresh channel
+            backup every time your channels change. You can also use umbrelOS
+            backups as another layer of protection, but make sure they include
+            recent Lightning data before relying on them for recovery.
+          </p>
+        </div>
+        <div class="d-flex flex-column flex-lg-row justify-content-center w-100 mt-2">
+          <b-button
+            variant="success"
+            :disabled="isChangingAutomaticBackups"
+            class="btn-border w-100"
+            @click="$bvModal.hide('disable-automatic-backups-modal')"
+          >Keep automatic backups on</b-button>
+          <b-button
+            variant="outline-danger"
+            :disabled="isChangingAutomaticBackups"
+            :class="{'fade-in-out': isChangingAutomaticBackups}"
+            class="ml-lg-2 mt-lg-0 mt-2 w-100"
+            @click="disableAutomaticBackups"
+          >I understand, turn off backups</b-button>
+        </div>
+      </div>
+    </b-modal>
     <tor-backup-failed-modal />
   </div>
 </template>
@@ -392,6 +450,7 @@ export default {
       selectedChannel: {},
       showRecoverChannelsModal: false,
       showAdvancedSettingsModal: false,
+      isChangingAutomaticBackups: false,
       currencyChangeId: 0
     };
   },
@@ -414,6 +473,7 @@ export default {
       supportedFiatCurrencies: state => state.system.supportedFiatCurrencies,
       backupStatus: state => state.system.backupStatus,
       lastBackupDate: state => state.lightning.lastBackupDate,
+      automaticBackups: state => state.system.automaticBackups,
       backupOverTor: state => state.system.backupOverTor,
       mostRecentBackupSuccess: state => state.system.mostRecentBackupSuccess,
       onboarding: state => state.system.onboarding
@@ -431,6 +491,28 @@ export default {
     },
     toggleBackupOverTor() {
       this.$store.dispatch('system/toggleBackupOverTor');
+    },
+    async toggleAutomaticBackups(automaticBackups) {
+      if (!automaticBackups) {
+        this.$bvModal.show("disable-automatic-backups-modal");
+        return;
+      }
+
+      this.isChangingAutomaticBackups = true;
+      try {
+        await this.$store.dispatch("system/changeAutomaticBackups", true);
+      } finally {
+        this.isChangingAutomaticBackups = false;
+      }
+    },
+    async disableAutomaticBackups() {
+      this.isChangingAutomaticBackups = true;
+      try {
+        await this.$store.dispatch("system/changeAutomaticBackups", false);
+        this.$bvModal.hide("disable-automatic-backups-modal");
+      } finally {
+        this.isChangingAutomaticBackups = false;
+      }
     },
     toggleTheme(isDark) {
       this.$store.dispatch("system/changeTheme", isDark ? "dark" : "light");
@@ -524,6 +606,7 @@ export default {
       this.fetchData(),
       this.$store.dispatch("user/getLndConfig"),
       this.$store.dispatch("system/getBackupOverTor"),
+      this.$store.dispatch("system/getAutomaticBackups"),
       this.$store.dispatch("system/getMostRecentBackupSuccess")
     ]);
 
@@ -531,7 +614,7 @@ export default {
       this.$bvModal.show("onboarding-modal");
     }
 
-    if (!this.mostRecentBackupSuccess && this.backupOverTor && !this.onboarding) {
+    if (!this.mostRecentBackupSuccess && this.automaticBackups && this.backupOverTor && !this.onboarding) {
       this.$bvModal.show("tor-backup-failed-modal");
     }
   },
@@ -580,5 +663,9 @@ export default {
 
 .currency-select {
   max-width: 90px;
+}
+
+.btn-border {
+  border: solid 1px !important;
 }
 </style>

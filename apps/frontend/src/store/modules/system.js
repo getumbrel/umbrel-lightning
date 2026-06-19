@@ -18,6 +18,7 @@ const state = () => ({
     status: "", //success, failed
     timestamp: null
   },
+  automaticBackups: true,
   backupOverTor: true, // by default we backup over Tor
   mostRecentBackupSuccess: false,
   onboarding: false, // assume false to prevent modal flickering
@@ -60,6 +61,9 @@ const mutations = {
   },
   setBackupStatus(state, status) {
     state.backupStatus = status;
+  },
+  setAutomaticBackups(state, automaticBackups) {
+    state.automaticBackups = automaticBackups;
   },
   setBackupOverTor(state, backupOverTor) {
     state.backupOverTor = backupOverTor;
@@ -152,6 +156,21 @@ const actions = {
       `${process.env.VUE_APP_API_BASE_URL}/v1/system/backup-over-tor`
     );
     commit("setBackupOverTor", backupOverTor);
+  },
+  async getAutomaticBackups({ commit }) {
+    const automaticBackups = await API.get(
+      `${process.env.VUE_APP_API_BASE_URL}/v1/system/automatic-backups`
+    );
+    commit("setAutomaticBackups", automaticBackups);
+  },
+  async changeAutomaticBackups({ commit }, newValue) {
+    const response = await API.post(`${process.env.VUE_APP_API_BASE_URL}/v1/system/automatic-backups`, {
+      automaticBackups: newValue
+    });
+
+    if (response.data.success) {
+      commit("setAutomaticBackups", newValue);
+    }
   },
   async changeBackupOverTor({ commit }, newValue) {
     const response = await API.post(`${process.env.VUE_APP_API_BASE_URL}/v1/system/backup-over-tor`, {

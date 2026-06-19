@@ -64,6 +64,7 @@ async function getJsonStore() {
   const defaultProperties = {
     onboarding: true,
     seed: [],
+    automaticBackups: true,
     backupOverTor: true, // by default we backup over Tor
     mostRecentBackupSuccess: true, // default to true to prevent warning modal rendering before first backup is attempted
   };
