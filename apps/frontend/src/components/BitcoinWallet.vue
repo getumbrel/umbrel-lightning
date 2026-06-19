@@ -193,7 +193,7 @@
                     </small>
                   </div>
 
-                  <div class="text-right">
+                  <div class="wallet-transaction-amount text-right">
                     <span
                       class="font-weight-bold d-block"
                       v-b-tooltip.hover.left
@@ -905,11 +905,22 @@ export default {
 .transaction-description {
   flex: 1;
   min-width: 0;
+
   .transaction-description-text {
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
     margin-right: 10px;
+  }
+}
+
+.wallet-transaction-amount {
+  flex: 0 0 auto;
+  margin-left: 0.75rem;
+
+  .font-weight-bold,
+  small {
+    white-space: nowrap;
   }
 }
 

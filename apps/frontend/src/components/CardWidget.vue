@@ -31,8 +31,10 @@
       </div>
       <div class="card-custom-body">
         <div class="card-app-info px-3 px-lg-4" v-if="title || subTitle">
-          <div class="d-flex w-100 justify-content-between align-items-center mb-4">
-            <div>
+          <div
+            class="card-app-info-row d-flex w-100 justify-content-between align-items-center mb-4"
+          >
+            <div class="card-app-info-title">
               <div>
                 <h3 v-if="title" class="mb-1">{{ title }}</h3>
                 <h3 class="mb-1" v-else>
@@ -41,8 +43,14 @@
                 <p class="text-muted mb-0" v-if="subTitle">{{ subTitle }}</p>
               </div>
             </div>
-            <img :alt="header" :src="require(`@/assets/${icon}`)" v-if="icon" />
-            <slot name="icon-replacement"></slot>
+            <div class="card-app-info-action">
+              <img
+                :alt="header"
+                :src="require(`@/assets/${icon}`)"
+                v-if="icon"
+              />
+              <slot name="icon-replacement"></slot>
+            </div>
           </div>
         </div>
         <slot></slot>
@@ -75,4 +83,23 @@ export default {
 };
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+.card-app-info-row {
+  gap: 1rem;
+  min-width: 0;
+}
+
+.card-app-info-title {
+  flex: 1 1 auto;
+  min-width: 0;
+
+  h3,
+  p {
+    white-space: nowrap;
+  }
+}
+
+.card-app-info-action {
+  flex: 0 0 auto;
+}
+</style>
