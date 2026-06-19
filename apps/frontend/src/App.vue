@@ -36,16 +36,22 @@ export default {
       isIframe: window.self !== window.top,
       loading: true,
       loadingProgress: 0,
-      loadingPollInProgress: false,
+      loadingPollInProgress: false
     };
   },
   computed: {
     ...mapState({
       isApiOperational: state => state.system.api.operational,
       isLightningOperational: state => state.lightning.operational,
+      theme: state => state.system.theme
     }),
   },
   methods: {
+    applyTheme(theme) {
+      const isDark = theme === "dark";
+      document.body.classList.toggle("theme-dark", isDark);
+      document.documentElement.style.colorScheme = isDark ? "dark" : "light";
+    },
     updateViewPortHeightCSS() {
       return document.documentElement.style.setProperty(
         "--vh100",
@@ -95,6 +101,7 @@ export default {
     },
   },
   created() {
+    this.$store.dispatch("system/getTheme");
     //for 100vh consistency
     this.updateViewPortHeightCSS();
     window.addEventListener("resize", this.updateViewPortHeightCSS);
@@ -118,6 +125,12 @@ export default {
         }
       },
       immediate: true,
+    },
+    theme: {
+      handler: function(theme) {
+        this.applyTheme(theme);
+      },
+      immediate: true
     },
   },
   beforeDestroy() {

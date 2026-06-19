@@ -107,11 +107,24 @@
             </b-dropdown-group>
             <b-dropdown-group>
               <div class="dropdown-group">
+                <div class="d-flex w-100 justify-content-between align-items-center">
+                  <span class="d-block">Dark mode</span>
+                  <toggle-switch
+                    class="align-self-center"
+                    :on="theme === 'dark'"
+                    @toggle="toggleTheme"
+                  ></toggle-switch>
+                </div>
+              </div>
+            </b-dropdown-group>
+            <b-dropdown-group>
+              <div class="dropdown-group">
                 <div class="d-flex w-100 justify-content-between">
                   <div>
                     <span class="d-block">Automatic backups</span>
                     <small class="d-block">
                       <a
+                        class="backup-learn-more-link"
                         href="https://github.com/getumbrel/umbrel/blob/2b266036f62a1594aa60a8a3be30cfb8656e755f/scripts/backup/README.md"
                         target="blank"
                         >Learn more</a
@@ -396,6 +409,7 @@ export default {
       lndConnectUrls: state => state.lightning.lndConnectUrls,
       channels: state => state.lightning.channels,
       unit: state => state.system.unit,
+      theme: state => state.system.theme,
       currency: state => state.system.currency,
       supportedFiatCurrencies: state => state.system.supportedFiatCurrencies,
       backupStatus: state => state.system.backupStatus,
@@ -417,6 +431,9 @@ export default {
     },
     toggleBackupOverTor() {
       this.$store.dispatch('system/toggleBackupOverTor');
+    },
+    toggleTheme(isDark) {
+      this.$store.dispatch("system/changeTheme", isDark ? "dark" : "light");
     },
     async changeCurrency(currency) {
       const currencyChangeId = this.currencyChangeId + 1;

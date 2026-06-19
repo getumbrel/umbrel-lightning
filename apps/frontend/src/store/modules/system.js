@@ -23,6 +23,7 @@ const state = () => ({
   onboarding: false, // assume false to prevent modal flickering
   loading: true,
   unit: "sats", //sats or btc
+  theme: "light",
   currency: "USD",
   supportedFiatCurrencies: SUPPORTED_FIAT_CURRENCIES,
   api: {
@@ -44,6 +45,9 @@ const mutations = {
   },
   setCurrency(state, currency) {
     state.currency = currency;
+  },
+  setTheme(state, theme) {
+    state.theme = theme;
   },
   setApi(state, api) {
     state.api = api;
@@ -112,6 +116,20 @@ const actions = {
     if (SUPPORTED_FIAT_CURRENCIES.includes(currency)) {
       window.localStorage.setItem("currency", currency);
       commit("setCurrency", currency);
+    }
+  },
+  async getTheme({ commit }) {
+    if (window.localStorage && window.localStorage.getItem("theme")) {
+      const theme = window.localStorage.getItem("theme");
+      if (theme === "light" || theme === "dark") {
+        commit("setTheme", theme);
+      }
+    }
+  },
+  changeTheme({ commit }, theme) {
+    if (theme === "light" || theme === "dark") {
+      window.localStorage.setItem("theme", theme);
+      commit("setTheme", theme);
     }
   },
   async getApi({ commit }) {
