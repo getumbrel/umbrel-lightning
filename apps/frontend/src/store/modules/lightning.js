@@ -236,16 +236,22 @@ const actions = {
     const response = await API.get(
       `${process.env.VUE_APP_API_BASE_URL}/v1/lnd/backups`
     );
-    
+
+    if (!response) {
+      throw new Error("Unable to get channel backups.");
+    }
+
     if (response.success === false) {
+      const errorMessage = response.error || "Unable to get channel backups.";
       // set getBackupsFailedDueToTor to true if the error includes non-case-sensitive "Proxy"
       // e.g, "SocksClientError: Proxy connection timed out"
-      if (response.error.toLowerCase().includes("proxy")) {
+      if (errorMessage.toLowerCase().includes("proxy")) {
         commit("setGetBackupsFailedDueToTor", true);
       }
-    } else {
-      commit("setBackups", response.timestamps);
+      throw new Error(errorMessage);
     }
+
+    commit("setBackups", Array.isArray(response.timestamps) ? response.timestamps : []);
   },
 
   async getLastBackupDate({ commit }) {

@@ -135,9 +135,7 @@ const actions = {
     );
     commit("setBackupOverTor", backupOverTor);
   },
-  async toggleBackupOverTor({ commit, state }) {
-    const newValue = !state.backupOverTor;
-
+  async changeBackupOverTor({ commit }, newValue) {
     const response = await API.post(`${process.env.VUE_APP_API_BASE_URL}/v1/system/backup-over-tor`, {
       backupOverTor: newValue
     });
@@ -145,6 +143,9 @@ const actions = {
     if (response.data.success) {
       commit('setBackupOverTor', newValue);
     }
+  },
+  async toggleBackupOverTor({ dispatch, state }) {
+    return dispatch("changeBackupOverTor", !state.backupOverTor);
   },
   async getMostRecentBackupSuccess({ commit }) {
     const mostRecentBackupSuccess = await API.get(

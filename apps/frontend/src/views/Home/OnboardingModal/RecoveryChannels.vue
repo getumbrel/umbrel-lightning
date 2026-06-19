@@ -76,7 +76,8 @@ export default {
     ...mapState({
       backups: state => state.lightning.backups,
       isLightningSyncing: state => !state.lightning.syncedToChain,
-      getBackupsFailedDueToTor: state => state.lightning.getBackupsFailedDueToTor
+      getBackupsFailedDueToTor: state => state.lightning.getBackupsFailedDueToTor,
+      backupOverTor: state => state.system.backupOverTor
     }),
   },
   methods: {
@@ -111,12 +112,23 @@ export default {
     },
 
     async retryWithoutTor() {
-      this.changeStep('loading');
-      await this.$store.dispatch('system/toggleBackupOverTor');
-      await this.getBackups();
-      // turn tor back on after we're done because this is a one-time request the user is making
-      await this.$store.dispatch('system/toggleBackupOverTor');
+      const previousBackupOverTor = this.backupOverTor;
 
+      this.changeStep('loading');
+
+      try {
+        if (previousBackupOverTor) {
+          await this.$store.dispatch('system/changeBackupOverTor', false);
+        }
+        await this.getBackups();
+      } finally {
+        if (this.backupOverTor !== previousBackupOverTor) {
+          await this.$store.dispatch(
+            'system/changeBackupOverTor',
+            previousBackupOverTor
+          );
+        }
+      }
     },
 
     async restoreBackup({ timestamp, backupFile }) {

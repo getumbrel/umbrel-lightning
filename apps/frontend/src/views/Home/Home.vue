@@ -333,11 +333,12 @@
       centered
       hide-header
       hide-footer
+      @hidden="showRecoverChannelsModal = false"
     >
       <recovery-channels
         :onComplete="channelRecoveryInitiated"
-        :onBack="() => this.$bvModal.hide('recover-channels-modal')"
-        :onClose="() => this.$bvModal.hide('recover-channels-modal')"
+        :onBack="closeRecoverChannelsModal"
+        :onClose="closeRecoverChannelsModal"
       />
     </b-modal>
     <advanced-settings-modal v-if="showAdvancedSettingsModal" />
@@ -353,7 +354,6 @@ import { mapState } from "vuex";
 import moment from "moment";
 
 import API from "@/helpers/api";
-import delay from "@/helpers/delay";
 
 import CardWidget from "@/components/CardWidget";
 import Stat from "@/components/Utility/Stat";
@@ -444,12 +444,12 @@ export default {
         this.$bvModal.show("advanced-settings-modal");
       });
     },
-    async recoverChannels() {
+    recoverChannels() {
       this.showRecoverChannelsModal = true;
-      // add delay to make sure that
-      // the modal component is mounted
-      await delay(300);
-      this.$bvModal.show("recover-channels-modal");
+      this.$nextTick(() => this.$bvModal.show("recover-channels-modal"));
+    },
+    closeRecoverChannelsModal() {
+      this.$bvModal.hide("recover-channels-modal");
     },
     channelRecoveryInitiated() {
       this.$bvToast.toast("Once your channels start closing, it may take upto 2 days for the funds to arrive in your Bitcoin (on-chain) wallet.", {
@@ -459,7 +459,7 @@ export default {
         solid: true,
         toaster: "b-toaster-bottom-right",
       });
-      return this.$bvModal.hide('recover-channels-modal');
+      return this.closeRecoverChannelsModal();
     },
     getLndConnectUrls() {
       this.$store.dispatch("lightning/getLndConnectUrls");
