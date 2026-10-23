@@ -14,8 +14,10 @@
   "keywords": [],
   "author": "",
   "dependencies": {
+    "@grpc/grpc-js": "1.14.6",
+    "@grpc/proto-loader": "0.8.1",
     "aezeed": "^0.0.5",
-    "axios": "^0.26.1",
+    "axios": "0.34.0",
     "big.js": "^6.1.1",
     "bitcoind-rpc": "^0.9.1",
     "camelize-keys": "^1.0.0",
@@ -26,7 +28,6 @@
     "find-config": "^1.0.0",
     "form-data": "^4.0.0",
     "get-stream": "^6.0.1",
-    "grpc": "^1.24.11",
     "lndconnect": "^0.2.10",
     "lodash.clonedeep": "^4.5.0",
     "lodash.merge": "^4.6.2",
@@ -38,7 +39,6 @@
     "openpgp": "^5.4.0",
     "socks-proxy-agent": "^5.0.0",
     "tar-stream": "^2.2.0",
-    "uuid": "^8.3.2",
     "validator": "^13.7.0",
     "winston": "^3.6.0",
     "winston-daily-rotate-file": "^4.6.1"

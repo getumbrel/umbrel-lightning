@@ -5,7 +5,7 @@
   "description": "",
   "private": true,
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "node --test tests/*.test.cjs",
     "dev:frontend": "npm run serve -w umbrel-lnd-frontend",
     "build:frontend": "npm run build -w umbrel-lnd-frontend",
     "dev:backend": "npm run start -w umbrel-lnd-backend"
@@ -13,5 +13,13 @@
   "keywords": [],
   "workspaces": [
     "apps/*"
-  ]
+  ],
+  "overrides": {
+    "lndconnect": {
+      "decode-uri-component": "0.5.0"
+    }
+  },
+  "resolutions": {
+    "**/lndconnect/decode-uri-component": "0.5.0"
+  }
 }

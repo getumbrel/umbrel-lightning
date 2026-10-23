@@ -1,5 +1,6 @@
 /* eslint-disable camelcase, max-lines */
-const grpc = require("grpc");
+const grpc = require("@grpc/grpc-js");
+const protoLoader = require("@grpc/proto-loader");
 const camelizeKeys = require("camelize-keys");
 
 const diskService = require("services/disk");
@@ -27,17 +28,26 @@ if (process.env.MACAROON_DIR) {
   MACAROON_FILE = process.env.MACAROON_DIR + "admin.macaroon";
 }
 
+// Preserve the response shapes used by the existing dashboard and RPC payloads.
+const loadProto = filename => grpc.loadPackageDefinition(protoLoader.loadSync(filename, {
+  keepCase: true,
+  longs: String,
+  enums: String,
+  defaults: true,
+  oneofs: true,
+}));
+
 // TODO move this to volume
-const lnrpcDescriptor = grpc.load(PROTO_FILE);
+const lnrpcDescriptor = loadProto(PROTO_FILE);
 const lnrpc = lnrpcDescriptor.lnrpc;
 
-const lnrpcRouterDescriptor = grpc.load(ROUTERRPC_PROTO_FILE);
+const lnrpcRouterDescriptor = loadProto(ROUTERRPC_PROTO_FILE);
 const lnrpcRouter = lnrpcRouterDescriptor.routerrpc;
 
-const lnrpcWatchtowerDescriptor = grpc.load(WATCHTOWERRPC_PROTO_FILE);
+const lnrpcWatchtowerDescriptor = loadProto(WATCHTOWERRPC_PROTO_FILE);
 const lnrpcWatchtower = lnrpcWatchtowerDescriptor.watchtowerrpc;
 
-const lnrpcWtclientDescriptor = grpc.load(WTCLIENTRPC_PROTO_FILE);
+const lnrpcWtclientDescriptor = loadProto(WTCLIENTRPC_PROTO_FILE);
 const lnrpcWtclient = lnrpcWtclientDescriptor.wtclientrpc;
 
 const DEFAULT_RECOVERY_WINDOW = 250;

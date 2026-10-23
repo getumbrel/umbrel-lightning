@@ -12,7 +12,7 @@
   "author": "",
   "dependencies": {
     "autoprefixer": "^9.8.8",
-    "axios": "^0.19.2",
+    "axios": "0.34.0",
     "bignumber.js": "^9.0.0",
     "bootstrap-vue": "^2.11.0",
     "countup.js": "^2.0.8",
