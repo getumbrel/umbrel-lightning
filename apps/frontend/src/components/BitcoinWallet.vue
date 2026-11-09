@@ -618,6 +618,7 @@ import { mapState, mapGetters } from "vuex";
 import { satsToBtc, btcToSats } from "@/helpers/units.js";
 import API from "@/helpers/api";
 import getErrorMessage from "@/helpers/error-message";
+import parseBip321 from "@/helpers/bip321";
 
 import CountUp from "@/components/Utility/CountUp";
 import CardWidget from "@/components/CardWidget";
@@ -848,6 +849,18 @@ export default {
         this.withdraw.amount = btcToSats(val);
       }
       this.fetchWithdrawalFees();
+    },
+    "withdraw.address": function(val) {
+      //extract address and amount from BIP 321 URI
+      const bip321 = parseBip321(val);
+      if (!bip321 || !bip321.address) return;
+      this.withdraw.address = bip321.address;
+      if (bip321.amount && !this.withdraw.sweep) {
+        this.withdraw.amountInput =
+          this.unit === "btc"
+            ? bip321.amount
+            : String(btcToSats(bip321.amount));
+      }
     },
     "withdraw.sweep": async function(val) {
       if (val) {
