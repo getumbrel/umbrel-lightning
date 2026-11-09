@@ -769,6 +769,7 @@ import { mapState } from "vuex";
 import { satsToBtc, btcToSats } from "@/helpers/units.js";
 import API from "@/helpers/api";
 import getErrorMessage from "@/helpers/error-message";
+import parseBip321 from "@/helpers/bip321";
 
 import CountUp from "@/components/Utility/CountUp";
 import CardWidget from "@/components/CardWidget";
@@ -988,6 +989,16 @@ export default {
         this.error = "";
         return;
       }
+
+      //extract invoice from BIP 321 or lightning: URI
+      const bip321 = parseBip321(this.send.paymentRequest);
+      if (bip321 && bip321.lightning) {
+        this.send.paymentRequest = bip321.lightning;
+      }
+      this.send.paymentRequest = this.send.paymentRequest.replace(
+        /^lightning:/i,
+        ""
+      );
 
       this.send.description = "";
       this.send.isValidInvoice = false;
