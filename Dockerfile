@@ -1,5 +1,5 @@
 # Build backend
-FROM node:24.22.1-slim@sha256:55fb5f5a527ea2c5c4a95f963e48ef90aa38c7b346054fdc8ee9957a2b55d205 AS backend-builder
+FROM node:24.22.3-slim@sha256:dc26ae92c9fb15cf6b1d63e20f0944b2efe0f115b20e00be48fb23fceb061c54 AS backend-builder
 
 # Create app directory
 WORKDIR /app
@@ -15,7 +15,7 @@ COPY apps/backend ./apps/backend
 
 
 # Build frontend
-FROM node:24.22.1-slim@sha256:55fb5f5a527ea2c5c4a95f963e48ef90aa38c7b346054fdc8ee9957a2b55d205 AS frontend-builder
+FROM node:24.22.3-slim@sha256:dc26ae92c9fb15cf6b1d63e20f0944b2efe0f115b20e00be48fb23fceb061c54 AS frontend-builder
 
 # Create app directory
 WORKDIR /app
@@ -35,7 +35,7 @@ RUN npm run build:frontend
 
 
 # Final image
-FROM node:24.22.1-slim@sha256:55fb5f5a527ea2c5c4a95f963e48ef90aa38c7b346054fdc8ee9957a2b55d205 AS lightning
+FROM node:24.22.3-slim@sha256:dc26ae92c9fb15cf6b1d63e20f0944b2efe0f115b20e00be48fb23fceb061c54 AS lightning
 
 # Change directory to '/app' 
 WORKDIR /app
